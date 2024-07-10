@@ -113,6 +113,7 @@
     "tiled-hexagons": "^1.0.2",
     "trim": "^1.0.1",
     "uuid": "^9.0.0",
+    "videojs": "^1.0.0",
     "vis-timeline": "^7.7.0",
     "yarn": "^1.22.19",
     "youtube-transcript": "^1.0.6",

@@ -1,8 +1,13 @@
-import React, { useEffect } from 'react';
+import React, { useState, useEffect, useRef } from 'react';
 import styled from 'styled-components';
 import { useRouter } from 'next/router';
 
 const swapgoBg = '/logo/swapgo_w_big.png';
+const swapgoTrans = '/logo/swapgo_trans.png';
+const swapgo = '/logo/swapgo.png';
+const swapgoWhite = '/logo/swapgo_w.png';
+const backgroundWhite = '/logo/white.png';
+const oceanSound = '/ocean-waves-112906.mp3';
 
 const Page = styled.div`
   * {
@@ -39,10 +44,22 @@ const Page = styled.div`
     font-weight: 900;
   }
   .nav-title {
-    font-size: 4em;
+    position: relative;
+    width: 250px;
+    height: 250px;
+    background-image: url(${swapgo});
+    background-size: contain;
+    background-repeat: no-repeat;
+    background-position: center;
+    transition: background-image 0.3s ease;
+
+    &:hover {
+      background-image: url(${swapgoWhite});
+    }
   }
   .nav-subTitle {
-    font-size: 3em;
+    margin-left: 15px;
+    font-size: 1.7em;
   }
   a {
     transition: all .25s ease-in-out;
@@ -473,8 +490,28 @@ const Hero = styled.section`
     min-height: 100vh;
     height: 100vh;
 
+    .hero-content {
+      position: relative;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      justify-content: center;
+      height: 100%;
+    }
+
     .hero-title {
-      font-size: 12vw;
+      position: relative;
+      z-index: 2;
+      transition: transform 0.3s ease;
+
+      &:hover {
+        transform: scale(1.05);
+      }
+
+      img {
+        width: 100%;
+        max-width: 600px;
+      }
     }
 
     #video-bg {
@@ -493,6 +530,26 @@ const Hero = styled.section`
       max-width: 600px;
     }
   }
+
+  .background-white {
+    position: absolute;
+    top: 50%;
+    left: 50%;
+    transform: translate(-50%, -50%);
+    width: 120%;
+    height: 120%;
+    background-image: url(${backgroundWhite});
+    background-size: cover;
+    background-position: center;
+    opacity: 0.5;
+    filter: blur(10px);
+    transition: opacity 0.3s ease;
+    z-index: 1;
+  }
+
+  .hero-title:hover + .background-white {
+    opacity: 0;
+  }
 `;
 
 const CustomCursor = styled.div`
@@ -510,6 +567,32 @@ const CustomCursor = styled.div`
   &.custom-cursor--link {
     background-color: #fff;
     transform: translate(-50%, -50%) scale(1.25);
+  }
+`;
+
+const AudioPlayer = styled.div`
+  position: fixed;
+  bottom: 20px;
+  right: 20px;
+  z-index: 1000;
+  display: flex;
+  align-items: center;
+  background: rgba(255, 255, 255, 0.2);
+  backdrop-filter: blur(5px);
+  padding: 10px;
+  border-radius: 20px;
+
+  button {
+    background: none;
+    border: none;
+    color: white;
+    font-size: 24px;
+    cursor: pointer;
+    margin-right: 10px;
+  }
+
+  .volume-control {
+    width: 100px;
   }
 `;
 
@@ -601,7 +684,33 @@ const useMenuToggle = () => {
 export default function Home() {
   useCustomCursor();
   useMenuToggle();
+
   const router = useRouter();
+
+  const [isPlaying, setIsPlaying] = useState(false);
+  const [volume, setVolume] = useState(0.5);
+  const audioRef = useRef(null);
+
+  useEffect(() => {
+    if (audioRef.current) {
+      audioRef.current.volume = volume;
+    }
+  }, [volume]);
+
+  const togglePlay = () => {
+    if (audioRef.current.paused) {
+      audioRef.current.play();
+      setIsPlaying(true);
+    } else {
+      audioRef.current.pause();
+      setIsPlaying(false);
+    }
+  };
+
+  const handleVolumeChange = (e) => {
+    const newVolume = parseFloat(e.target.value);
+    setVolume(newVolume);
+  };
 
   return (
     <Page>
@@ -623,9 +732,8 @@ export default function Home() {
             <div className="nav-col nav-contact w-1/4 bg-black flex flex-col justify-center items-center relative py-5 px-3">
               <div className="absolute w-full h-full bg-topographic"></div>
               <div className="relative mt-36 ml-5">
-                <h2 className="nav-title white mb-5" onClick={() => router.push('/SWAPGO/start')}>
-                  Go To Game<span className="d-inline green"></span>
-                </h2>
+                <div className="nav-title white mb-5" onClick={() => router.push('/SWAPGO/start')}>
+                </div>
               </div>
             </div>
             <div className="nav-col nav-menu bg-green flex flex-col justify-center items-center pt-5 pb-3 px-[7px]">
@@ -651,7 +759,6 @@ export default function Home() {
         <div className="video-wrap">
           <video autoPlay playsInline loop muted id="video-bg">
             <source src="https://tactusmarketing.com/wp-content/uploads/tactus-waves-hero.mp4" type="video/mp4" />
-            <source src="https://tactusmarketing.com/wp-content/uploads/tactus-waves-hero.mp4" type="video/mp4" />
           </video>
         </div>
         <div className="position-absolute w-100 gradient-overlay"></div>
@@ -662,6 +769,23 @@ export default function Home() {
         </div>
       </Hero>
       <CustomCursor className="custom-cursor"></CustomCursor>
+      <audio ref={audioRef} loop>
+        <source src={oceanSound} type="audio/mpeg" />
+      </audio>
+      <AudioPlayer>
+        <button onClick={togglePlay}>
+          {isPlaying ? '⏸' : '▶'}
+        </button>
+        <input
+          type="range"
+          min="0"
+          max="1"
+          step="0.1"
+          value={volume}
+          onChange={handleVolumeChange}
+          className="volume-control"
+        />
+      </AudioPlayer>
     </Page>
   );
 }
