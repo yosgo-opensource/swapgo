@@ -5,6 +5,7 @@ import { Fade } from "@mui/material";
 import axios from "axios";
 import ReactPlayer from "react-player";
 import ReactTyped from "react-typed";
+import { Button, Divider, Loading, Modal } from "@geist-ui/core";
 
 const GO = () => {
   // 網址參數
@@ -22,6 +23,10 @@ const GO = () => {
   const [aiThinking, setAIThinking] = useState(false);
   const [aiResponse, setAiResponse] = useState(null);
   const [screenWriting, setScreenWriting] = useState([]);
+  const [boardWidth, setBoardWidth] = useState();
+  const [aiReplyCountDown, setAIReplyCountDown] = useState(0);
+  const [endGameModalOpen, setEndGameModalOpen] = useState(false);
+  const [endGameScreenWriting, setEndGameScreenWriting] = useState(null);
 
   //解析網址參數
   useEffect(() => {
@@ -51,6 +56,21 @@ const GO = () => {
         setParsed(true);
       }, 50);
     }
+  }, []);
+
+  //決定棋盤寬度
+  const handleResizeTheBoardWidth = () => {
+    //先取得螢幕尺寸
+    const screenWidth = window.innerWidth;
+    console.log("> screenWidth", screenWidth);
+    setBoardWidth(screenWidth / 2 - 6);
+  };
+  useEffect(() => {
+    handleResizeTheBoardWidth();
+  }, []);
+  useEffect(() => {
+    //當螢幕大小改變時，重新計算棋盤寬度
+    window.addEventListener("resize", handleResizeTheBoardWidth);
   }, []);
 
   //初始化棋盤
@@ -121,6 +141,7 @@ const GO = () => {
     //API 請求
     const fetchAI = async () => {
       setAIThinking(true);
+      setAIReplyCountDown(90);
       try {
         //劇本提示詞
         let _newScreenWriting;
@@ -201,7 +222,7 @@ imgPrompt: 搭配劇情的生成圖片提示詞，請你搭配使用此基本風
             prompt: _newScreenWriting.imgPrompt,
           })
           .then((res) => {
-            const img = res.data.data[0].url;
+            const img = res.data.data[0].url || battle.img;
             _newScreenWriting = {
               ..._newScreenWriting,
               img,
@@ -216,12 +237,14 @@ imgPrompt: 搭配劇情的生成圖片提示詞，請你搭配使用此基本風
 
         //取得 AI 棋盤回應
         await axios
-          .post(`https://swapgo.yosgo.com/ana`, {
+          .post(`http://192.168.0.113:3031/ana`, {
             moves: payload,
           })
           .then((res) => {
             let ana = res.data;
-            let pass = `${ana.next_move}`.indexOf("pass") !== -1;
+            let pass =
+              `${ana.next_move}`.indexOf("pass") !== -1 ||
+              ana?.top_moves.find((m) => m.move.indexOf("pass") !== -1);
             //依照難度計算下一步的數字格式
             let next_move_number_format;
             let next_move_text_format;
@@ -253,6 +276,7 @@ imgPrompt: 搭配劇情的生成圖片提示詞，請你搭配使用此基本風
 
         //AI 結束思考
         setAIThinking(false);
+        setAIReplyCountDown(0);
       } catch (err) {
         console.log("> fetchAI error", err);
       }
@@ -307,20 +331,134 @@ imgPrompt: 搭配劇情的生成圖片提示詞，請你搭配使用此基本風
         console.error(`沒有找到坐標為 (${x}, ${y}) 的交叉點元素`);
       }
     } else if (aiResponse && aiResponse?.pass) {
-      alert(
-        `Game Over. ${aiResponse.score_lead}. 
-          
-Black: ${aiResponse.black_win_rate}
-
-White: ${aiResponse.white_win_rate}`
-      );
+      //AI 判定結束遊戲 end game
+      setEndGameModalOpen(true);
     }
   }, [aiResponse]);
+
+  // AI 回應預期倒數
+  useEffect(() => {
+    if (aiReplyCountDown > 0) {
+      const timer = setTimeout(() => {
+        setAIReplyCountDown(aiReplyCountDown - 1);
+      }, 1000);
+      return () => clearTimeout(timer);
+    }
+  }, [aiReplyCountDown]);
 
   //監聽劇情
   useEffect(() => {
     console.log("> screenWriting", screenWriting);
   }, [screenWriting]);
+
+  //End game 處理
+  useEffect(() => {
+    (async () => {
+      //當 endGameModelOpen 時，把資料給 AI 並產出劇情與結果
+      if (endGameModalOpen) {
+        //常數
+        const playerColor = side === "1" ? "black" : "white";
+        const aiColor = side === "1" ? "white" : "black";
+
+        //劇本提示詞
+        let _endGameScreenWriting;
+        const endGameScreenWritingTemplate = `這是一場圍棋比賽，而你的任務就是轉譯，把棋盤上的局勢描述成歷史上的戰役
+
+玩家的名稱是 ${player} 代表 ${playerColor} 方，對手是 AI 代表 ${aiColor} 方，由 ${whoFirst} 先手
+
+${
+  aiResponse
+    ? `對手下在了 ${aiResponse.next_move_number_format} 位置，目前的局勢是 ${aiResponse?.score_lead}，勝率分別是黑：${aiResponse?.black_win_rate} 與白：${aiResponse?.white_win_rate}，`
+    : ""
+}
+
+目前的棋盤是 
+${
+  currentState?.intersections &&
+  visualizeGoBoard(currentState?.intersections, currentState.boardSize)
+}
+
+${
+  currentState?.playedPoint
+    ? `玩家下在了 [${currentState?.playedPoint.x}, ${currentState?.playedPoint.y}] 的位置`
+    : ""
+}
+
+戰役的部分是 ${battle.name}
+
+黑方是 ${battle.black}，白方是 ${battle.white}
+
+${
+  screenWriting.length > 0 &&
+  `先前有以下劇情
+${screenWriting.map((s, index) => `${index}.${s.description}`).join("\n")}`
+}
+
+現在有人發動了棋盤的判決，玩家是 ${player}，代表 ${playerColor} 方，對手是 AI，代表 ${aiColor} 方，這場比賽將會結束
+
+黑子的勝率是 ${aiResponse?.black_win_rate}，白子的勝率是 ${
+          aiResponse?.white_win_rate
+        }，目前的局勢是 ${aiResponse?.score_lead}
+目前情勢是：${aiResponse?.score_lead}
+
+請為這場比賽做結束的劇情描述與圖片生成提示詞
+
+description: 30字的英文
+imgPrompt: 搭配劇情的生成圖片提示詞，請你搭配使用此基本風格 sketch style, black and white illustration, soft pencil lines, minimalist details, vintage look, beige background
+
+另外就是圖片提示詞可能要注意安全政策(Safe Policy)，在不影響生成圖片的精彩度之下，避免一些過於細節暴力、血腥的場景
+
+最後請你直接回應 JSON 格式的字串，例如下方
+
+{
+    description: ""
+    imgPrompt: ""
+}
+`;
+        //生成劇本與圖片提示詞
+        await axios
+          .post("/api/claude_call2", {
+            prompts: [
+              {
+                role: "user",
+                content: `${endGameScreenWritingTemplate}`,
+              },
+            ],
+          })
+          .then((res) => {
+            const parsed = JSON.parse(res.data.payload.text);
+            const { description, imgPrompt } = parsed;
+            _endGameScreenWriting = {
+              imgPrompt,
+              description,
+            };
+          })
+          .catch((err) => {
+            alert("> ScreenWriting error");
+          });
+
+        //生成圖片
+        await axios
+          .post("/api/openai_sprint", {
+            type: "image",
+            prompt: _endGameScreenWriting.imgPrompt,
+          })
+          .then((res) => {
+            const img = res.data.data[0].url || battle.img;
+            _endGameScreenWriting = {
+              ..._endGameScreenWriting,
+              img,
+            };
+          })
+          .catch((err) => {
+            alert("> ImageGenerating error.");
+          });
+
+        //更新劇情
+        setEndGameScreenWriting(_endGameScreenWriting);
+      }
+    })();
+  }, [endGameModalOpen]);
 
   //樣式
   const styles = {
@@ -330,13 +468,12 @@ White: ${aiResponse.white_win_rate}`
       minHeight: "100vh",
       overflow: "hidden",
       alignItems: "stretch",
-      border: "3px solid rgba(55,55,55,1)",
+      border: "3px solid black",
       boxSize: "border-box",
     },
     leftColumn: {
       display: "flex",
-      flexDirection: "column",
-      width: "50%",
+      width: "100%",
       height: "calc(100vh - 6px)",
       borderRight: "3px solid rgba(55,55,55,1)",
       display: "flex",
@@ -345,7 +482,7 @@ White: ${aiResponse.white_win_rate}`
       boxSize: "border-box",
     },
     rightColumn: {
-      width: "50%",
+      width: "100%",
       height: "calc(100vh - 6px)",
       position: "relative",
     },
@@ -353,6 +490,7 @@ White: ${aiResponse.white_win_rate}`
       overflow: "auto",
       boxSize: "border-box",
       padding: "8px 16px",
+      minHeight: "88px",
     },
     leftBottom: {
       borderTop: "3px solid rgba(55,55,55,1)",
@@ -366,222 +504,328 @@ White: ${aiResponse.white_win_rate}`
       <style jsx>
         {`
           .swap-go-board {
-            width: calc(50vw - 6px) !important;
-            height: calc(50vw - 6px) !important;
+            width: 100% !important;
+            height: 100% !important;
           }
         `}
       </style>
       {parsed && (
         <Fade in={parsed}>
-          <div style={styles.container}>
-            <div style={styles.leftColumn}>
-              <div style={styles.leftTop}>
-                <div
-                  onClick={() => {
-                    console.log("> All state", {
-                      player,
-                      side,
-                      difficulty,
-                      boardSize,
-                      battle,
-                      whoFirst,
-                      currentState,
-                      moves,
-                      gameLog,
-                      aiThinking,
-                      aiResponse,
-                      screenWriting,
-                    });
-                  }}
-                >
-                  <h1 style={{ fontSize: "2rem", fontStyle: "italic" }}>
-                    {battle.name}
-                  </h1>
-                  <YTMusic />
+          <div>
+            {/* End Game Modal */}
+            <Modal
+              visible={endGameModalOpen}
+              onClose={() => setEndGameModalOpen(false)}
+            >
+              {endGameScreenWriting === null ? (
+                <div>
+                  <Loading />
+                  Someone call end game. System is scoring
                 </div>
-                <div
-                  style={{
-                    display: "flex",
-                    alignItems: "center",
-                    gap: "24px",
-                  }}
-                >
-                  {[
-                    {
-                      label: battle.black,
-                      type: "black",
-                      img: "/swapgo/black.png",
-                      value: "1",
-                    },
-                    {
-                      label: battle.white,
-                      type: "white",
-                      img: "/swapgo/white.png",
-                      value: "-1",
-                    },
-                  ].map((item) => (
-                    <div
-                      key={item.img}
-                      style={{
-                        display: "flex",
-                        alignItems: "center",
-                        gap: "4px",
-                      }}
-                    >
+              ) : (
+                <div style={{ textAlign: "left" }}>
+                  {aiResponse && endGameScreenWriting && (
+                    <div>
                       <img
-                        src={item.img}
-                        style={{ width: "20px", height: "20px" }}
+                        src={endGameScreenWriting?.img}
+                        style={{
+                          borderRadius: "2px",
+                        }}
                       />
-                      <i>
-                        {item.label}(
-                        {side === item.value ? ` You, ${player}` : " AI"})
-                      </i>
+                      <div
+                        style={{
+                          marginTop: "8px",
+                          fontSize: "1rem",
+                          fontStyle: "italic",
+                        }}
+                      >
+                        {endGameScreenWriting.description}
+                      </div>
+                      <Divider />
+                      <p>{aiResponse.score_lead}</p>
+                      <p>Black: {aiResponse.black_win_rate}</p>
+                      <p>White: {aiResponse.white_win_rate}</p>
                     </div>
-                  ))}
-                </div>
-              </div>
-              <div style={styles.leftBottom}>
-                {/* 棋盤狀態 */}
-                <div
-                  style={{
-                    padding: "4px 16px",
-                    textAlign: "center",
-                    position: "relative",
-                  }}
-                >
-                  {gameLog.length > 0 && (
-                    <span
-                      style={{
-                        position: "relative",
-                        zIndex: 3,
-                        display: "inline-block",
-                        margin: "0 auto",
-                        backdropFilter: "blur(5px)",
-                        backgroundColor: "rgba(255, 255, 255, 0.5)",
-                        border: "1px solid rgba(255, 255, 255, 0.18)",
-                        borderRadius: "8px",
-                        padding: "0 8px",
-                        fontStyle: "italic",
-                      }}
-                    >
-                      <i>
-                        Round {currentState?.moveNumber}.{" "}
-                        {gameLog[gameLog.length - 1]}
-                      </i>
-                    </span>
                   )}
+                </div>
+              )}
+              <Modal.Action
+                onClick={() => {
+                  window.location.href = "/SWAPGO/start";
+                }}
+              >
+                Play Again
+              </Modal.Action>
+            </Modal>
+            <div style={styles.container}>
+              <div style={styles.leftColumn}>
+                <div style={styles.leftTop}>
                   <div
                     style={{
-                      zIndex: 1,
-                      position: "absolute",
-                      top: 0,
-                      left: 0,
-                      background: "black",
-                      width: aiResponse ? aiResponse?.black_win_rate : "50%",
-                      height: "100%",
-                      fontSize: "12px",
-                      transition: "width 1s",
-                    }}
-                  ></div>
-                  <div
-                    style={{
-                      zIndex: 1,
-                      position: "absolute",
-                      top: 0,
-                      right: 0,
-                      background: "white",
-                      width: aiResponse ? aiResponse?.white_win_rate : "50%",
-                      height: "100%",
                       display: "flex",
-                      justifyContent: "flex-start",
+                      justifyContent: "space-between",
                       alignItems: "center",
-                      transition: "width 1s",
+                    }}
+                    onClick={() => {
+                      console.log("> All state", {
+                        player,
+                        side,
+                        difficulty,
+                        boardSize,
+                        battle,
+                        whoFirst,
+                        currentState,
+                        moves,
+                        gameLog,
+                        aiThinking,
+                        aiResponse,
+                        screenWriting,
+                        boardWidth,
+                        aiReplyCountDown,
+                        endGameModalOpen,
+                      });
                     }}
                   >
-                    <span
-                      style={{
-                        position: "relative",
-                        zIndex: 999,
-                        width: "30px",
-                        margin: "-55px 0 0 -8px",
-                        fontSize: "1rem",
-                      }}
-                    >
-                      🚩
-                    </span>
+                    <h1 style={{ fontSize: "1.5rem", fontStyle: "italic" }}>
+                      {battle.name}
+                    </h1>
+                    {aiResponse && (
+                      <div>
+                        <Button
+                          width={"20px"}
+                          paddingLeft={"8px"}
+                          paddingRight={"8px"}
+                          height={"30px"}
+                          onClick={() => {
+                            if (aiThinking) {
+                              alert(
+                                "AI is thinking, please for the next move to end the game."
+                              );
+                            } else {
+                              var confirm = window.confirm(
+                                "Are you sure to end the game? The game will be scored and ended."
+                              );
+                              if (confirm) {
+                                setEndGameModalOpen(true);
+                              }
+                            }
+                          }}
+                        >
+                          End game
+                        </Button>
+                      </div>
+                    )}
+                    <YTMusic />
+                  </div>
+                  <div
+                    style={{
+                      display: "flex",
+                      flexDirection: "column",
+                    }}
+                  >
+                    {[
+                      {
+                        label: battle.black,
+                        type: "black",
+                        img: "/swapgo/black.png",
+                        value: "1",
+                        captured: currentState?.blackStonesCaptured,
+                      },
+                      {
+                        label: battle.white,
+                        type: "white",
+                        img: "/swapgo/white.png",
+                        value: "-1",
+                        captured: currentState?.whiteStonesCaptured,
+                      },
+                    ].map((item) => (
+                      <div
+                        key={item.img}
+                        style={{
+                          display: "flex",
+                          alignItems: "center",
+                          gap: "4px",
+                        }}
+                      >
+                        <img
+                          src={item.img}
+                          style={{ width: "20px", height: "20px" }}
+                        />
+                        <i>
+                          <b>{item.captured}</b>{" "}
+                          {item.captured > 1 ? "stones" : "stone"} captured
+                        </i>
+                        ,
+                        <i>
+                          {item.label}(
+                          {side === item.value ? `You, ${player}` : "AI"})
+                        </i>
+                      </div>
+                    ))}
                   </div>
                 </div>
-                {/* 棋盤 */}
-                <div
-                  className="tenuki-board swap-go-board"
-                  data-include-coordinates={true}
-                />
-                {/* 遮罩 */}
-                {aiThinking && (
+                <div style={styles.leftBottom}>
+                  {/* 棋盤狀態 */}
                   <div
                     style={{
-                      position: "absolute",
-                      top: 0,
-                      left: 0,
-                      width: "100%",
-                      height: "100%",
-                      cursor: "not-allowed",
-                      zIndex: 99,
+                      padding: "4px 16px",
+                      textAlign: "center",
+                      position: "relative",
                     }}
-                  />
-                )}
-              </div>
-            </div>
-            <div style={styles.rightColumn}>
-              {screenWriting.map((item, index) => {
-                const randomRotate = Math.random() * 3 + 1;
-                return (
+                  >
+                    {gameLog.length > 0 && (
+                      <span
+                        style={{
+                          position: "relative",
+                          zIndex: 3,
+                          display: "inline-block",
+                          margin: "0 auto",
+                          backdropFilter: "blur(5px)",
+                          backgroundColor: "rgba(255, 255, 255, 0.5)",
+                          border: "1px solid rgba(255, 255, 255, 0.18)",
+                          borderRadius: "8px",
+                          padding: "0 8px",
+                          fontStyle: "italic",
+                        }}
+                      >
+                        <i>
+                          {currentState?.moveNumber > 0
+                            ? `Move ${currentState?.moveNumber}. `
+                            : ""}
+                          {gameLog[gameLog.length - 1]}
+                          {aiReplyCountDown > 0 ? (
+                            <span>
+                              , estimating reply in <b>{aiReplyCountDown}</b>{" "}
+                              seconds
+                            </span>
+                          ) : (
+                            ""
+                          )}
+                        </i>
+                      </span>
+                    )}
+                    <div
+                      style={{
+                        zIndex: 1,
+                        position: "absolute",
+                        top: 0,
+                        left: 0,
+                        background: "black",
+                        width: aiResponse ? aiResponse?.black_win_rate : "50%",
+                        minHeight: "34px",
+                        height: "100%",
+                        fontSize: "12px",
+                        transition: "width 1s",
+                      }}
+                    ></div>
+                    <div
+                      style={{
+                        zIndex: 1,
+                        position: "absolute",
+                        top: 0,
+                        right: 0,
+                        background: "white",
+                        width: aiResponse ? aiResponse?.white_win_rate : "50%",
+                        minHeight: "34px",
+                        height: "100%",
+                        display: "flex",
+                        justifyContent: "flex-start",
+                        alignItems: "center",
+                        transition: "width 1s",
+                      }}
+                    >
+                      <span
+                        style={{
+                          position: "relative",
+                          zIndex: 999,
+                          width: "30px",
+                          margin: "-55px 0 0 -8px",
+                          fontSize: "1rem",
+                        }}
+                      >
+                        🚩
+                      </span>
+                    </div>
+                  </div>
+                  {/* 棋盤 */}
                   <div
-                    key={`screenWriting-${index}`}
                     style={{
-                      zIndex: index,
-                      position: "absolute",
-                      height: "95%",
-                      width: "95%",
-                      top: "2.5%",
-                      left: "2.5%",
-                      borderRadius: "2px",
-                      backgroundImage: `url(${item?.img}), linear-gradient(rgba(255, 255, 255, 0.5), rgba(255, 255, 255, 0.5)), url('/swapgo/background.png')`,
-                      backgroundSize: "cover",
-                      backgroundPosition: "center",
-                      boxSize: "border-box",
-                      display: "flex",
-                      alignItems: "flex-end",
-                      justifyContent: "center",
-                      transform: `rotate(${index * 0.05}deg)`,
-                      border: "2px solid #909090",
-                      transform: `rotate(${
-                        index === 0 ? "0" : randomRotate
-                      }deg)`,
-                      transition: "transform 0.5s",
+                      width: `${boardWidth}px`,
+                      height: `${boardWidth}px`,
                     }}
                   >
                     <div
+                      className="tenuki-board swap-go-board"
+                      data-include-coordinates={true}
+                    />
+                  </div>
+                  {/* 遮罩 */}
+                  {aiThinking && (
+                    <div
                       style={{
-                        padding: "16px",
-                        fontSize: "14px",
-                        width: "90%",
-                        margin: "8px auto 8px auto",
-                        backdropFilter: "blur(5px)",
-                        backgroundColor: "rgba(255, 255, 255, 0.5)",
-                        border: "1px solid rgba(255, 255, 255, 0.18)",
-                        borderRadius: "8px",
-                        fontStyle: "italic",
+                        position: "absolute",
+                        top: 0,
+                        left: 0,
+                        width: "100%",
+                        height: "100%",
+                        cursor: "not-allowed",
+                        zIndex: 99,
+                      }}
+                    />
+                  )}
+                </div>
+              </div>
+              <div style={styles.rightColumn}>
+                {screenWriting.map((item, index) => {
+                  const randomRotate = Math.random() * 3 + 1;
+                  return (
+                    <div
+                      key={`screenWriting-${index}`}
+                      style={{
+                        zIndex: index,
+                        position: "absolute",
+                        height: "95%",
+                        width: "95%",
+                        top: "2.5%",
+                        left: "2.5%",
+                        borderRadius: "2px",
+                        backgroundImage: `url(${item?.img}), linear-gradient(rgba(255, 255, 255, 0.5), rgba(255, 255, 255, 0.5)), url('/swapgo/background.png')`,
+                        backgroundSize: "cover",
+                        backgroundPosition: "center",
+                        boxSize: "border-box",
+                        display: "flex",
+                        alignItems: "flex-end",
+                        justifyContent: "center",
+                        transform: `rotate(${index * 0.05}deg)`,
+                        border: "2px solid #909090",
+                        transform: `rotate(${
+                          index === 0 ? "0" : randomRotate
+                        }deg)`,
+                        transition: "transform 0.5s",
                       }}
                     >
-                      <ReactTyped
-                        strings={[`${item.description}`]}
-                        typeSpeed={60}
-                      />
+                      <div
+                        style={{
+                          padding: "16px",
+                          fontSize: "1.2rem",
+                          width: "90%",
+                          margin: "8px auto 8px auto",
+                          backdropFilter: "blur(5px)",
+                          backgroundColor: "rgba(255, 255, 255, 0.5)",
+                          border: "1px solid rgba(255, 255, 255, 0.18)",
+                          borderRadius: "8px",
+                          fontStyle: "italic",
+                        }}
+                      >
+                        <ReactTyped
+                          strings={[`${item.description}`]}
+                          typeSpeed={60}
+                        />
+                      </div>
                     </div>
-                  </div>
-                );
-              })}
+                  );
+                })}
+              </div>
             </div>
           </div>
         </Fade>
@@ -662,9 +906,6 @@ const YTMusic = () => {
         volume={1}
         playsinline={true}
         playing={true}
-        onPlay={(state) => {
-          console.log(state);
-        }}
       />
     </div>
   );
