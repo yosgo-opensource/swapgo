@@ -2,7 +2,7 @@ import React, { useState, useEffect, useRef } from 'react';
 import styled from 'styled-components';
 import { useRouter } from 'next/router';
 
-const swapgoBg = '/logo/swapgo_w_big.png';
+const swapgoBg = '/logo/swapgo_b_big_new.png';
 const swapgoBgBlack = '/logo/swapgo_b_big.png';
 const swapgoTrans = '/logo/swapgo_trans.png';
 const swapgo = '/logo/swapgo.png';
@@ -471,12 +471,27 @@ const Hero = styled.section`
   max-height: 100vh;
   height: 100vh;
   width: 100%;
+
+  .logo-background {
+    position: absolute;
+    top: 50%;
+    left: 50%;
+    transform: translate(-50%, -50%);
+    width: 120%;
+    height: 120%;
+    background-color: rgba(0, 0, 0, 0.2); // 可以调整颜色和透明度
+    filter: blur(10px);
+    z-index: 0;
+  }
+
 .hero-title {
     display: flex;
     justify-content: center;
     align-items: center;
-    margin-top: -180px;
+    margin-top: -200px;
     transition: transform 0.3s ease;
+    position: relative;
+    z-index: 2;
 
     &:hover {
       transform: scale(1.05);
@@ -564,7 +579,7 @@ const Hero = styled.section`
     display: flex;
     justify-content: center;
     align-items: center;
-    margin-top: -180px;
+    margin-top: -300px;
 
     img {
       width: 100%;
@@ -837,6 +852,7 @@ export default function Home() {
           </video>
         </div>
         <div className="position-absolute w-100 gradient-overlay"></div>
+        <div className="logo-background"></div>
         <div className="content position-relative text-center ">
           <h1 className="hero-title blend flex justify-center" onClick={() => router.push('/SWAPGO/start')}>
             <div className="hero-title-white">
@@ -890,6 +906,21 @@ export default function Home() {
               <span className="mx-2 white">|</span>
               <a className="text-decoration-none green" href="#">instagram</a>
             </div> */}
+
+                        {/* <ul className="nav-items list-unstyled text-center"> */}
+                {/* <li className="pb-3">
+                  <a className="text-decoration-none" href="#">services</a>
+                </li>
+                <li className="pb-3">
+                  <a className="text-decoration-none" href="#">portfolio</a>
+                </li>
+                <li className="pb-3">
+                  <a className="text-decoration-none" href="#">contact</a>
+                </li>
+                <li>
+                  <a className="text-decoration-none" href="#">about</a>
+                </li> */}
+              {/* </ul> */}
 
 
 // Copyright (c) 2024 - YOSGO - https://codepen.io/jalinb/pen/ExOgOBZ
