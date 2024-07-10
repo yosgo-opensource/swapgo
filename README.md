@@ -8,7 +8,7 @@ As the game progresses, AI generates real-time story scenes and character dialog
 
 ## Project Background
 
-SwapGo is a participating project in the 2024 Claude Hackathon. In an era where AI Go programs have surpassed human abilities, we consider how to use AI technology to create new possibilities for the field of Go.
+SwapGo is a participating project in the ["Build with Claude June 2024 contest"](https://docs.anthropic.com/en/build-with-claude-contest/overview). In an era where AI Go programs have surpassed human abilities, we consider how to use AI technology to create new possibilities for the field of Go.
 
 Our inspiration comes from the essence of Go—military simulation. SwapGo uses AI to simulate war scenarios, allowing players to experience the depth of strategy and tactics while playing. Through this innovative approach, we hope not only to enrich the Go gaming experience but also to help people understand the complexity of war more deeply, thereby promoting the idea of peace.
 
@@ -49,14 +49,17 @@ To ensure the best experience, we recommend running SwapGo locally. Please follo
 ## Technologies and Resources Used
 
 ### Go AI
+
 - [KataGo](https://github.com/lightvector/KataGo): Used for simulating opponents
 
 ### Music Resources
+
 - [Age of Empires II: Definitive Edition Soundtrack](https://www.youtube.com/playlist?list=PLh4Eme5gACZFflgnk-qzmDGWroz2EIqi8)
 - [Dune - Game of Thrones Style Intro](https://www.youtube.com/watch?v=VlPIBlr0VCs)
 - [Age of Empires 2 Definitive Edition - Japanese theme](https://www.youtube.com/watch?v=rCr_p3N5qso)
 
 ### Image Generation
+
 - [OpenAI DALL-E 3](https://platform.openai.com/docs/guides/images)
 
 ## Contribution
