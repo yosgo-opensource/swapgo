@@ -237,7 +237,7 @@ imgPrompt: 搭配劇情的生成圖片提示詞，請你搭配使用此基本風
 
         //取得 AI 棋盤回應
         await axios
-          .post(`http://192.168.0.113:3031/ana`, {
+          .post(`https://swapgo.yosgo.com/ana`, {
             moves: payload,
           })
           .then((res) => {
