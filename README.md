@@ -1,5 +1,7 @@
 # SwapGo: The Intelligent Narrative Revolution in Go
 
+Screenshots 
+
 <table>
   <tr>
     <td><img src="public/demoImages/1.png" alt="Screenshot 1" width="250"/></td>
@@ -8,17 +10,35 @@
   </tr>
 </table>
 
+⬇︎ Click the image below to watch our demo video!
+
+<table>
+  <tr>
+    <td>
+      <a href="https://www.youtube.com/watch?v=on3ye7jCcRg">
+        <img src="https://img.youtube.com/vi/on3ye7jCcRg/0.jpg" alt="SwapGo Demo Video" width="250" style="border-radius:4px;">
+      </a>
+    </td>
+  </tr>
+</table>
+
+<br>
+
 ## Project Introduction
 
 SwapGo is an innovative Go project aimed at transforming the traditional black and white game into an adventure filled with stories and emotions. By combining Go with advanced Artificial Intelligence Language Models (AI-LLM), we bring life and meaning to every move.
 
 As the game progresses, AI generates real-time story scenes and character dialogues corresponding to the game situation, immersing players and spectators in a dynamically changing narrative world. This is not just a game of Go, but a wonderful journey that unfolds with each stone placed, offering Go enthusiasts an unprecedented experience.
 
+<br>
+
 ## Project Background
 
 SwapGo is a participating project in the ["Build with Claude June 2024 contest"](https://docs.anthropic.com/en/build-with-claude-contest/overview). In an era where AI Go programs have surpassed human abilities, we consider how to use AI technology to create new possibilities for the field of Go.
 
 Our inspiration comes from the essence of Go—military simulation. SwapGo uses AI to simulate war scenarios, allowing players to experience the depth of strategy and tactics while playing. Through this innovative approach, we hope not only to enrich the Go gaming experience but also to help people understand the complexity of war more deeply, thereby promoting the idea of peace.
+
+<br>
 
 ## System Architecture
 
@@ -35,15 +55,19 @@ graph TD
     H --> J[SWAPGO Client]
 ```
 
+<br>
+
 ## Demonstration
 
-We provide an online demonstration website for SwapGo. Please note the following:
+[Online Demo Website Link](https://go.swap.work/SWAPGO/start)
 
 - The demo site supports a maximum of 2 users simultaneously due to performance considerations.
 - We cannot guarantee continuous availability of the demo site.
 - Your understanding and patience are greatly appreciated.
 
-[Online Demo Website Link](https://go.swap.work/SWAPGO/start)
+
+
+<br>
 
 ## Local Setup
 
@@ -104,6 +128,7 @@ In the go.js file, modify line 239 to change the production URL to the local API
 
 Ensure this change is made to connect the client to your local KataGo AI server.
 
+<br>
 
 ## Technologies and Resources Used
 
@@ -121,13 +146,13 @@ Ensure this change is made to connect the client to your local KataGo AI server.
 
 - [OpenAI DALL-E 3](https://platform.openai.com/docs/guides/images)
 
+<br>
+
 ## Contribution
 
 We welcome community contributions! If you have any ideas for improvements or find any bugs, please don't hesitate to submit an issue or pull request.
 
-## License
-
-This project is licensed under the [MIT License](LICENSE).
+<br>
 
 ---
 

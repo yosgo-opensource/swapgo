@@ -224,7 +224,7 @@ const StartGame = () => {
                         overflow: "hidden",
                         textOverflow: "ellipsis",
                         display: "-webkit-box",
-                        WebkitLineClamp: 2,
+                        WebkitLineClamp: 3,
                         WebkitBoxOrient: "vertical",
                         fontSize: "14px",
                       }}
