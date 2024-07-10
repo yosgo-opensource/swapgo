@@ -222,14 +222,14 @@ imgPrompt: 搭配劇情的生成圖片提示詞，請你搭配使用此基本風
             prompt: _newScreenWriting.imgPrompt,
           })
           .then((res) => {
-            const img = res.data.data[0].url || battle.img;
+            const img = res?.data?.data[0]?.url || battle.img;
             _newScreenWriting = {
               ..._newScreenWriting,
               img,
             };
           })
           .catch((err) => {
-            alert("> ImageGenerating error");
+            console.log("> ImageGenerating error");
           });
 
         //更新劇情
@@ -801,7 +801,6 @@ imgPrompt: 搭配劇情的生成圖片提示詞，請你搭配使用此基本風
                         transform: `rotate(${
                           index === 0 ? "0" : randomRotate
                         }deg)`,
-                        transition: "transform 0.5s",
                       }}
                     >
                       <div
