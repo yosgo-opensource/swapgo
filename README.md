@@ -41,10 +41,61 @@ We provide an online demonstration website for SwapGo. Please note the following
 
 To ensure the best experience, we recommend running SwapGo locally. Please follow these steps to set up:
 
-1. Clone the repository: `git clone [Repository URL]`
-2. Install dependencies: `pip install -r requirements.txt`
-3. Set up your API key: `export OPENAI_API_KEY='your-api-key-here'`
-4. Run the program: `python main.py`
+### KataGo AI Setup
+
+1. **KataGo Executable**: Download the appropriate version for your operating system from [KataGo Binary](https://github.com/lightvector/KataGo/releases).
+
+2. **Model Parameter File**: Download the v1.4.0 model parameter file from [KataGo Neural Nets](https://github.com/lightvector/KataGo/releases/tag/v1.4.0).
+
+3. **Python Main File** (`ana.py`): 
+   Modify line 34 to match your local file locations:
+
+   ```python
+   katago = subprocess.Popen(
+       ["./katago", "analysis", "-config", "./ana.cfg", "-model", "./g170e-b20c256x2-s5303129600-d1228401921.bin.gz", *additional_args],
+       stdin=subprocess.PIPE,
+       stdout=subprocess.PIPE,
+       stderr=subprocess.PIPE,
+   )
+   ```
+
+   Replace `./katago`, `./ana.cfg`, and `./g170e-b20c256x2-s5303129600-d1228401921.bin.gz` with the correct paths on your system.
+
+4. **KataGo Configuration File** (`ana.cfg`)
+
+5. **API Server** (`give.js`)
+
+Place all files in the same directory.
+
+The default API URL is `http://localhost:3031/ana`.
+
+### Client Server
+
+This project uses [Next.js](https://nextjs.org/). 
+
+#### Requirements
+- Node.js version 18 or higher
+
+#### Running the Web Server
+Execute the following command:
+```
+yarn dev
+```
+
+Access the web interface at `http://localhost:3000`
+
+Additional Configuration
+In the go.js file, modify line 239 to change the production URL to the local API URL
+
+```diff-javascript
+- await axios.post(`https://swapgo.yosgo.com/ana`, {
++ await axios.post(`http://localhost:3031/ana`, {
+  moves: payload,
+})
+```
+
+Ensure this change is made to connect the client to your local KataGo AI server.
+
 
 ## Technologies and Resources Used
 
