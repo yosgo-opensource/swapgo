@@ -1,5 +1,13 @@
 # SwapGo: The Intelligent Narrative Revolution in Go
 
+<table>
+  <tr>
+    <td><img src="public/demoImages/1.png" alt="Screenshot 1" width="250"/></td>
+    <td><img src="public/demoImages/3.png" alt="Screenshot 2" width="250"/></td>
+    <td><img src="public/demoImages/7.png" alt="Screenshot 3" width="250"/></td>
+  </tr>
+</table>
+
 ## Project Introduction
 
 SwapGo is an innovative Go project aimed at transforming the traditional black and white game into an adventure filled with stories and emotions. By combining Go with advanced Artificial Intelligence Language Models (AI-LLM), we bring life and meaning to every move.
