@@ -228,7 +228,7 @@ imgPrompt: 搭配劇情的生成圖片提示詞，請你搭配使用此基本風
             };
           })
           .catch((err) => {
-            console.log("> ImageGenerating error");
+            console.log("> ImageGenerating error", err);
           });
 
         //更新劇情
@@ -443,14 +443,14 @@ imgPrompt: 搭配劇情的生成圖片提示詞，請你搭配使用此基本風
             prompt: _endGameScreenWriting.imgPrompt,
           })
           .then((res) => {
-            const img = res.data.data[0].url || battle.img;
+            const img = res?.data?.data[0]?.url || battle.img;
             _endGameScreenWriting = {
               ..._endGameScreenWriting,
               img,
             };
           })
           .catch((err) => {
-            alert("> ImageGenerating error.");
+            console.log("> ImageGenerating error", err);
           });
 
         //更新劇情
