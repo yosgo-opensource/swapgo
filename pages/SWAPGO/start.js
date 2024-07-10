@@ -1,6 +1,7 @@
 import { Button, Input, Radio, Spacer } from "@geist-ui/core";
 import { Fade } from "@mui/material";
 import { useEffect, useState } from "react";
+import ReactPlayer from "react-player";
 
 const StartGame = () => {
   const [selectedBattle, setSelectedBattle] = useState(0);
@@ -10,6 +11,13 @@ const StartGame = () => {
   const [boardSize, setBoardSize] = useState(9); // [9, 13, 19
 
   const [currentMusic, setCurrentMusic] = useState(null);
+  const [rendered, setRendered] = useState(false);
+
+  useEffect(() => {
+    if (!rendered) {
+      setRendered(true);
+    }
+  }, []);
 
   useEffect(() => {
     if (currentMusic) {
@@ -23,232 +31,211 @@ const StartGame = () => {
   }, [currentMusic]);
 
   return (
-    <div>
-      <style jsx>{`
-        .side-options {
-          display: flex;
-          align-items: center;
-          cursor: pointer;
-        }
-
-        .hint-text {
-          font-size: 1rem;
-          color: gray;
-          animation: flashAndFloat 1.5s ease-in-out infinite;
-          display: inline-block;
-          position: relative;
-          font-style: italic;
-          font-weight: bold;
-          margin-bottom: 8px;
-        }
-
-        @keyframes flashAndFloat {
-          0%,
-          100% {
-            opacity: 1;
-            transform: translateY(0);
+    rendered && (
+      <div>
+        <style jsx>{`
+          .side-options {
+            display: flex;
+            align-items: center;
+            cursor: pointer;
           }
-          50% {
-            opacity: 0.7;
-            transform: translateY(2.5px);
+
+          .hint-text {
+            font-size: 1rem;
+            color: gray;
+            display: inline-block;
+            position: relative;
+            font-style: italic;
+            font-weight: bold;
+            margin-bottom: 4px;
           }
-        }
-      `}</style>
-      <button
-        style={{
-          position: "absolute",
-          padding: 10,
-          right: 0,
-          fontSize: "14px",
-        }}
-        onClick={() => {
-          setCurrentMusic(
-            currentMusic
-              ? null
-              : battlesData.find((b) => b.id === selectedBattle)?.music ||
-                  battlesData[0].music
-          );
-        }}
-      >
-        <i>
-          {currentMusic ? "🔈" : "🔇"} Turn {currentMusic ? "Off" : "On"}
-        </i>
-      </button>
-      <Layout>
-        <Spacer h={"40px"} />
-        <div
+
+          @keyframes flashAndFloat {
+            0%,
+            100% {
+              opacity: 1;
+              transform: translateY(0);
+            }
+            50% {
+              opacity: 0.7;
+              transform: translateY(2.5px);
+            }
+          }
+        `}</style>
+        <button
           style={{
-            maxWidth: "1280px",
-            margin: "0 auto",
-            flex: 1,
-            display: "flex",
-            flexDirection: "column",
-            justifyContent: "center",
-            alignItems: "flex-start",
-            gap: "30px",
+            position: "absolute",
+            padding: 10,
+            right: 0,
+            fontSize: "14px",
+          }}
+          onClick={() => {
+            setCurrentMusic(
+              currentMusic
+                ? null
+                : battlesData.find((b) => b.id === selectedBattle)?.music ||
+                    battlesData[0].music
+            );
           }}
         >
-          <div style={{ display: "flex", alignItems: "center", gap: "16px" }}>
-            <img
-              src="/swapgo/board2-removebg.png"
-              style={{
-                width: "120px",
-                height: "120px",
-                display: "block",
-                objectFit: "cover",
-                margin: "0 auto",
-              }}
-            />
-            <h1 style={{ fontSize: "4.2rem", fontStyle: "italic" }}>SwapGo</h1>
-          </div>
-          <p
-            style={{
-              fontSize: "1.2rem",
-              fontStyle: "italic",
-            }}
-          >
-            Every game of SwapGo is a journey through time; each move, a pivotal
-            moment in history rewritten.
-          </p>
-          <div>
-            {selectedBattle === 0 && (
-              <h3 className="hint-text">⬇︎ Please select a battle ⬇︎</h3>
-            )}
-            <div
-              style={{
-                display: "grid",
-                gridTemplateColumns: `repeat(${battlesData.length}, 1fr)`,
-                gap: "16px",
-              }}
-            >
-              {battlesData.map((battle) => (
-                <div
-                  className="battle-card"
-                  key={battle.id}
-                  style={{
-                    border: `1px solid ${
-                      selectedBattle === battle.id ? `black` : "lightgrey"
-                    }`,
-                    boxShadow:
-                      selectedBattle === battle.id
-                        ? "0 0 10px rgba(0,0,0,0.2)"
-                        : "none",
-                    transition: "all 0.3s",
-                    borderRadius: "8px",
-                    cursor: battle.open ? "pointer" : "not-allowed",
-                    overflow: "hidden",
-                    padding: "16px",
-                  }}
-                  onClick={() => {
-                    if (battle.open) {
-                      setSelectedBattle(battle.id);
-                      setCurrentMusic(battle.music);
-                    } else alert("This battle is coming soon");
-                  }}
-                >
-                  <div
-                    style={{
-                      display: "flex",
-                      alignItems: "center",
-                      gap: "16px",
-                    }}
-                  >
-                    <img
-                      src={battle.img}
-                      style={{
-                        width: "80px",
-                        height: "80px",
-                        objectFit: "cover",
-                        objectPosition: "center",
-                        borderRadius: "8px",
-                      }}
-                    />
-                    <div>
-                      <h3
-                        style={{
-                          color:
-                            selectedBattle === battle.id ? "black" : "gray",
-                          fontWeight: "bold",
-                        }}
-                      >
-                        {battle.name}
-                      </h3>
-                      <p style={{ fontSize: "12px", fontStyle: "italic" }}>
-                        {battle.open ? "Ready to play" : " Coming Soon"}
-                      </p>
-                    </div>
-                  </div>
-                  <p
-                    style={{
-                      color: "gray",
-                      marginTop: "8px",
-                      overflow: "hidden",
-                      textOverflow: "ellipsis",
-                      display: "-webkit-box",
-                      WebkitLineClamp: 2,
-                      WebkitBoxOrient: "vertical",
-                      fontSize: "14px",
-                    }}
-                  >
-                    {battle.description}
-                  </p>
-                </div>
-              ))}
-            </div>
-          </div>
-          {/* 選擇尺寸 */}
+          <i>
+            {currentMusic ? "🔈" : "🔇"} Turn {currentMusic ? "Off" : "On"}
+          </i>
+        </button>
+        <Layout>
+          <Spacer h={"40px"} />
           <div
             style={{
+              maxWidth: "1280px",
+              margin: "0 auto",
+              flex: 1,
               display: "flex",
-              alignItems: "center",
-              gap: "16px",
+              flexDirection: "column",
+              justifyContent: "center",
+              alignItems: "flex-start",
+              gap: "30px",
             }}
           >
-            Please select board size
-            {[
-              { value: 9, label: "9x9", disabled: false },
-              { value: 13, label: "13x13", disabled: true },
-              { value: 19, label: "19x19", disabled: true },
-            ].map((item) => (
-              <div
-                key={`${item.label}`}
-                onClick={() => {
-                  if (!item.disabled) setBoardSize(item.value);
-                }}
+            <div style={{ display: "flex", alignItems: "center", gap: "16px" }}>
+              <img
+                src="/swapgo/board2-removebg.png"
                 style={{
-                  display: "flex",
-                  gap: "4px",
-                  alignItems: "center",
-                  cursor: "pointer",
+                  width: "120px",
+                  height: "120px",
+                  display: "block",
+                  objectFit: "cover",
+                  margin: "0 auto",
+                }}
+              />
+              <h1 style={{ fontSize: "4.2rem", fontStyle: "italic" }}>
+                SwapGo
+              </h1>
+            </div>
+            <p
+              style={{
+                fontSize: "1.2rem",
+                fontStyle: "italic",
+              }}
+            >
+              Every game of SwapGo is a journey through time; each move, a
+              pivotal moment in history rewritten.
+            </p>
+            <div>
+              <div
+                style={{
+                  display: "grid",
+                  gridTemplateColumns: `repeat(${battlesData.length + 1}, 1fr)`,
+                  gap: "16px",
                 }}
               >
-                {boardSize === item.value ? (
-                  <div
-                    style={{
-                      width: "14px",
-                      height: "14px",
-                      borderRadius: "50%",
-                      background: "black",
-                    }}
-                  />
-                ) : null}
-                <span
+                <div>
+                  <h3 className="hint-text">Live Demo video</h3>
+                </div>
+                <div>
+                  <h3 className="hint-text">Please select a battle to start</h3>
+                </div>
+              </div>
+              <div
+                style={{
+                  display: "grid",
+                  gridTemplateColumns: `repeat(${battlesData.length + 1}, 1fr)`,
+                  gap: "16px",
+                }}
+              >
+                <div
+                  className="battle-card"
                   style={{
-                    color: boardSize === item.value ? "black" : "gray",
-                    fontWeight: boardSize === item.value ? "bold" : "normal",
-                    textDecoration:
-                      boardSize === item.value ? "underline" : "none",
-                    fontStyle: "italic",
+                    border: "1px solid lightgrey",
+                    borderRadius: "8px",
+                    cursor: "pointer",
+                    overflow: "hidden",
+                    boxShadow: "0 0 10px rgba(0,0,0,0.2)",
                   }}
                 >
-                  {item.label}
-                  {item.disabled ? " (coming soon)" : ""}
-                </span>
+                  <ReactPlayer
+                    url={"https://youtu.be/on3ye7jCcRg"}
+                    width={320}
+                    height={180}
+                    volume={1}
+                    controls={true}
+                  />
+                </div>
+                {battlesData.map((battle) => (
+                  <div
+                    className="battle-card"
+                    key={battle.id}
+                    style={{
+                      border: `1px solid ${
+                        selectedBattle === battle.id ? `black` : "lightgrey"
+                      }`,
+                      boxShadow:
+                        selectedBattle === battle.id
+                          ? "0 0 10px rgba(0,0,0,0.2)"
+                          : "none",
+                      transition: "all 0.3s",
+                      borderRadius: "8px",
+                      cursor: battle.open ? "pointer" : "not-allowed",
+                      overflow: "hidden",
+                      padding: "16px",
+                    }}
+                    onClick={() => {
+                      if (battle.open) {
+                        setSelectedBattle(battle.id);
+                        setCurrentMusic(battle.music);
+                      } else alert("This battle is coming soon");
+                    }}
+                  >
+                    <div
+                      style={{
+                        display: "flex",
+                        alignItems: "center",
+                        gap: "16px",
+                      }}
+                    >
+                      <img
+                        src={battle.img}
+                        style={{
+                          width: "80px",
+                          height: "80px",
+                          objectFit: "cover",
+                          objectPosition: "center",
+                          borderRadius: "8px",
+                        }}
+                      />
+                      <div>
+                        <h3
+                          style={{
+                            color:
+                              selectedBattle === battle.id ? "black" : "gray",
+                            fontWeight: "bold",
+                          }}
+                        >
+                          {battle.name}
+                        </h3>
+                        <p style={{ fontSize: "12px", fontStyle: "italic" }}>
+                          {battle.open ? "Ready to play" : " Coming Soon"}
+                        </p>
+                      </div>
+                    </div>
+                    <p
+                      style={{
+                        color: "gray",
+                        marginTop: "8px",
+                        overflow: "hidden",
+                        textOverflow: "ellipsis",
+                        display: "-webkit-box",
+                        WebkitLineClamp: 2,
+                        WebkitBoxOrient: "vertical",
+                        fontSize: "14px",
+                      }}
+                    >
+                      {battle.description}
+                    </p>
+                  </div>
+                ))}
               </div>
-            ))}
-          </div>
-          {/* 選擇先後手   */}
-          <div>
+            </div>
+            {/* 選擇尺寸 */}
             <div
               style={{
                 display: "flex",
@@ -256,174 +243,229 @@ const StartGame = () => {
                 gap: "16px",
               }}
             >
-              Please choose your side
-              <div
-                className="side-options"
-                style={{
-                  textDecoration: side === 1 ? "underline" : "none",
-                  fontWeight: side === 1 ? "bold" : "normal",
-                  color: side === 1 ? "black" : "gray",
-                }}
-                onClick={() => {
-                  setSide(1);
-                }}
-              >
-                <img
-                  src="/swapgo/black.png"
-                  style={{
-                    width: "30px",
-                    height: "30px",
-                    transform: `scale(
-                    ${side === 1 ? 1.5 : 1}
-                    )`,
-                    marginRight: "4px",
+              Please select board size
+              {[
+                { value: 9, label: "9x9", disabled: false },
+                { value: 13, label: "13x13", disabled: true },
+                { value: 19, label: "19x19", disabled: true },
+              ].map((item) => (
+                <div
+                  key={`${item.label}`}
+                  onClick={() => {
+                    if (!item.disabled) setBoardSize(item.value);
                   }}
-                />
-                <i>
-                  Black{" "}
-                  {battlesData.find((b) => b.id === selectedBattle)
-                    ? `(${
-                        battlesData.find((b) => b.id === selectedBattle)?.black
-                      })`
-                    : ""}
-                </i>
-              </div>
-              <div
-                className="side-options"
-                style={{
-                  textDecoration: side === -1 ? "underline" : "none",
-                  fontWeight: side === -1 ? "bold" : "normal",
-                  color: side === -1 ? "black" : "gray",
-                }}
-                onClick={() => {
-                  setSide(-1);
-                }}
-              >
-                <img
-                  src="/swapgo/white.png"
                   style={{
-                    width: "30px",
-                    height: "30px",
-                    transform: `scale(
-                    ${side === -1 ? 1.5 : 1}
-                    )`,
-                    marginRight: "4px",
-                  }}
-                />
-                <i>
-                  White{" "}
-                  {battlesData.find((b) => b.id === selectedBattle)
-                    ? `${
-                        battlesData.find((b) => b.id === selectedBattle)?.white
-                      }`
-                    : ""}
-                </i>
-              </div>
-            </div>
-          </div>
-          {/* 選擇難度 */}
-          <div
-            style={{
-              display: "flex",
-              alignItems: "center",
-              gap: "8px",
-            }}
-          >
-            Please select difficulty
-            {[
-              { value: 2, label: "Easy" },
-              { value: 1, label: "Normal" },
-              { value: 0, label: "Hard" },
-            ].map((item) => (
-              <Radio
-                checked={difficulty === item.value}
-                type="default"
-                onClick={() => setDifficulty(item.value)}
-              >
-                <span
-                  style={{
-                    color: difficulty === item.value ? "black" : "gray",
-                    fontWeight: difficulty === item.value ? "bold" : "normal",
-                    textDecoration:
-                      difficulty === item.value ? "underline" : "none",
-                    fontStyle: "italic",
+                    display: "flex",
+                    gap: "4px",
+                    alignItems: "center",
+                    cursor: "pointer",
                   }}
                 >
-                  {item.label}
-                </span>
-              </Radio>
-            ))}
-          </div>
-          {/* 輸入姓名 */}
-          <div
-            style={{
-              display: "flex",
-              alignItems: "center",
-              gap: "16px",
-            }}
-          >
-            <div style={{ flex: "1 1 auto" }}>Enter your name</div>
-            <Input
-              type="secondary"
-              placeholder="You want to be called?"
-              autoFocus
-              width={"240px"}
-              onChange={(e) => setPlayerName(e.target.value)}
-              value={playerName}
-              style={{ fontStyle: "italic" }}
-              h={"30px"}
-            />
-          </div>
-          {/* 開始 */}
-          <Button
-            h={"36px"}
-            type="secondary"
-            disabled={
-              playerName.length === 0 || side === 0 || selectedBattle === 0
-            }
-            onClick={() => {
-              window.location.href = `/SWAPGO/go?id=${selectedBattle}&side=${side}&player=${playerName}&difficulty=${difficulty}&boardSize=${boardSize}`;
-            }}
-          >
-            Start
-          </Button>
-          <div>
-            {
-              //這裡用英文寫一段聲明
-              //1.這是一個 Build with Claude June 2024 contest 的活動專案，網址是 https://docs.anthropic.com/en/build-with-claude-contest/overview，網頁僅供本次活動示意使用，請勿填寫個資或是敏感資料
-              //2.附上 Github 連結 https://github.com/yosgo-opensource/swapgo
-              //3.請用 Footer 的樣式來呈現
+                  {boardSize === item.value ? (
+                    <div
+                      style={{
+                        width: "14px",
+                        height: "14px",
+                        borderRadius: "50%",
+                        background: "black",
+                      }}
+                    />
+                  ) : null}
+                  <span
+                    style={{
+                      color: boardSize === item.value ? "black" : "gray",
+                      fontWeight: boardSize === item.value ? "bold" : "normal",
+                      textDecoration:
+                        boardSize === item.value ? "underline" : "none",
+                      fontStyle: "italic",
+                    }}
+                  >
+                    {item.label}
+                    {item.disabled ? " (coming soon)" : ""}
+                  </span>
+                </div>
+              ))}
+            </div>
+            {/* 選擇先後手   */}
+            <div>
               <div
                 style={{
-                  padding: "8px 0",
-                  fontStyle: "italic",
-                  color: "gray",
-                  fontSize: "13px",
+                  display: "flex",
+                  alignItems: "center",
+                  gap: "16px",
                 }}
               >
-                <p>
-                  This is a project for the{" "}
-                  <a
-                    href="https://docs.anthropic.com/en/build-with-claude-contest/overview"
-                    style={{ margin: "0 4px", textDecoration: "underline" }}
-                  >
-                    Build with Claude June 2024 contest
-                  </a>{" "}
-                  and is for demonstration purposes only. Please do not enter
-                  personal or sensitive information.
-                  <a
-                    href="https://github.com/yosgo-opensource/swapgo"
-                    style={{ margin: "0 4px", textDecoration: "underline" }}
-                  >
-                    View the project Github repository
-                  </a>
-                </p>
+                Please choose your side
+                <div
+                  className="side-options"
+                  style={{
+                    textDecoration: side === 1 ? "underline" : "none",
+                    fontWeight: side === 1 ? "bold" : "normal",
+                    color: side === 1 ? "black" : "gray",
+                  }}
+                  onClick={() => {
+                    setSide(1);
+                  }}
+                >
+                  <img
+                    src="/swapgo/black.png"
+                    style={{
+                      width: "30px",
+                      height: "30px",
+                      transform: `scale(
+                    ${side === 1 ? 1.5 : 1}
+                    )`,
+                      marginRight: "4px",
+                    }}
+                  />
+                  <i>
+                    Black{" "}
+                    {battlesData.find((b) => b.id === selectedBattle)
+                      ? `(${
+                          battlesData.find((b) => b.id === selectedBattle)
+                            ?.black
+                        })`
+                      : ""}
+                  </i>
+                </div>
+                <div
+                  className="side-options"
+                  style={{
+                    textDecoration: side === -1 ? "underline" : "none",
+                    fontWeight: side === -1 ? "bold" : "normal",
+                    color: side === -1 ? "black" : "gray",
+                  }}
+                  onClick={() => {
+                    setSide(-1);
+                  }}
+                >
+                  <img
+                    src="/swapgo/white.png"
+                    style={{
+                      width: "30px",
+                      height: "30px",
+                      transform: `scale(
+                    ${side === -1 ? 1.5 : 1}
+                    )`,
+                      marginRight: "4px",
+                    }}
+                  />
+                  <i>
+                    White{" "}
+                    {battlesData.find((b) => b.id === selectedBattle)
+                      ? `${
+                          battlesData.find((b) => b.id === selectedBattle)
+                            ?.white
+                        }`
+                      : ""}
+                  </i>
+                </div>
               </div>
-            }
+            </div>
+            {/* 選擇難度 */}
+            <div
+              style={{
+                display: "flex",
+                alignItems: "center",
+                gap: "8px",
+              }}
+            >
+              Please select difficulty
+              {[
+                { value: 2, label: "Easy" },
+                { value: 1, label: "Normal" },
+                { value: 0, label: "Hard" },
+              ].map((item) => (
+                <Radio
+                  checked={difficulty === item.value}
+                  type="default"
+                  onClick={() => setDifficulty(item.value)}
+                >
+                  <span
+                    style={{
+                      color: difficulty === item.value ? "black" : "gray",
+                      fontWeight: difficulty === item.value ? "bold" : "normal",
+                      textDecoration:
+                        difficulty === item.value ? "underline" : "none",
+                      fontStyle: "italic",
+                    }}
+                  >
+                    {item.label}
+                  </span>
+                </Radio>
+              ))}
+            </div>
+            {/* 輸入姓名 */}
+            <div
+              style={{
+                display: "flex",
+                alignItems: "center",
+                gap: "16px",
+              }}
+            >
+              <div style={{ flex: "1 1 auto" }}>Enter your name</div>
+              <Input
+                type="secondary"
+                placeholder="You want to be called?"
+                autoFocus
+                width={"240px"}
+                onChange={(e) => setPlayerName(e.target.value)}
+                value={playerName}
+                style={{ fontStyle: "italic" }}
+                h={"30px"}
+              />
+            </div>
+            {/* 開始 */}
+            <Button
+              h={"36px"}
+              type="secondary"
+              disabled={
+                playerName.length === 0 || side === 0 || selectedBattle === 0
+              }
+              onClick={() => {
+                window.location.href = `/SWAPGO/go?id=${selectedBattle}&side=${side}&player=${playerName}&difficulty=${difficulty}&boardSize=${boardSize}`;
+              }}
+            >
+              Start
+            </Button>
+            <div>
+              {
+                //這裡用英文寫一段聲明
+                //1.這是一個 Build with Claude June 2024 contest 的活動專案，網址是 https://docs.anthropic.com/en/build-with-claude-contest/overview，網頁僅供本次活動示意使用，請勿填寫個資或是敏感資料
+                //2.附上 Github 連結 https://github.com/yosgo-opensource/swapgo
+                //3.請用 Footer 的樣式來呈現
+                <div
+                  style={{
+                    padding: "8px 0",
+                    fontStyle: "italic",
+                    color: "gray",
+                    fontSize: "13px",
+                  }}
+                >
+                  <p>
+                    This is a project for the{" "}
+                    <a
+                      href="https://docs.anthropic.com/en/build-with-claude-contest/overview"
+                      style={{ margin: "0 4px", textDecoration: "underline" }}
+                    >
+                      Build with Claude June 2024 contest
+                    </a>{" "}
+                    and is for demonstration purposes only. Please do not enter
+                    personal or sensitive information.
+                    <a
+                      href="https://github.com/yosgo-opensource/swapgo"
+                      style={{ margin: "0 4px", textDecoration: "underline" }}
+                    >
+                      View the project Github repository
+                    </a>
+                  </p>
+                </div>
+              }
+            </div>
           </div>
-        </div>
-      </Layout>
-    </div>
+        </Layout>
+      </div>
+    )
   );
 };
 

@@ -62,7 +62,6 @@ const GO = () => {
   const handleResizeTheBoardWidth = () => {
     //先取得螢幕尺寸
     const screenWidth = window.innerWidth;
-    console.log("> screenWidth", screenWidth);
     setBoardWidth(screenWidth / 2 - 6);
   };
   useEffect(() => {
@@ -777,7 +776,7 @@ imgPrompt: 搭配劇情的生成圖片提示詞，請你搭配使用此基本風
               </div>
               <div style={styles.rightColumn}>
                 {screenWriting.map((item, index) => {
-                  const randomRotate = Math.random() * 3 + 1;
+                  const rotate = index * 0.05;
                   return (
                     <div
                       key={`screenWriting-${index}`}
@@ -798,9 +797,7 @@ imgPrompt: 搭配劇情的生成圖片提示詞，請你搭配使用此基本風
                         justifyContent: "center",
                         transform: `rotate(${index * 0.05}deg)`,
                         border: "2px solid #909090",
-                        transform: `rotate(${
-                          index === 0 ? "0" : randomRotate
-                        }deg)`,
+                        transform: `rotate(${rotate}deg)`,
                       }}
                     >
                       <div
@@ -893,7 +890,7 @@ function visualizeGoBoard(intersections, size) {
   return board;
 }
 //音樂元件
-const YTMusic = () => {
+export const YTMusic = () => {
   return (
     <div style={{ position: "absolute", zIndex: -9999 }}>
       <ReactPlayer
