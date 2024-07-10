@@ -85,7 +85,7 @@ const StartGame = () => {
             flexDirection: "column",
             justifyContent: "center",
             alignItems: "flex-start",
-            gap: "40px",
+            gap: "30px",
           }}
         >
           <div style={{ display: "flex", alignItems: "center", gap: "16px" }}>
@@ -387,6 +387,40 @@ const StartGame = () => {
           >
             Start
           </Button>
+          <div>
+            {
+              //這裡用英文寫一段聲明
+              //1.這是一個 Build with Claude June 2024 contest 的活動專案，網址是 https://docs.anthropic.com/en/build-with-claude-contest/overview，網頁僅供本次活動示意使用，請勿填寫個資或是敏感資料
+              //2.附上 Github 連結 https://github.com/yosgo-opensource/swapgo
+              //3.請用 Footer 的樣式來呈現
+              <div
+                style={{
+                  padding: "8px 0",
+                  fontStyle: "italic",
+                  color: "gray",
+                  fontSize: "13px",
+                }}
+              >
+                <p>
+                  This is a project for the{" "}
+                  <a
+                    href="https://docs.anthropic.com/en/build-with-claude-contest/overview"
+                    style={{ margin: "0 4px", textDecoration: "underline" }}
+                  >
+                    Build with Claude June 2024 contest
+                  </a>{" "}
+                  and is for demonstration purposes only. Please do not enter
+                  personal or sensitive information.
+                  <a
+                    href="https://github.com/yosgo-opensource/swapgo"
+                    style={{ margin: "0 4px", textDecoration: "underline" }}
+                  >
+                    View the project Github repository
+                  </a>
+                </p>
+              </div>
+            }
+          </div>
         </div>
       </Layout>
     </div>

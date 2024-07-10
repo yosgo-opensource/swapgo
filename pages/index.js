@@ -2,7 +2,8 @@ import React, { useState, useEffect, useRef } from 'react';
 import styled from 'styled-components';
 import { useRouter } from 'next/router';
 
-const swapgoBg = '/logo/swapgo_w_big.png';
+const swapgoBg = '/logo/swapgo_b_big_new.png';
+const swapgoBgBlack = '/logo/swapgo_b_big.png';
 const swapgoTrans = '/logo/swapgo_trans.png';
 const swapgo = '/logo/swapgo.png';
 const swapgoWhite = '/logo/swapgo_w.png';
@@ -471,6 +472,61 @@ const Hero = styled.section`
   height: 100vh;
   width: 100%;
 
+  .logo-background {
+    position: absolute;
+    top: 50%;
+    left: 50%;
+    transform: translate(-50%, -50%);
+    width: 120%;
+    height: 120%;
+    background-color: rgba(0, 0, 0, 0.2); // 可以调整颜色和透明度
+    filter: blur(10px);
+    z-index: 0;
+  }
+
+.hero-title {
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    margin-top: -200px;
+    transition: transform 0.3s ease;
+    position: relative;
+    z-index: 2;
+
+    &:hover {
+      transform: scale(1.05);
+    }
+
+    img {
+      width: 100%;
+      max-width: 600px;
+      transition: opacity 0.3s ease;
+    }
+  }
+
+  .hero-title-black {
+    position: absolute;
+    top: 50%;
+    left: 50%;
+    transform: translate(-50%, -50%);
+    opacity: 0;
+    transition: opacity 0.3s ease;
+
+    img {
+      width: 100%;
+      max-width: 600px;
+    }
+  }
+
+  .hero-title:hover {
+    .hero-title-white {
+      opacity: 0;
+    }
+    .hero-title-black {
+      opacity: 1;
+    }
+  }
+
   @media screen and (min-width: 1200px) {
     height: 100vh;
 
@@ -523,7 +579,7 @@ const Hero = styled.section`
     display: flex;
     justify-content: center;
     align-items: center;
-    margin-top: -180px;
+    margin-top: -300px;
 
     img {
       width: 100%;
@@ -687,24 +743,57 @@ export default function Home() {
 
   const router = useRouter();
 
-  const [isPlaying, setIsPlaying] = useState(false);
-  const [volume, setVolume] = useState(0.5);
+  const [isPlaying, setIsPlaying] = useState(true);
+  const [volume, setVolume] = useState(0.2);
   const audioRef = useRef(null);
+
+  useEffect(() => {
+    const playAudio = () => {
+      if (audioRef.current) {
+        audioRef.current.play().catch(error => {
+          console.log("Audio autoplay was prevented:", error);
+          setIsPlaying(false);
+        });
+      }
+    };
+
+    playAudio();
+
+    const handleInteraction = () => {
+      playAudio();
+      document.removeEventListener('click', handleInteraction);
+    };
+
+    document.addEventListener('click', handleInteraction);
+
+    return () => {
+      document.removeEventListener('click', handleInteraction);
+    };
+  }, []);
 
   useEffect(() => {
     if (audioRef.current) {
       audioRef.current.volume = volume;
+      if (isPlaying) {
+        audioRef.current.play().then(() => {
+          let vol = 0;
+          const interval = setInterval(() => {
+            vol += 0.1;
+            if (vol <= volume) {
+              audioRef.current.volume = vol;
+            } else {
+              clearInterval(interval);
+            }
+          }, 100);
+        }).catch(error => console.log("Audio autoplay was prevented:", error));
+      } else {
+        audioRef.current.pause();
+      }
     }
-  }, [volume]);
+  }, [isPlaying, volume]);
 
   const togglePlay = () => {
-    if (audioRef.current.paused) {
-      audioRef.current.play();
-      setIsPlaying(true);
-    } else {
-      audioRef.current.pause();
-      setIsPlaying(false);
-    }
+    setIsPlaying(!isPlaying);
   };
 
   const handleVolumeChange = (e) => {
@@ -758,18 +847,25 @@ export default function Home() {
       <Hero className="hero d-flex justify-content-center">
         <div className="video-wrap">
           <video autoPlay playsInline loop muted id="video-bg">
-            <source src="https://tactusmarketing.com/wp-content/uploads/tactus-waves-hero.mp4" type="video/mp4" />
+            <source src="https://tactusmarketing.com/wp-content/uploads/tactus-waves-hero.mp4" 
+                    type="video/mp4" />
           </video>
         </div>
         <div className="position-absolute w-100 gradient-overlay"></div>
-        <div className="content position-relative text-center mb-5">
+        <div className="logo-background"></div>
+        <div className="content position-relative text-center ">
           <h1 className="hero-title blend flex justify-center" onClick={() => router.push('/SWAPGO/start')}>
-            <img src={swapgoBg} alt="SwapGo" />
+            <div className="hero-title-white">
+              <img src={swapgoBg} alt="SwapGo" />
+            </div>
+            <div className="hero-title-black">
+              <img src={swapgoBgBlack} alt="SwapGo" />
+            </div>
           </h1>
         </div>
       </Hero>
       <CustomCursor className="custom-cursor"></CustomCursor>
-      <audio ref={audioRef} loop>
+      <audio ref={audioRef} loop preload="auto">
         <source src={oceanSound} type="audio/mpeg" />
       </audio>
       <AudioPlayer>
@@ -786,29 +882,45 @@ export default function Home() {
           className="volume-control"
         />
       </AudioPlayer>
+      <CustomCursor className="custom-cursor"></CustomCursor>
     </Page>
   );
 }
 
 
          {/* <ul className="contact-items white list-unstyled mb-5">
-                      <li className="pb-4">
-                        <a className="text-decoration-none" href="#">+1 386-235-4062</a>
-                      </li>
-                      <li className="pb-4">
-                        <a className="text-decoration-none" href="#">morgan@tactusmarketing.com</a>
-                      </li>
-                      <li>
-                        <a className="text-decoration-none" href="#">Aguadilla, PR 00603</a>
-                      </li>
-                    </ul>
-                    <div className="social">
-                      <a className="text-decoration-none green" href="#">linkedin</a>
-                      <span className="mx-2 white">|</span>
-                      <a className="text-decoration-none green" href="#">facebook</a>
-                      <span className="mx-2 white">|</span>
-                      <a className="text-decoration-none green" href="#">instagram</a>
-                    </div> */}
+              <li className="pb-4">
+                <a className="text-decoration-none" href="#">+1 386-235-4062</a>
+              </li>
+              <li className="pb-4">
+                <a className="text-decoration-none" href="#">morgan@tactusmarketing.com</a>
+              </li>
+              <li>
+                <a className="text-decoration-none" href="#">Aguadilla, PR 00603</a>
+              </li>
+            </ul>
+            <div className="social">
+              <a className="text-decoration-none green" href="#">linkedin</a>
+              <span className="mx-2 white">|</span>
+              <a className="text-decoration-none green" href="#">facebook</a>
+              <span className="mx-2 white">|</span>
+              <a className="text-decoration-none green" href="#">instagram</a>
+            </div> */}
+
+                        {/* <ul className="nav-items list-unstyled text-center"> */}
+                {/* <li className="pb-3">
+                  <a className="text-decoration-none" href="#">services</a>
+                </li>
+                <li className="pb-3">
+                  <a className="text-decoration-none" href="#">portfolio</a>
+                </li>
+                <li className="pb-3">
+                  <a className="text-decoration-none" href="#">contact</a>
+                </li>
+                <li>
+                  <a className="text-decoration-none" href="#">about</a>
+                </li> */}
+              {/* </ul> */}
 
 
 // Copyright (c) 2024 - YOSGO - https://codepen.io/jalinb/pen/ExOgOBZ
