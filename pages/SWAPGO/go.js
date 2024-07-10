@@ -228,6 +228,10 @@ imgPrompt: 搭配劇情的生成圖片提示詞，請你搭配使用此基本風
             };
           })
           .catch((err) => {
+            _newScreenWriting = {
+              ..._newScreenWriting,
+              img: battle.img,
+            };
             console.log("> ImageGenerating error", err);
           });
 
@@ -450,6 +454,10 @@ imgPrompt: 搭配劇情的生成圖片提示詞，請你搭配使用此基本風
             };
           })
           .catch((err) => {
+            _endGameScreenWriting = {
+              ..._endGameScreenWriting,
+              img: battle.img,
+            };
             console.log("> ImageGenerating error", err);
           });
 
