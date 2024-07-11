@@ -9,6 +9,8 @@ const swapgo = '/logo/swapgo.png';
 const swapgoWhite = '/logo/swapgo_w.png';
 const backgroundWhite = '/logo/white.png';
 const oceanSound = '/ocean-waves-112906.mp3';
+const blackIgo = 'swapgo/black.png';
+const whiteIgo = 'swapgo/white.png';
 
 const Page = styled.div`
   * {
@@ -863,11 +865,15 @@ export default function Home() {
         <div className="logo-background"></div>
         <div className="content position-relative text-center ">
           <div className="hero-title blend flex justify-center" onClick={() => router.push('/SWAPGO/start')}>
-            <div className="hero-title-white">
+            <div className="hero-title-white flex align-items-center justify-center">
+              <img src={blackIgo} alt="Black Igo" style={{ marginTop: 150, width: 100, height: 100 }} />
               <img src={swapgoBg} alt="SwapGo" />
+              <img src={whiteIgo} alt="White Igo" style={{ marginTop: 300, width: 100, height: 100 }}/>
             </div>
-            <div className="hero-title-black">
+            <div className="hero-title-black flex">
+              <img src={whiteIgo} alt="White Igo" style={{ marginTop: 300, width: 100, height: 100 }}/>
               <img src={swapgoBgBlack} alt="SwapGo" />
+              <img src={blackIgo} alt="Black Igo" style={{ marginTop: 300, width: 100, height: 100 }} />
             </div>
           </div>
         </div>
