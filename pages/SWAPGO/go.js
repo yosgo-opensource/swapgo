@@ -142,102 +142,6 @@ const GO = () => {
       setAIThinking(true);
       setAIReplyCountDown(90);
       try {
-        //劇本提示詞
-        let _newScreenWriting;
-        const screenWritingTemplate = `這是一場圍棋比賽，而你的任務就是轉譯，把棋盤上的局勢描述成歷史上的戰役
-
-玩家的名稱是 ${player} 代表 ${playerColor} 方，對手是 AI 代表 ${aiColor} 方，由 ${whoFirst} 先手
-
-${
-  aiResponse
-    ? `對手下在了 ${aiResponse.next_move_number_format} 位置，目前的局勢是 ${aiResponse?.score_lead}，勝率分別是黑：${aiResponse?.black_win_rate} 與白：${aiResponse?.white_win_rate}，`
-    : ""
-}
-
-目前的棋盤是 
-${
-  currentState?.intersections &&
-  visualizeGoBoard(currentState?.intersections, currentState.boardSize)
-}
-
-${
-  currentState?.playedPoint
-    ? `玩家下在了 [${currentState?.playedPoint.x}, ${currentState?.playedPoint.y}] 的位置`
-    : ""
-}
-
-戰役的部分是 ${battle.name}
-
-黑方是 ${battle.black}，白方是 ${battle.white}
-
-${
-  screenWriting.length > 0 &&
-  `先前有以下劇情
-${screenWriting.map((s, index) => `${index}.${s.description}`).join("\n")}`
-}
-
-接下來請你使用圍棋的規則與想像力，把當前的戰況劇情描述出來，並提供該劇情場景所需的圖片提示詞，
-
-description: 30字的英文
-imgPrompt: 搭配劇情的生成圖片提示詞，請你搭配使用此基本風格 sketch style, black and white illustration, soft pencil lines, minimalist details, vintage look, beige background
-
-另外就是圖片提示詞可能要注意安全政策(Safe Policy)，在不影響生成圖片的精彩度之下，避免一些過於細節暴力、血腥的場景
-
-最後請你直接回應 JSON 格式的字串，例如下方
-
-{
-    description: ""
-    imgPrompt: ""
-}
-`;
-        console.log("> screenWritingTemplate", screenWritingTemplate);
-
-        //生成劇本與圖片提示詞
-        await axios
-          .post("/api/claude_call2", {
-            prompts: [
-              {
-                role: "user",
-                content: `${screenWritingTemplate}`,
-              },
-            ],
-          })
-          .then((res) => {
-            const parsed = JSON.parse(res.data.payload.text);
-            const { description, imgPrompt } = parsed;
-            _newScreenWriting = {
-              imgPrompt,
-              description,
-            };
-          })
-          .catch((err) => {
-            alert("> ScreenWriting error");
-          });
-
-        //生成圖片
-        await axios
-          .post("/api/openai_sprint", {
-            type: "image",
-            prompt: _newScreenWriting.imgPrompt,
-          })
-          .then((res) => {
-            const img = res?.data?.data[0]?.url || battle.img;
-            _newScreenWriting = {
-              ..._newScreenWriting,
-              img,
-            };
-          })
-          .catch((err) => {
-            _newScreenWriting = {
-              ..._newScreenWriting,
-              img: battle.img,
-            };
-            console.log("> ImageGenerating error", err);
-          });
-
-        //更新劇情
-        setScreenWriting([...screenWriting, _newScreenWriting]);
-
         //取得 AI 棋盤回應
         await axios
           .post(`https://swapgo.yosgo.com/ana`, {
@@ -284,6 +188,107 @@ imgPrompt: 搭配劇情的生成圖片提示詞，請你搭配使用此基本風
         console.log("> fetchAI error", err);
       }
     };
+    const fetchGenAI = async () => {
+      //劇本提示詞
+      setAIThinking(true);
+      let _newScreenWriting;
+      const screenWritingTemplate = `這是一場圍棋比賽，而你的任務就是轉譯，把棋盤上的局勢描述成歷史上的戰役
+
+玩家的名稱是 ${player} 代表 ${playerColor} 方，對手是 AI 代表 ${aiColor} 方，由 ${whoFirst} 先手
+
+${
+  aiResponse
+    ? `對手下在了 ${aiResponse.next_move_number_format} 位置，目前的局勢是 ${aiResponse?.score_lead}，勝率分別是黑：${aiResponse?.black_win_rate} 與白：${aiResponse?.white_win_rate}，`
+    : ""
+}
+
+目前的棋盤是 
+${
+  currentState?.intersections &&
+  visualizeGoBoard(currentState?.intersections, currentState.boardSize)
+}
+
+${
+  currentState?.playedPoint
+    ? `玩家下在了 [${currentState?.playedPoint.x}, ${currentState?.playedPoint.y}] 的位置`
+    : ""
+}
+
+戰役的部分是 ${battle.name}
+
+黑方是 ${battle.black}，白方是 ${battle.white}
+
+${
+  screenWriting.length > 0 &&
+  `先前有以下劇情
+${screenWriting.map((s, index) => `${index}.${s.description}`).join("\n")}`
+}
+
+接下來請你使用圍棋的規則與想像力，把當前的戰況劇情描述出來，並提供該劇情場景所需的圖片提示詞，
+
+description: 30字的英文
+imgPrompt: 搭配劇情的生成圖片提示詞，請你搭配使用此基本風格 sketch style, black and white illustration, soft pencil lines, minimalist details, vintage look, beige background
+
+另外就是圖片提示詞可能要注意安全政策(Safe Policy)，在不影響生成圖片的精彩度之下，避免一些過於細節暴力、血腥的場景
+
+最後請你直接回應 JSON 格式的字串，例如下方
+
+{
+    description: ""
+    imgPrompt: ""
+}
+`;
+      console.log("> screenWritingTemplate", screenWritingTemplate);
+
+      //生成劇本與圖片提示詞
+      await axios
+        .post("/api/claude_call2", {
+          prompts: [
+            {
+              role: "user",
+              content: `${screenWritingTemplate}`,
+            },
+          ],
+        })
+        .then((res) => {
+          const parsed = JSON.parse(res.data.payload.text);
+          const { description, imgPrompt } = parsed;
+          _newScreenWriting = {
+            imgPrompt,
+            description,
+          };
+        })
+        .catch((err) => {
+          alert("> ScreenWriting error");
+        });
+
+      //生成圖片
+      await axios
+        .post("/api/openai_sprint", {
+          type: "image",
+          prompt: _newScreenWriting.imgPrompt,
+        })
+        .then((res) => {
+          const img = res?.data?.data[0]?.url || battle.img;
+          _newScreenWriting = {
+            ..._newScreenWriting,
+            img,
+          };
+        })
+        .catch((err) => {
+          _newScreenWriting = {
+            ..._newScreenWriting,
+            img: battle.img,
+          };
+          console.log("> ImageGenerating error", err);
+        });
+
+      //更新劇情
+      setScreenWriting([...screenWriting, _newScreenWriting]);
+
+      //AI 結束思考
+      setAIThinking(false);
+    };
 
     //下棋順序判斷
     if (moves.length === 0) {
@@ -291,14 +296,16 @@ imgPrompt: 搭配劇情的生成圖片提示詞，請你搭配使用此基本風
         handleAddGameLog(waitForPlayerString);
       } else {
         handleAddGameLog(waitForAIString);
-        await fetchAI();
+        fetchGenAI();
+        fetchAI();
       }
     } else {
       if (playerColor !== lastColor) {
         handleAddGameLog(waitForPlayerString);
       } else {
         handleAddGameLog(waitForAIString);
-        await fetchAI();
+        fetchGenAI();
+        fetchAI();
       }
     }
   };
@@ -902,9 +909,7 @@ export const YTMusic = () => {
   return (
     <div style={{ position: "absolute", zIndex: -9999 }}>
       <ReactPlayer
-        url={
-          "https://www.youtube.com/playlist?list=PLh4Eme5gACZFflgnk-qzmDGWroz2EIqi8"
-        }
+        url={"https://www.youtube.com/watch?v=jZSquuCHVZA"}
         width={320}
         height={180}
         volume={1}

@@ -1,6 +1,6 @@
 # SwapGo: The Intelligent Narrative Revolution in Go
 
-Screenshots 
+Screenshots
 
 <table>
   <tr>
@@ -65,8 +65,6 @@ graph TD
 - We cannot guarantee continuous availability of the demo site.
 - Your understanding and patience are greatly appreciated.
 
-
-
 <br>
 
 ## Local Setup
@@ -79,7 +77,7 @@ To ensure the best experience, we recommend running SwapGo locally. Please follo
 
 2. **Model Parameter File**: Download the v1.4.0 model parameter file from [KataGo Neural Nets](https://github.com/lightvector/KataGo/releases/tag/v1.4.0).
 
-3. **Python Main File** (`ana.py`): 
+3. **Python Main File** (`ana.py`):
    Modify line 34 to match your local file locations:
 
    ```python
@@ -103,13 +101,16 @@ The default API URL is `http://localhost:3031/ana`.
 
 ### Client Server
 
-This project uses [Next.js](https://nextjs.org/). 
+This project uses [Next.js](https://nextjs.org/).
 
 #### Requirements
+
 - Node.js version 18 or higher
 
 #### Running the Web Server
+
 Execute the following command:
+
 ```
 yarn dev
 ```
@@ -138,9 +139,7 @@ Ensure this change is made to connect the client to your local KataGo AI server.
 
 ### Music Resources
 
-- [Age of Empires II: Definitive Edition Soundtrack](https://www.youtube.com/playlist?list=PLh4Eme5gACZFflgnk-qzmDGWroz2EIqi8)
-- [Dune - Game of Thrones Style Intro](https://www.youtube.com/watch?v=VlPIBlr0VCs)
-- [Age of Empires 2 Definitive Edition - Japanese theme](https://www.youtube.com/watch?v=rCr_p3N5qso)
+- [Angel Lover - Eyes of Glory](https://www.youtube.com/watch?v=jZSquuCHVZA)
 
 ### Image Generation
 

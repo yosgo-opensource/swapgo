@@ -10,7 +10,6 @@ const StartGame = () => {
   const [difficulty, setDifficulty] = useState(2);
   const [boardSize, setBoardSize] = useState(9); // [9, 13, 19
 
-  const [currentMusic, setCurrentMusic] = useState(null);
   const [rendered, setRendered] = useState(false);
 
   useEffect(() => {
@@ -18,17 +17,6 @@ const StartGame = () => {
       setRendered(true);
     }
   }, []);
-
-  useEffect(() => {
-    if (currentMusic) {
-      const audio = new Audio(currentMusic);
-      audio.loop = true;
-      audio.play();
-      return () => {
-        audio.pause();
-      };
-    }
-  }, [currentMusic]);
 
   return (
     rendered && (
@@ -62,26 +50,6 @@ const StartGame = () => {
             }
           }
         `}</style>
-        <button
-          style={{
-            position: "absolute",
-            padding: 10,
-            right: 0,
-            fontSize: "14px",
-          }}
-          onClick={() => {
-            setCurrentMusic(
-              currentMusic
-                ? null
-                : battlesData.find((b) => b.id === selectedBattle)?.music ||
-                    battlesData[0].music
-            );
-          }}
-        >
-          <i>
-            {currentMusic ? "🔈" : "🔇"} Turn {currentMusic ? "Off" : "On"}
-          </i>
-        </button>
         <Layout>
           <Spacer h={"40px"} />
           <div
@@ -181,7 +149,6 @@ const StartGame = () => {
                     onClick={() => {
                       if (battle.open) {
                         setSelectedBattle(battle.id);
-                        setCurrentMusic(battle.music);
                       } else alert("This battle is coming soon");
                     }}
                   >
