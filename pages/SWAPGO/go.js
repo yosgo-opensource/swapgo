@@ -21,6 +21,7 @@ const GO = () => {
   const [moves, setMoves] = useState(null);
   const [gameLog, setGameLog] = useState([]);
   const [aiThinking, setAIThinking] = useState(false);
+  const [aiGenerating, setAIGenerating] = useState(false);
   const [aiResponse, setAiResponse] = useState(null);
   const [screenWriting, setScreenWriting] = useState([]);
   const [boardWidth, setBoardWidth] = useState();
@@ -190,7 +191,7 @@ const GO = () => {
     };
     const fetchGenAI = async () => {
       //劇本提示詞
-      setAIThinking(true);
+      setAIGenerating(true);
       let _newScreenWriting;
       const screenWritingTemplate = `這是一場圍棋比賽，而你的任務就是轉譯，把棋盤上的局勢描述成歷史上的戰役
 
@@ -292,8 +293,8 @@ imgPrompt: 搭配劇情的生成圖片提示詞，請你搭配使用此基本風
       //更新劇情
       setScreenWriting([...screenWriting, _newScreenWriting]);
 
-      //AI 結束思考
-      setAIThinking(false);
+      //AI 結束生成
+      setAIGenerating(false);
     };
 
     //下棋順序判斷
@@ -604,6 +605,7 @@ imgPrompt: 搭配劇情的生成圖片提示詞，請你搭配使用此基本風
                         moves,
                         gameLog,
                         aiThinking,
+                        aiGenerating,
                         aiResponse,
                         screenWriting,
                         boardWidth,
@@ -623,7 +625,7 @@ imgPrompt: 搭配劇情的生成圖片提示詞，請你搭配使用此基本風
                           paddingRight={"8px"}
                           height={"30px"}
                           onClick={() => {
-                            if (aiThinking) {
+                            if (aiThinking || aiGenerating) {
                               alert(
                                 "AI is thinking, please for the next move to end the game."
                               );
@@ -787,7 +789,7 @@ imgPrompt: 搭配劇情的生成圖片提示詞，請你搭配使用此基本風
                     />
                   </div>
                   {/* 遮罩 */}
-                  {aiThinking && (
+                  {(aiThinking || aiGenerating) && (
                     <div
                       style={{
                         position: "absolute",
