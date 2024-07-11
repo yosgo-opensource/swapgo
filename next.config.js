@@ -8,15 +8,15 @@ const nextConfig = {
     isStyledComponents: true,
   },
 
-  // async redirects() {
-  //   return [
-  //     {
-  //       source: '/SWAPGO',
-  //       destination: '/SWAPGO/start',
-  //       permanent: true,
-  //     }
-  //   ]
-  // },
+  async redirects() {
+    return [
+      {
+        source: '/SWAPGO',
+        destination: '/SWAPGO/start',
+        permanent: true,
+      },
+    ]
+  },
 
   images: {
     domains: ['tactusmarketing.com', 'oaidalleapiprodscus.blob.core.windows.net'], 

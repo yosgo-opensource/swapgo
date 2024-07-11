@@ -12,8 +12,6 @@ import Head from "next/head";
 
 const GO = () => {
 
-  const router = useRouter();
-
   // parameters
   const [parsed, setParsed] = useState(null);
   const [player, setPlayer] = useState(null);
@@ -194,7 +192,7 @@ const GO = () => {
             console.log("> fetchAI error", err);
           });
 
-        //AI stop thinking
+        //AI stop generating
         setAIThinking(false);
         setAIReplyCountDown(0);
       } catch (err) {
@@ -305,7 +303,7 @@ imgPrompt: 搭配劇情的生成圖片提示詞，請你搭配使用此基本風
       //Update Narratives
       setScreenWriting([...screenWriting, _newScreenWriting]);
 
-      //AI stop thinking
+      //AI stop generating
       setAIThinking(false);
     };
 
@@ -544,16 +542,14 @@ imgPrompt: 搭配劇情的生成圖片提示詞，請你搭配使用此基本風
         <title>{`${player}'s Game - SWAPGO`}</title>
         <meta name="description" content={`SwapGo Go game session for ${player} in SWAPGO`} />
         <meta name="robots" content="noindex,nofollow" /> 
-        <link rel="canonical" href="https://go.swap.work/SWAPGO/start" />
+        <link rel="canonical" href="https://go.swap.work/SWAPGO/go" />
         
-        {/* Open Graph / Facebook */}
         <meta property="og:type" content="website" />
         <meta property="og:url" content={`https://go.swap.work/SWAPGO/go?id=${battle?.id}&side=${side}&player=${player}&difficulty=${difficulty}&boardSize=${boardSize}`} />
         <meta property="og:title" content={`${player}'s Game - SWAPGO`} />
         <meta property="og:description" content={`Go game session for ${player} in SWAPGO`} />
         <meta property="og:image" content="/images/swapgo-og-image.jpg" />
 
-        {/* Twitter */}
         <meta property="twitter:card" content="summary_large_image" />
         <meta property="twitter:url" content={`https://go.swap.work/SWAPGO/go?id=${battle?.id}&side=${side}&player=${player}&difficulty=${difficulty}&boardSize=${boardSize}`} />
         <meta property="twitter:title" content={`${player}'s Game - SWAPGO`} />
