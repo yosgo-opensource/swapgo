@@ -45,6 +45,7 @@ const GO = () => {
         (b) => `${b.id}` === `${urlParams.get("id")}`
       );
 
+      
       // if (!_player || !_side || !_difficulty || !_boardSize || !_battle) {
       //   router.push("/SWAPGO/start");
       //   return;

@@ -3,11 +3,14 @@ import { Fade } from "@mui/material";
 import { useEffect, useState } from "react";
 import ReactPlayer from "react-player";
 import Head from 'next/head'
+import { useRouter } from 'next/router'; 
 
 const StartGame = () => {
-  const [selectedBattle, setSelectedBattle] = useState(0);
+  const router = useRouter(); 
+
+  const [selectedBattle, setSelectedBattle] = useState(2);
   const [side, setSide] = useState(1); //-1 white, 1 black
-  const [playerName, setPlayerName] = useState("SwapGo Player1");
+  const [playerName, setPlayerName] = useState("SwapGo Player 1");
   const [difficulty, setDifficulty] = useState(2);
   const [boardSize, setBoardSize] = useState(9); // [9, 13, 19
 
@@ -147,8 +150,8 @@ const StartGame = () => {
                 </div>
                 {battlesData.map((battle) => (
                   <div
-                    className="battle-card"
                     key={battle.id}
+                    className="battle-card"
                     style={{
                       border: `1px solid ${
                         selectedBattle === battle.id ? `black` : "lightgrey"
@@ -361,6 +364,7 @@ const StartGame = () => {
                 { value: 0, label: "Hard" },
               ].map((item) => (
                 <Radio
+                  key={item.value}
                   checked={difficulty === item.value}
                   type="default"
                   onClick={() => setDifficulty(item.value)}

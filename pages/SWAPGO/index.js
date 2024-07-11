@@ -3,9 +3,9 @@ import { Fade } from "@mui/material";
 import { useEffect, useState } from "react";
 
 const StartGame = () => {
-  const [selectedBattle, setSelectedBattle] = useState(0);
+  const [selectedBattle, setSelectedBattle] = useState(2);
   const [side, setSide] = useState(1); //-1 white 1 black
-  const [playerName, setPlayerName] = useState("SwapGo Player1");
+  const [playerName, setPlayerName] = useState("SwapGo Player 1");
   const [difficulty, setDifficulty] = useState(2);
   const [boardSize, setBoardSize] = useState(9); // [9, 13, 19
 
