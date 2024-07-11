@@ -195,10 +195,16 @@ const GO = () => {
       const screenWritingTemplate = `這是一場圍棋比賽，而你的任務就是轉譯，把棋盤上的局勢描述成歷史上的戰役
 
 玩家的名稱是 ${player} 代表 ${playerColor} 方，對手是 AI 代表 ${aiColor} 方，由 ${whoFirst} 先手
+黑子被吃掉的數量是 ${currentState?.blackStonesCaptured}，白子被吃掉的數量是 ${
+        currentState?.whiteStonesCaptured
+      }
 
 ${
   aiResponse
-    ? `對手下在了 ${aiResponse.next_move_number_format} 位置，目前的局勢是 ${aiResponse?.score_lead}，勝率分別是黑：${aiResponse?.black_win_rate} 與白：${aiResponse?.white_win_rate}，`
+    ? `對手下在了 ${aiResponse.next_move_number_format} 位置
+    即時分析的局勢是 ${aiResponse?.score_lead}
+    勝率分別是黑：${aiResponse?.black_win_rate} 與白：${aiResponse?.white_win_rate}，
+`
     : ""
 }
 
@@ -375,10 +381,16 @@ imgPrompt: 搭配劇情的生成圖片提示詞，請你搭配使用此基本風
         const endGameScreenWritingTemplate = `這是一場圍棋比賽，而你的任務就是轉譯，把棋盤上的局勢描述成歷史上的戰役
 
 玩家的名稱是 ${player} 代表 ${playerColor} 方，對手是 AI 代表 ${aiColor} 方，由 ${whoFirst} 先手
+黑子被吃掉的數量是 ${currentState?.blackStonesCaptured}，白子被吃掉的數量是 ${
+          currentState?.whiteStonesCaptured
+        }
 
 ${
   aiResponse
-    ? `對手下在了 ${aiResponse.next_move_number_format} 位置，目前的局勢是 ${aiResponse?.score_lead}，勝率分別是黑：${aiResponse?.black_win_rate} 與白：${aiResponse?.white_win_rate}，`
+    ? `對手下在了 ${aiResponse.next_move_number_format} 位置
+    即時分析的局勢是 ${aiResponse?.score_lead}
+    勝率分別是黑：${aiResponse?.black_win_rate} 與白：${aiResponse?.white_win_rate}，
+`
     : ""
 }
 
@@ -667,11 +679,12 @@ imgPrompt: 搭配劇情的生成圖片提示詞，請你搭配使用此基本風
                         />
                         <i>
                           <b>{item.captured}</b>{" "}
-                          {item.captured > 1 ? "stones" : "stone"} captured
+                          {item.captured > 1 ? "stones" : "stone"}{" "}
+                          {item.captured > 1 ? "were" : "was"} captured
                         </i>
-                        ,
+                        ,{" "}
                         <i>
-                          {item.label}(
+                          {item.type.toUpperCase()}: {item.label}(
                           {side === item.value ? `You, ${player}` : "AI"})
                         </i>
                       </div>
