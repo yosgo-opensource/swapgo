@@ -2,10 +2,11 @@ import { Button, Input, Radio, Spacer } from "@geist-ui/core";
 import { Fade } from "@mui/material";
 import { useEffect, useState } from "react";
 import ReactPlayer from "react-player";
+import Head from 'next/head'
 
 const StartGame = () => {
   const [selectedBattle, setSelectedBattle] = useState(0);
-  const [side, setSide] = useState(1); //-1 白 1 黑
+  const [side, setSide] = useState(1); //-1 white, 1 black
   const [playerName, setPlayerName] = useState("SwapGo Player1");
   const [difficulty, setDifficulty] = useState(2);
   const [boardSize, setBoardSize] = useState(9); // [9, 13, 19
@@ -18,9 +19,25 @@ const StartGame = () => {
     }
   }, []);
 
+  const pageJsonLd = {
+    "@context": "https://schema.org",
+    "@type": "WebPage",
+    "name": "start page",
+    "description": "game play page"
+  }
+
   return (
     rendered && (
-      <div>
+      <>
+        <Head>
+          <title>SWAPGO Start Page</title>
+          <meta name="description" content="Description of SWAPGO start page" />
+          <link rel="canonical" href="https://go.swap.work/SWAPGO/start" />
+          <script
+            type="application/ld+json"
+            dangerouslySetInnerHTML={{ __html: JSON.stringify(pageJsonLd) }}
+          />
+        </Head>
         <style jsx>{`
           .side-options {
             display: flex;
@@ -202,7 +219,7 @@ const StartGame = () => {
                 ))}
               </div>
             </div>
-            {/* 選擇尺寸 */}
+            {/* choose size */}
             <div
               style={{
                 display: "flex",
@@ -253,7 +270,7 @@ const StartGame = () => {
                 </div>
               ))}
             </div>
-            {/* 選擇先後手   */}
+            {/* first or not */}
             <div>
               <div
                 style={{
@@ -329,7 +346,7 @@ const StartGame = () => {
                 </div>
               </div>
             </div>
-            {/* 選擇難度 */}
+            {/* difficulty choose */}
             <div
               style={{
                 display: "flex",
@@ -362,7 +379,7 @@ const StartGame = () => {
                 </Radio>
               ))}
             </div>
-            {/* 輸入姓名 */}
+            {/* name input */}
             <div
               style={{
                 display: "flex",
@@ -397,10 +414,11 @@ const StartGame = () => {
             </Button>
             <div>
               {
-                //這裡用英文寫一段聲明
-                //1.這是一個 Build with Claude June 2024 contest 的活動專案，網址是 https://docs.anthropic.com/en/build-with-claude-contest/overview，網頁僅供本次活動示意使用，請勿填寫個資或是敏感資料
-                //2.附上 Github 連結 https://github.com/yosgo-opensource/swapgo
-                //3.請用 Footer 的樣式來呈現
+                // English Declaration
+                //1.this is a ' Build with Claude June 2024 contest' event project at https://docs.anthropic.com/en/build-with-claude-contest/overview，
+                // the website is only for demo for the event, please do not fill in personal sensitive data
+                //2. Github attached  : https://github.com/yosgo-opensource/swapgo
+                //3.please show it in Footer format
                 <div
                   style={{
                     padding: "8px 0",
@@ -431,7 +449,7 @@ const StartGame = () => {
             </div>
           </div>
         </Layout>
-      </div>
+      </>
     )
   );
 };

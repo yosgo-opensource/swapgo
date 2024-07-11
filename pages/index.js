@@ -21,7 +21,7 @@ const Page = styled.div`
     font-family: 'Montserrat', sans-serif;
     font-size: 16px;
     height: 100%;
-    overflow: hidden; /* 禁止下拉 */
+    overflow: hidden; 
     max-height: 100vh;
   }
   ::selection {
@@ -251,7 +251,7 @@ const Page = styled.div`
     width: 100%;
     height: 100%;
     overflow: hidden;
-    border-bottom-right-radius: 15vw;
+    border-bottom-right-radius: 0vw;
     pointer-events: none;
   }
   #video-bg {
@@ -367,7 +367,11 @@ const StickyNav = styled.div`
   &.difference {
     background-repeat: no-repeat;
     background-size: contain;
-    mix-blend-mode: difference;
+
+    .blend-difference {
+      mix-blend-mode: difference;
+    }
+
 
     #nav-btn {
       filter: invert(0);
@@ -628,27 +632,29 @@ const CustomCursor = styled.div`
 
 const AudioPlayer = styled.div`
   position: fixed;
-  bottom: 20px;
+  top: 50%;
   right: 20px;
   z-index: 1000;
   display: flex;
   align-items: center;
   background: rgba(255, 255, 255, 0.2);
-  backdrop-filter: blur(5px);
+  backdrop-filter: blur(10px);
   padding: 10px;
-  border-radius: 20px;
+  border-radius: 10px;
+  width: 120px;
 
   button {
     background: none;
     border: none;
     color: white;
-    font-size: 24px;
+    font-size: 16px;
+    width: 20px;
     cursor: pointer;
     margin-right: 10px;
   }
 
   .volume-control {
-    width: 100px;
+    width: 70px;
   }
 `;
 
@@ -804,11 +810,11 @@ export default function Home() {
   return (
     <Page>
       <Header>
-        <StickyNav className="sticky-nav difference d-flex justify-content-between mt-10">
-          <div className="logo" onClick={() => router.push('/')}>                    
-            <h2 className="nav-subTitle white mb-5">SWAPGO</h2>  
+        <StickyNav className="sticky-nav d-flex justify-content-between mt-10">
+          <div className="logo" style={{ opacity: 0.65}} onClick={() => router.push('/')} >                    
+            <img src={swapgoTrans} width={120} alt="swapgo logo navbar"></img>
           </div>
-          <div id="nav-btn" className="menu box">
+          <div id="nav-btn" className="menu box bg-blend-luminosity">
             <svg id="i1" className="icon" viewBox="20 30 60 40">
               <path id="top-line-1" d="M30,37 L70,37 Z"></path>
               <path id="middle-line-1" d="M30,50 L70,50 Z"></path>
@@ -854,14 +860,14 @@ export default function Home() {
         <div className="position-absolute w-100 gradient-overlay"></div>
         <div className="logo-background"></div>
         <div className="content position-relative text-center ">
-          <h1 className="hero-title blend flex justify-center" onClick={() => router.push('/SWAPGO/start')}>
+          <div className="hero-title blend flex justify-center" onClick={() => router.push('/SWAPGO/start')}>
             <div className="hero-title-white">
               <img src={swapgoBg} alt="SwapGo" />
             </div>
             <div className="hero-title-black">
               <img src={swapgoBgBlack} alt="SwapGo" />
             </div>
-          </h1>
+          </div>
         </div>
       </Hero>
       <CustomCursor className="custom-cursor"></CustomCursor>
