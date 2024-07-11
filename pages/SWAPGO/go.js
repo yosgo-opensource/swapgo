@@ -10,8 +10,10 @@ import ReactTyped from "react-typed";
 import { Button, Divider, Loading, Modal } from "@geist-ui/core";
 import Head from "next/head";
 
-const GO = () => {
 
+
+const GO = () => {
+  const router = useRouter();
   // parameters
   const [parsed, setParsed] = useState(null);
   const [player, setPlayer] = useState(null);
@@ -46,10 +48,10 @@ const GO = () => {
       );
 
       
-      // if (!_player || !_side || !_difficulty || !_boardSize || !_battle) {
-      //   router.push("/SWAPGO/start");
-      //   return;
-      // }
+      if (!_player || !_side || !_difficulty || !_boardSize || !_battle) {
+        router.push("/SWAPGO/start");
+        return;
+      }
 
       setPlayer(_player);
       setSide(_side);
@@ -537,43 +539,43 @@ imgPrompt: 搭配劇情的生成圖片提示詞，請你搭配使用此基本風
     },
   };
 
+  const pageJsonLd = {
+    "@context": "https://schema.org",
+    "@type": "Game",
+    "name": "SWAPGO Game Page",
+    "description": `Game session for ${player} in SWAPGO`,
+    "url": `https://go.swap.work/SWAPGO/go?id=${battle?.id}&side=${side}&player=${player}&difficulty=${difficulty}&boardSize=${boardSize}`,
+    "image": "https://go.swap.work/logo/swapgo_trans.png",
+    "author": {
+      "@type": "Organization",
+      "name": "SwapGo",
+      "url": "https://go.swap.work"
+    }
+  };
+
   return (
     <Layout>
        <Head>
         <title>{`${player}'s Game - SWAPGO`}</title>
         <meta name="description" content={`SwapGo Go game session for ${player} in SWAPGO`} />
-        <meta name="robots" content="noindex,nofollow" /> 
-        <link rel="canonical" href="https://go.swap.work/SWAPGO/go" />
+        <link rel="canonical" href={`https://go.swap.work/SWAPGO/go?id=${battle?.id}&side=${side}&player=${player}&difficulty=${difficulty}&boardSize=${boardSize}`} />
         
         <meta property="og:type" content="website" />
         <meta property="og:url" content={`https://go.swap.work/SWAPGO/go?id=${battle?.id}&side=${side}&player=${player}&difficulty=${difficulty}&boardSize=${boardSize}`} />
         <meta property="og:title" content={`${player}'s Game - SWAPGO`} />
         <meta property="og:description" content={`Go game session for ${player} in SWAPGO`} />
-        <meta property="og:image" content="/images/swapgo-og-image.jpg" />
+        <meta property="og:image" content="https://go.swap.work/logo/swapgo_trans.png" />
 
         <meta property="twitter:card" content="summary_large_image" />
         <meta property="twitter:url" content={`https://go.swap.work/SWAPGO/go?id=${battle?.id}&side=${side}&player=${player}&difficulty=${difficulty}&boardSize=${boardSize}`} />
         <meta property="twitter:title" content={`${player}'s Game - SWAPGO`} />
         <meta property="twitter:description" content={`Go game session for ${player} in SWAPGO`} />
-        <meta property="twitter:image" content="/images/swapgo-twitter-image.jpg" />
+        <meta property="twitter:image" content="https://go.swap.work/logo/swapgo_trans.png" />
 
-        <script type="application/ld+json">
-          {JSON.stringify({
-            "@context": "https://schema.org",
-            "@type": "Game",
-            "name": "SWAPGO Go Game",
-            "description": `Go game session for ${player}`,
-            "numberOfPlayers": {
-              "@type": "QuantitativeValue",
-              "minValue": 2,
-              "maxValue": 2
-            },
-            "gameLocation": {
-              "@type": "VirtualLocation",
-              "name": "SWAPGO Online Platform"
-            }
-          })}
-        </script>
+        <script
+            type="application/ld+json"
+            dangerouslySetInnerHTML={{ __html: JSON.stringify(pageJsonLd) }}
+          />
       </Head>
       <style jsx>
         {`
@@ -583,7 +585,9 @@ imgPrompt: 搭配劇情的生成圖片提示詞，請你搭配使用此基本風
           }
         `}
       </style>
-      {parsed && (
+      {!parsed ? (
+        <div> Loading... </div>
+      ) : (
         <Fade in={parsed}>
           <div>
             {/* End Game Modal */}

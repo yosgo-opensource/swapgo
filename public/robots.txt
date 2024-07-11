@@ -1,8 +1,16 @@
 # *
 User-agent: *
 Allow: /
-Disallow: /SWAPGO
-Disallow: /SWAPGO/go
+Disallow: /SWAPGO$
+Disallow: /SWAPGO/go$
+
+# *
+User-agent: *
+Allow: /SWAPGO/go?*
+
+# *
+User-agent: *
+Allow: /SWAPGO/start
 
 # Host
 Host: https://go.swap.work

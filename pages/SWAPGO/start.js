@@ -25,17 +25,46 @@ const StartGame = () => {
   const pageJsonLd = {
     "@context": "https://schema.org",
     "@type": "WebPage",
-    "name": "start page",
-    "description": "game play page"
-  }
+    "name": "SWAPGO Start Page",
+    "description": "Start your journey with SwapGo, a strategic game that rewrites pivotal moments in history.",
+    "url": "https://go.swap.work/SWAPGO/start",
+    "image": "https://go.swap.work/logo/swapgo_trans.png",
+    "author": {
+      "@type": "Organization",
+      "name": "SwapGo",
+      "url": "https://go.swap.work"
+    },
+    // "potentialAction": {
+    //   "@type": "SearchAction",
+    //   "target": "https://go.swap.work/SWAPGO/start?q={search_term_string}",
+    //   "query-input": "required name=search_term_string"
+    // }
+  };
 
   return (
     rendered && (
       <>
-        <Head>
+      <Head>
           <title>SWAPGO Start Page</title>
-          <meta name="description" content="Description of SWAPGO start page" />
+          <meta name="description" content="Start your journey with SwapGo, a strategic game that rewrites pivotal moments in history." />
+          <meta name="keywords" content="SwapGo, strategic game, history, board game, Go game" />
           <link rel="canonical" href="https://go.swap.work/SWAPGO/start" />
+
+          {/* Open Graph */}
+          <meta property="og:type" content="website" />
+          <meta property="og:url" content="https://go.swap.work/SWAPGO/start" />
+          <meta property="og:title" content="SWAPGO Start Page" />
+          <meta property="og:description" content="Start your journey with SwapGo, a strategic game that rewrites pivotal moments in history." />
+          <meta property="og:image" content="https://go.swap.work/logo/swapgo_trans.png" />
+
+          {/* Twitter Card */}
+          <meta property="twitter:card" content="summary_large_image" />
+          <meta property="twitter:url" content="https://go.swap.work/SWAPGO/start" />
+          <meta property="twitter:title" content="SWAPGO Start Page" />
+          <meta property="twitter:description" content="Start your journey with SwapGo, a strategic game that rewrites pivotal moments in history." />
+          <meta property="twitter:image" content="https://go.swap.work/logo/swapgo_trans.png" />
+
+          {/* Structured Data */}
           <script
             type="application/ld+json"
             dangerouslySetInnerHTML={{ __html: JSON.stringify(pageJsonLd) }}

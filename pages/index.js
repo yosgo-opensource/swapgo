@@ -251,7 +251,7 @@ const Page = styled.div`
     width: 100%;
     height: 100%;
     overflow: hidden;
-    border-bottom-right-radius: 0vw;
+    /* border-bottom-right-radius: 0vw; */
     pointer-events: none;
   }
   #video-bg {
@@ -273,7 +273,7 @@ const Page = styled.div`
     
     &.hero {
       background-color: #212121;
-      border-bottom-right-radius: 15vw;
+      /* border-bottom-right-radius: 0vw; */
       position: relative;
     }
   }
@@ -470,11 +470,13 @@ const TakeoverNav = styled.div`
 
 const Hero = styled.section`
   background-color: #212121;
-  border-bottom-right-radius: 15vw;
+  /* border-bottom-right-radius: 0vw; */
   position: relative;
   max-height: 100vh;
   height: 100vh;
+  min-width: 100%;
   width: 100%;
+  overflow: hidden;
 
   .logo-background {
     position: absolute;
@@ -870,7 +872,6 @@ export default function Home() {
           </div>
         </div>
       </Hero>
-      <CustomCursor className="custom-cursor"></CustomCursor>
       <audio ref={audioRef} loop preload="auto">
         <source src={oceanSound} type="audio/mpeg" />
       </audio>

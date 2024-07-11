@@ -66,6 +66,13 @@ export default class MyDocument extends Document {
                 "url": "https://go.swap.work/",
                 "name": "SWAPGO",
                 "description" : "Every game of SwapGo is a journey through time; each move, a pivotal moment in history rewritten.",
+                "url": "https://go.swap.work/",
+                "image": "https://go.swap.work/logo/swapgo_trans.png",
+                "author": {
+                  "@type": "Organization",
+                  "name": "SwapGo",
+                  "url": "https://go.swap.work"
+                },
               })
             }}
           />
