@@ -399,7 +399,7 @@ const StartGame = () => {
                 h={"30px"}
               />
             </div>
-            {/* 開始 */}
+            {/* start */}
             <Button
               h={"36px"}
               type="secondary"

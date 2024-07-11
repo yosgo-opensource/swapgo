@@ -150,7 +150,7 @@ const GO = () => {
 
     //API request
     const fetchAI = async () => {
-      setAIThinking(true);
+      setAIGenerating(true);
       setAIReplyCountDown(90);
       try {
         //Get AI board response
@@ -304,7 +304,7 @@ imgPrompt: 搭配劇情的生成圖片提示詞，請你搭配使用此基本風
       setScreenWriting([...screenWriting, _newScreenWriting]);
 
       //AI stop generating
-      setAIThinking(false);
+      setAIGenerating(false);
     };
 
     // play sequence judgement
@@ -673,6 +673,7 @@ imgPrompt: 搭配劇情的生成圖片提示詞，請你搭配使用此基本風
                           paddingLeft={"8px"}
                           paddingRight={"8px"}
                           height={"30px"}
+                          aria-label="End Game"
                           onClick={() => {
                             if (aiThinking || aiGenerating) {
                               alert(
@@ -687,7 +688,6 @@ imgPrompt: 搭配劇情的生成圖片提示詞，請你搭配使用此基本風
                               }
                             }
                           }}
-                          aria-label="End Game"
                         >
                           End game
                         </Button>
@@ -841,7 +841,7 @@ imgPrompt: 搭配劇情的生成圖片提示詞，請你搭配使用此基本風
                     />
                   </div>
                   {/* mask */}
-                  {aiThinking && (
+                  {(aiThinking || aiGenerating) && (
                     <div
                       style={{
                         position: "absolute",
