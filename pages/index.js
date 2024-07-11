@@ -60,7 +60,7 @@ const Page = styled.div`
   }
   .nav-subTitle {
     margin-left: 15px;
-    font-size: 1.7em;
+    font-size: 35px;
   }
   a {
     transition: all .25s ease-in-out;

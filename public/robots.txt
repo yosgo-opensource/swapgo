@@ -1,0 +1,11 @@
+# *
+User-agent: *
+Allow: /
+Disallow: /SWAPGO
+Disallow: /SWAPGO/go
+
+# Host
+Host: https://go.swap.work/
+
+# Sitemaps
+Sitemap: https://go.swap.work/sitemap.xml
