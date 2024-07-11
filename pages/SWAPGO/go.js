@@ -915,6 +915,7 @@ export const YTMusic = () => {
         volume={1}
         playsinline={true}
         playing={true}
+        loop={true}
       />
     </div>
   );
