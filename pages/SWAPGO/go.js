@@ -133,17 +133,14 @@ const GO = () => {
     const waitForPlayerString = `It's your turn 『${player}』`;
 
     //API request
-    const fetchAI = async () => {
-      try {
-        setAIThinking(true);
-        setAIReplyCountDown(90);
-        let _newScreenWriting;
-        const screenWritingTemplate = `這是一場圍棋比賽，而你的任務就是轉譯，把棋盤上的局勢描述成歷史上的戰役
+    const fetchGenAI = async () => {
+      let _newScreenWriting;
+      const screenWritingTemplate = `這是一場圍棋比賽，而你的任務就是轉譯，把棋盤上的局勢描述成歷史上的戰役
 
 玩家的名稱是 ${player} 代表 ${playerColor} 方，對手是 AI 代表 ${aiColor} 方，由 ${whoFirst} 先手
 黑子被吃掉的數量是 ${currentState?.blackStonesCaptured}，白子被吃掉的數量是 ${
-          currentState?.whiteStonesCaptured
-        }
+        currentState?.whiteStonesCaptured
+      }
 
 ${
   aiResponse
@@ -190,52 +187,56 @@ imgPrompt: 搭配劇情的生成圖片提示詞，請你搭配使用此基本風
     imgPrompt: ""
 }
 `;
-        console.log("> screenWritingTemplate", screenWritingTemplate);
+      console.log("> screenWritingTemplate", screenWritingTemplate);
 
-        //Generate Narratives and image prompts
-        await axios
-          .post("/api/claude_call2", {
-            prompts: [
-              {
-                role: "user",
-                content: `${screenWritingTemplate}`,
-              },
-            ],
-          })
-          .then((res) => {
-            const parsed = JSON.parse(res.data.payload.text);
-            const { description, imgPrompt } = parsed;
-            _newScreenWriting = {
-              imgPrompt,
-              description,
-            };
-          })
-          .catch((err) => {
-            alert("> ScreenWriting error");
-          });
+      //Generate Narratives and image prompts
+      await axios
+        .post("/api/claude_call2", {
+          prompts: [
+            {
+              role: "user",
+              content: `${screenWritingTemplate}`,
+            },
+          ],
+        })
+        .then((res) => {
+          const parsed = JSON.parse(res.data.payload.text);
+          const { description, imgPrompt } = parsed;
+          _newScreenWriting = {
+            imgPrompt,
+            description,
+          };
+        })
+        .catch((err) => {
+          alert("> ScreenWriting error");
+        });
 
-        //Generate Images
-        await axios
-          .post("/api/openai_sprint", {
-            type: "image",
-            prompt: _newScreenWriting.imgPrompt,
-          })
-          .then((res) => {
-            const img = res?.data?.data[0]?.url || battle.img;
-            _newScreenWriting = {
-              ..._newScreenWriting,
-              img,
-            };
-            setScreenWriting([...screenWriting, _newScreenWriting]);
-          })
-          .catch((err) => {
-            _newScreenWriting = {
-              ..._newScreenWriting,
-              img: battle.img,
-            };
-            console.log("> ImageGenerating error", err);
-          });
-
+      //Generate Images
+      await axios
+        .post("/api/openai_sprint", {
+          type: "image",
+          prompt: _newScreenWriting.imgPrompt,
+        })
+        .then((res) => {
+          const img = res?.data?.data[0]?.url || battle.img;
+          _newScreenWriting = {
+            ..._newScreenWriting,
+            img,
+          };
+          setScreenWriting([...screenWriting, _newScreenWriting]);
+        })
+        .catch((err) => {
+          _newScreenWriting = {
+            ..._newScreenWriting,
+            img: battle.img,
+          };
+          console.log("> ImageGenerating error", err);
+        });
+    };
+    const fetchAI = async () => {
+      try {
+        setAIThinking(true);
+        setAIReplyCountDown(90);
         //Get AI board response
         await axios
           .post(`https://swapgo.yosgo.com/ana`, {
@@ -269,33 +270,9 @@ imgPrompt: 搭配劇情的生成圖片提示詞，請你搭配使用此基本風
               next_move_text_format,
             };
 
-            // Get AI response，update board & judge win/lose
-            if (ana?.next_move_number_format && !ana?.pass) {
-              console.log("> ana", ana);
-              const x = ana.next_move_number_format[0];
-              const y = ana.next_move_number_format[1];
-              const intersection = document.querySelector(
-                `.intersection[data-intersection-x="${x}"][data-intersection-y="${y}"]`
-              );
-              if (intersection) {
-                const event = new MouseEvent("click", {
-                  bubbles: true,
-                  cancelable: true,
-                  view: window,
-                });
-                intersection.dispatchEvent(event);
-              } else {
-                alert(`沒有找到坐標為 (${x}, ${y}) 的交叉點元素`);
-                console.error(`沒有找到坐標為 (${x}, ${y}) 的交叉點元素`);
-              }
-            } else if (ana && ana?.pass) {
-              //AI judge end game
-              setEndGameModalOpen(true);
-            }
-
             // Update State
-            setAiResponse(ana);
             setAIThinking(false);
+            setAiResponse(ana);
             setAIReplyCountDown(0);
           })
           .catch((err) => {
@@ -315,14 +292,16 @@ imgPrompt: 搭配劇情的生成圖片提示詞，請你搭配使用此基本風
         handleAddGameLog(waitForPlayerString);
       } else {
         handleAddGameLog(waitForAIString);
-        await fetchAI();
+        fetchGenAI();
+        fetchAI();
       }
     } else {
       if (playerColor !== lastColor) {
         handleAddGameLog(waitForPlayerString);
       } else {
         handleAddGameLog(waitForAIString);
-        await fetchAI();
+        fetchGenAI();
+        fetchAI();
       }
     }
   };
@@ -334,6 +313,42 @@ imgPrompt: 搭配劇情的生成圖片提示詞，請你搭配使用此基本風
       }
     })();
   }, [moves, parsed]);
+  // AI Click the board
+  useEffect(() => {
+    if (
+      aiThinking === false &&
+      aiResponse &&
+      aiReplyCountDown === 0 &&
+      aiResponse?.next_move_number_format &&
+      !aiResponse?.pass
+    ) {
+      // Get AI response，update board & judge win/lose
+      try {
+        console.log("> ana", aiResponse);
+        const x = aiResponse.next_move_number_format[0];
+        const y = aiResponse.next_move_number_format[1];
+        const intersection = document.querySelector(
+          `.intersection[data-intersection-x="${x}"][data-intersection-y="${y}"]`
+        );
+        if (intersection) {
+          const event = new MouseEvent("click", {
+            bubbles: true,
+            cancelable: true,
+            view: window,
+          });
+          intersection.dispatchEvent(event);
+          intersection.dispatchEvent(event);
+        } else {
+          throw new Error(`沒有找到坐標為 (${x}, ${y}) 的交叉點元素`);
+        }
+      } catch (err) {
+        alert("Click board Error", err);
+      }
+    } else if (aiResponse && aiResponse?.pass) {
+      //AI judge end game
+      setEndGameModalOpen(true);
+    }
+  }, [aiThinking, aiResponse, aiReplyCountDown]);
 
   // AI respond anticipated countdown
   useEffect(() => {
