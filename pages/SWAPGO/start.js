@@ -4,7 +4,7 @@ import { useEffect, useState } from "react";
 import ReactPlayer from "react-player";
 
 const StartGame = () => {
-  const [selectedBattle, setSelectedBattle] = useState(0);
+  const [selectedBattle, setSelectedBattle] = useState(1);
   const [side, setSide] = useState(1); //-1 白 1 黑
   const [playerName, setPlayerName] = useState("SwapGo Player1");
   const [difficulty, setDifficulty] = useState(2);
@@ -22,6 +22,32 @@ const StartGame = () => {
     rendered && (
       <div>
         <style jsx>{`
+          .start-game-container {
+            padding: 16px;
+          }
+          @media (min-width: 1080px) {
+            .start-game-container {
+              max-width: 1024px;
+            }
+          }
+          @media (min-width: 1440px) {
+            .start-game-container {
+              max-width: 1280px;
+            }
+          }
+
+          @media (max-width: 1079px) {
+            .battle-card-container {
+              grid-template-columns: 1fr !important;
+            }
+            .battle-card {
+              height: 150px !important;
+            }
+            .hint-text2 {
+              margin-top: 40px;
+            }
+          }
+
           .side-options {
             display: flex;
             align-items: center;
@@ -53,8 +79,8 @@ const StartGame = () => {
         <Layout>
           <Spacer h={"40px"} />
           <div
+            className="start-game-container"
             style={{
-              maxWidth: "1280px",
               margin: "0 auto",
               flex: 1,
               display: "flex",
@@ -90,114 +116,109 @@ const StartGame = () => {
             </p>
             <div>
               <div
+                className="battle-card-container"
                 style={{
                   display: "grid",
                   gridTemplateColumns: `repeat(${battlesData.length + 1}, 1fr)`,
                   gap: "16px",
+                  alignItems: "flex-end",
                 }}
               >
                 <div>
                   <h3 className="hint-text">Live Demo video</h3>
-                </div>
-                <div>
-                  <h3 className="hint-text">Please select a battle to start</h3>
-                </div>
-              </div>
-              <div
-                style={{
-                  display: "grid",
-                  gridTemplateColumns: `repeat(${battlesData.length + 1}, 1fr)`,
-                  gap: "16px",
-                }}
-              >
-                <div
-                  className="battle-card"
-                  style={{
-                    border: "1px solid lightgrey",
-                    borderRadius: "8px",
-                    cursor: "pointer",
-                    overflow: "hidden",
-                    boxShadow: "0 0 10px rgba(0,0,0,0.2)",
-                  }}
-                >
-                  <ReactPlayer
-                    url={"https://youtu.be/on3ye7jCcRg"}
-                    width={320}
-                    height={180}
-                    volume={1}
-                    controls={true}
-                  />
-                </div>
-                {battlesData.map((battle) => (
-                  <div
-                    className="battle-card"
-                    key={battle.id}
-                    style={{
-                      border: `1px solid ${
-                        selectedBattle === battle.id ? `black` : "lightgrey"
-                      }`,
-                      boxShadow:
-                        selectedBattle === battle.id
-                          ? "0 0 10px rgba(0,0,0,0.2)"
-                          : "none",
-                      transition: "all 0.3s",
-                      borderRadius: "8px",
-                      cursor: battle.open ? "pointer" : "not-allowed",
-                      overflow: "hidden",
-                      padding: "16px",
-                    }}
-                    onClick={() => {
-                      if (battle.open) {
-                        setSelectedBattle(battle.id);
-                      } else alert("This battle is coming soon");
-                    }}
-                  >
-                    <div
+                  <div className="battle-card">
+                    <ReactPlayer
+                      url={"https://youtu.be/on3ye7jCcRg"}
+                      width={320}
+                      height={180}
+                      volume={1}
+                      controls={true}
                       style={{
-                        display: "flex",
-                        alignItems: "center",
-                        gap: "16px",
-                      }}
-                    >
-                      <img
-                        src={battle.img}
-                        style={{
-                          width: "80px",
-                          height: "80px",
-                          objectFit: "cover",
-                          objectPosition: "center",
-                          borderRadius: "8px",
-                        }}
-                      />
-                      <div>
-                        <h3
-                          style={{
-                            color:
-                              selectedBattle === battle.id ? "black" : "gray",
-                            fontWeight: "bold",
-                          }}
-                        >
-                          {battle.name}
-                        </h3>
-                        <p style={{ fontSize: "12px", fontStyle: "italic" }}>
-                          {battle.open ? "Ready to play" : " Coming Soon"}
-                        </p>
-                      </div>
-                    </div>
-                    <p
-                      style={{
-                        color: "gray",
-                        marginTop: "8px",
+                        borderRadius: "8px",
+                        cursor: "pointer",
                         overflow: "hidden",
-                        textOverflow: "ellipsis",
-                        display: "-webkit-box",
-                        WebkitLineClamp: 3,
-                        WebkitBoxOrient: "vertical",
-                        fontSize: "14px",
+                        boxShadow: "0 0 10px rgba(0,0,0,0.2)",
+                      }}
+                    />
+                  </div>
+                </div>
+                {battlesData.map((battle, index) => (
+                  <div key={battle.id}>
+                    {index === 0 && (
+                      <h3 className="hint-text hint-text2">
+                        Please select a battle to start
+                      </h3>
+                    )}
+                    <div
+                      className="battle-card"
+                      style={{
+                        border: `1px solid ${
+                          selectedBattle === battle.id ? `black` : "lightgrey"
+                        }`,
+                        boxShadow:
+                          selectedBattle === battle.id
+                            ? "0 0 10px rgba(0,0,0,0.2)"
+                            : "none",
+                        transition: "all 0.3s",
+                        borderRadius: "8px",
+                        cursor: battle.open ? "pointer" : "not-allowed",
+                        overflow: "hidden",
+                        padding: "16px",
+                        height: "180px",
+                      }}
+                      onClick={() => {
+                        if (battle.open) {
+                          setSelectedBattle(battle.id);
+                        } else alert("This battle is coming soon");
                       }}
                     >
-                      {battle.description}
-                    </p>
+                      <div
+                        style={{
+                          display: "flex",
+                          alignItems: "center",
+                          gap: "16px",
+                        }}
+                      >
+                        <img
+                          src={battle.img}
+                          style={{
+                            width: "80px",
+                            height: "80px",
+                            objectFit: "cover",
+                            objectPosition: "center",
+                            borderRadius: "8px",
+                          }}
+                        />
+                        <div>
+                          <h3
+                            style={{
+                              color:
+                                selectedBattle === battle.id ? "black" : "gray",
+                              fontWeight: "bold",
+                            }}
+                          >
+                            {battle.name}
+                          </h3>
+                          <p style={{ fontSize: "12px", fontStyle: "italic" }}>
+                            {battle.open ? "Ready to play" : " Coming Soon"}
+                          </p>
+                        </div>
+                      </div>
+                      <p
+                        style={{
+                          color: "gray",
+                          marginTop: "8px",
+                          overflow: "hidden",
+                          textOverflow: "ellipsis",
+                          display: "-webkit-box",
+                          WebkitLineClamp: 3,
+                          WebkitBoxOrient: "vertical",
+                          fontSize: "14px",
+                        }}
+                      >
+                        {battle.description}
+                      </p>
+                    </div>
                   </div>
                 ))}
               </div>
@@ -512,6 +533,7 @@ export const Layout = ({ children }) => {
           backgroundSize: "cover",
           backgroundPosition: "center",
           backgroundRepeat: "no-repeat",
+          overflow: "auto",
         }}
       >
         {children}

@@ -6,6 +6,7 @@ import axios from "axios";
 import ReactPlayer from "react-player";
 import ReactTyped from "react-typed";
 import { Button, Divider, Loading, Modal } from "@geist-ui/core";
+import { max } from "moment";
 
 const GO = () => {
   // 網址參數
@@ -24,7 +25,6 @@ const GO = () => {
   const [aiGenerating, setAIGenerating] = useState(false);
   const [aiResponse, setAiResponse] = useState(null);
   const [screenWriting, setScreenWriting] = useState([]);
-  const [boardWidth, setBoardWidth] = useState();
   const [aiReplyCountDown, setAIReplyCountDown] = useState(0);
   const [endGameModalOpen, setEndGameModalOpen] = useState(false);
   const [endGameScreenWriting, setEndGameScreenWriting] = useState(null);
@@ -57,20 +57,6 @@ const GO = () => {
         setParsed(true);
       }, 50);
     }
-  }, []);
-
-  //決定棋盤寬度
-  const handleResizeTheBoardWidth = () => {
-    //先取得螢幕尺寸
-    const screenWidth = window.innerWidth;
-    setBoardWidth(screenWidth / 2 - 6);
-  };
-  useEffect(() => {
-    handleResizeTheBoardWidth();
-  }, []);
-  useEffect(() => {
-    //當螢幕大小改變時，重新計算棋盤寬度
-    window.addEventListener("resize", handleResizeTheBoardWidth);
   }, []);
 
   //初始化棋盤
@@ -487,52 +473,75 @@ imgPrompt: 搭配劇情的生成圖片提示詞，請你搭配使用此基本風
     })();
   }, [endGameModalOpen]);
 
-  //樣式
-  const styles = {
-    container: {
-      display: "flex",
-      width: "100vw",
-      minHeight: "100vh",
-      overflow: "hidden",
-      alignItems: "stretch",
-      border: "3px solid black",
-      boxSize: "border-box",
-    },
-    leftColumn: {
-      display: "flex",
-      width: "100%",
-      height: "calc(100vh - 6px)",
-      borderRight: "3px solid rgba(55,55,55,1)",
-      display: "flex",
-      justifyContent: "space-between",
-      flexDirection: "column",
-      boxSize: "border-box",
-    },
-    rightColumn: {
-      width: "100%",
-      height: "calc(100vh - 6px)",
-      position: "relative",
-    },
-    leftTop: {
-      overflow: "auto",
-      boxSize: "border-box",
-      padding: "8px 16px",
-      minHeight: "88px",
-    },
-    leftBottom: {
-      borderTop: "3px solid rgba(55,55,55,1)",
-      boxSize: "border-box",
-      position: "relative",
-    },
-  };
-
   return (
     <Layout>
       <style jsx>
         {`
+          .swap-go-board-container {
+            width: 480px;
+            height: 480px;
+          }
           .swap-go-board {
             width: 100% !important;
             height: 100% !important;
+          }
+
+          .swap-go-container {
+            display: flex;
+            justify-content: space-between;
+            align-items: stretch;
+            border: 3px solid black;
+            box-sizing: border-box;
+            min-height: 100vh;
+            overflow: auto;
+          }
+          .leftColumn {
+            display: flex;
+            border-right: 3px solid rgba(55, 55, 55, 1);
+            display: flex;
+            justify-content: space-between;
+            flex-direction: column;
+            box-sizing: border-box;
+          }
+          .rightColumn {
+            width: 100%;
+            position: relative;
+          }
+          .leftTop {
+            overflow: auto;
+            box-sizing: border-box;
+            padding: 8px 16px;
+          }
+          .leftBottom {
+            border-top: 3px solid rgba(55, 55, 55, 1);
+            box-sizing: border-box;
+            position: relative;
+          }
+
+          //當螢幕寬度小於 960px 時
+          @media (max-width: 960px) {
+            .swap-go-board-container {
+              width: calc(100vw - 6px);
+              height: calc(100vw - 6px);
+            }
+            .swap-go-container {
+              flex-wrap: wrap;
+            }
+            .rightColumn {
+              height: 100vw;
+              width: 100vw;
+            }
+            .leftColumn {
+              border-right: none;
+              border-bottom: 3px solid rgba(55, 55, 55, 1);
+            }
+            .leftBottom {
+              border-top: none;
+            }
+            .screenWriting-text {
+              font-size: 13px !important;
+              padding: 2px 8px !important;
+            }
           }
         `}
       </style>
@@ -584,9 +593,9 @@ imgPrompt: 搭配劇情的生成圖片提示詞，請你搭配使用此基本風
                 Play Again
               </Modal.Action>
             </Modal>
-            <div style={styles.container}>
-              <div style={styles.leftColumn}>
-                <div style={styles.leftTop}>
+            <div className="swap-go-container">
+              <div className="leftColumn">
+                <div className="leftTop">
                   <div
                     style={{
                       display: "flex",
@@ -608,7 +617,6 @@ imgPrompt: 搭配劇情的生成圖片提示詞，請你搭配使用此基本風
                         aiGenerating,
                         aiResponse,
                         screenWriting,
-                        boardWidth,
                         aiReplyCountDown,
                         endGameModalOpen,
                       });
@@ -645,12 +653,7 @@ imgPrompt: 搭配劇情的生成圖片提示詞，請你搭配使用此基本風
                     )}
                     <YTMusic />
                   </div>
-                  <div
-                    style={{
-                      display: "flex",
-                      flexDirection: "column",
-                    }}
-                  >
+                  <div>
                     {[
                       {
                         label: battle.black,
@@ -667,33 +670,35 @@ imgPrompt: 搭配劇情的生成圖片提示詞，請你搭配使用此基本風
                         captured: currentState?.whiteStonesCaptured,
                       },
                     ].map((item) => (
-                      <div
-                        key={item.img}
-                        style={{
-                          display: "flex",
-                          alignItems: "center",
-                          gap: "4px",
-                        }}
-                      >
-                        <img
-                          src={item.img}
-                          style={{ width: "20px", height: "20px" }}
-                        />
-                        <i>
-                          <b>{item.captured}</b>{" "}
-                          {item.captured > 1 ? "stones" : "stone"}{" "}
-                          {item.captured > 1 ? "were" : "was"} captured
-                        </i>
-                        ,{" "}
+                      <div key={item.img} style={{ marginTop: "16px" }}>
                         <i>
                           {item.type.toUpperCase()}: {item.label}(
                           {side === item.value ? `You, ${player}` : "AI"})
                         </i>
+
+                        <div
+                          style={{
+                            display: "flex",
+                            flexWrap: "wrap",
+                            alignItems: "center",
+                            gap: "4px",
+                          }}
+                        >
+                          <img
+                            src={item.img}
+                            style={{ width: "20px", height: "20px" }}
+                          />
+                          <i>
+                            <b>{item.captured}</b>{" "}
+                            {item.captured > 1 ? "stones" : "stone"}{" "}
+                            {item.captured > 1 ? "were" : "was"} captured
+                          </i>
+                        </div>
                       </div>
                     ))}
                   </div>
                 </div>
-                <div style={styles.leftBottom}>
+                <div className="leftBottom">
                   {/* 棋盤狀態 */}
                   <div
                     style={{
@@ -749,7 +754,7 @@ imgPrompt: 搭配劇情的生成圖片提示詞，請你搭配使用此基本風
                     ></div>
                     <div
                       style={{
-                        zIndex: 1,
+                        zIndex: 2,
                         position: "absolute",
                         top: 0,
                         right: 0,
@@ -765,8 +770,6 @@ imgPrompt: 搭配劇情的生成圖片提示詞，請你搭配使用此基本風
                     >
                       <span
                         style={{
-                          position: "relative",
-                          zIndex: 999,
                           width: "30px",
                           margin: "-55px 0 0 -8px",
                           fontSize: "1rem",
@@ -777,12 +780,7 @@ imgPrompt: 搭配劇情的生成圖片提示詞，請你搭配使用此基本風
                     </div>
                   </div>
                   {/* 棋盤 */}
-                  <div
-                    style={{
-                      width: `${boardWidth}px`,
-                      height: `${boardWidth}px`,
-                    }}
-                  >
+                  <div className="swap-go-board-container">
                     <div
                       className="tenuki-board swap-go-board"
                       data-include-coordinates={true}
@@ -804,7 +802,7 @@ imgPrompt: 搭配劇情的生成圖片提示詞，請你搭配使用此基本風
                   )}
                 </div>
               </div>
-              <div style={styles.rightColumn}>
+              <div className="rightColumn">
                 {screenWriting.map((item, index) => {
                   const rotate = index * 0.05;
                   return (
@@ -813,10 +811,10 @@ imgPrompt: 搭配劇情的生成圖片提示詞，請你搭配使用此基本風
                       style={{
                         zIndex: index,
                         position: "absolute",
-                        height: "95%",
-                        width: "95%",
-                        top: "2.5%",
-                        left: "2.5%",
+                        height: "92%",
+                        width: "92%",
+                        top: "4%",
+                        left: "4%",
                         borderRadius: "2px",
                         backgroundImage: `url(${item?.img}), linear-gradient(rgba(255, 255, 255, 0.5), rgba(255, 255, 255, 0.5)), url('/swapgo/background.png')`,
                         backgroundSize: "cover",
@@ -831,6 +829,7 @@ imgPrompt: 搭配劇情的生成圖片提示詞，請你搭配使用此基本風
                       }}
                     >
                       <div
+                        className="screenWriting-text"
                         style={{
                           padding: "16px",
                           fontSize: "1.2rem",
@@ -922,7 +921,7 @@ function visualizeGoBoard(intersections, size) {
 //音樂元件
 export const YTMusic = () => {
   return (
-    <div style={{ position: "absolute", zIndex: -9999 }}>
+    <div style={{ position: "absolute", zIndex: -9999, opacity: 0 }}>
       <ReactPlayer
         url={"https://www.youtube.com/watch?v=jZSquuCHVZA"}
         width={320}
