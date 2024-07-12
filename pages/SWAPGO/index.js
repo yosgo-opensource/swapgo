@@ -3,9 +3,9 @@ import { Fade } from "@mui/material";
 import { useEffect, useState } from "react";
 
 const StartGame = () => {
-  const [selectedBattle, setSelectedBattle] = useState(0);
-  const [side, setSide] = useState(1); //-1 白 1 黑
-  const [playerName, setPlayerName] = useState("SwapGo Player1");
+  const [selectedBattle, setSelectedBattle] = useState(2);
+  const [side, setSide] = useState(1); //-1 white 1 black
+  const [playerName, setPlayerName] = useState("SwapGo Player 1");
   const [difficulty, setDifficulty] = useState(2);
   const [boardSize, setBoardSize] = useState(9); // [9, 13, 19
 
@@ -196,7 +196,7 @@ const StartGame = () => {
               ))}
             </div>
           </div>
-          {/* 選擇尺寸 */}
+          {/* choose size */}
           <div
             style={{
               display: "flex",
@@ -247,7 +247,7 @@ const StartGame = () => {
               </div>
             ))}
           </div>
-          {/* 選擇先後手   */}
+          {/* first or not */}
           <div>
             <div
               style={{
@@ -321,7 +321,7 @@ const StartGame = () => {
               </div>
             </div>
           </div>
-          {/* 選擇難度 */}
+          {/* difficulty */}
           <div
             style={{
               display: "flex",
@@ -354,7 +354,7 @@ const StartGame = () => {
               </Radio>
             ))}
           </div>
-          {/* 輸入姓名 */}
+          {/* name input */}
           <div
             style={{
               display: "flex",
@@ -374,7 +374,7 @@ const StartGame = () => {
               h={"30px"}
             />
           </div>
-          {/* 開始 */}
+          {/* start */}
           <Button
             h={"36px"}
             type="secondary"

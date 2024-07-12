@@ -1,15 +1,24 @@
 import React from "react";
 import { useEffect, useState } from "react";
+import { useRouter } from "next/router";
+import Error from "next/error";
 import { Layout, battlesData } from "./start";
 import { Fade } from "@mui/material";
 import axios from "axios";
 import ReactPlayer from "react-player";
 import ReactTyped from "react-typed";
 import { Button, Divider, Loading, Modal } from "@geist-ui/core";
+<<<<<<< HEAD
 import { max } from "moment";
+=======
+import Head from "next/head";
+
+
+>>>>>>> d36991db5016997d3c49e2847f92a1ccc06f6efa
 
 const GO = () => {
-  // 網址參數
+  const router = useRouter();
+  // parameters
   const [parsed, setParsed] = useState(null);
   const [player, setPlayer] = useState(null);
   const [side, setSide] = useState(null);
@@ -29,7 +38,7 @@ const GO = () => {
   const [endGameModalOpen, setEndGameModalOpen] = useState(false);
   const [endGameScreenWriting, setEndGameScreenWriting] = useState(null);
 
-  //解析網址參數
+  // parse URL parameters
   useEffect(() => {
     if (!parsed) {
       const urlParams = new URLSearchParams(window.location.search);
@@ -40,6 +49,13 @@ const GO = () => {
       const _battle = battlesData.find(
         (b) => `${b.id}` === `${urlParams.get("id")}`
       );
+
+      
+      if (!_player || !_side || !_difficulty || !_boardSize || !_battle) {
+        router.push("/SWAPGO/start");
+        return;
+      }
+
       setPlayer(_player);
       setSide(_side);
       setDifficulty(_difficulty);
@@ -59,13 +75,31 @@ const GO = () => {
     }
   }, []);
 
+<<<<<<< HEAD
   //初始化棋盤
+=======
+  //decide the board width
+  const handleResizeTheBoardWidth = () => {
+    //get window width first
+    const screenWidth = window.innerWidth;
+    setBoardWidth(screenWidth / 2 - 6);
+  };
+  useEffect(() => {
+    handleResizeTheBoardWidth();
+  }, []);
+  useEffect(() => {
+    // while resizing the window, the board width will be recalculated
+    window.addEventListener("resize", handleResizeTheBoardWidth);
+  }, []);
+
+  //initialize game board
+>>>>>>> d36991db5016997d3c49e2847f92a1ccc06f6efa
   useEffect(() => {
     if (parsed) {
-      // 清空
+      // clean up
       document.querySelector(".tenuki-board").innerHTML = "";
 
-      // 新的棋盘 github.com/aprescott/tenuki
+      // new game board : github.com/aprescott/tenuki
       var boardElement = document.querySelector(".tenuki-board");
       var game = new tenuki.Game({
         element: boardElement,
@@ -77,14 +111,14 @@ const GO = () => {
 
       // callback
       game.callbacks.postRender = function (game) {
-        // 設定 state
+        // setup state
         let _game = game.currentState();
         setCurrentState(_game);
       };
     }
   }, [parsed]);
 
-  //自行記錄 moves 歷史，以供 API 使用
+  //Manually record moves history for later API uses
   useEffect(() => {
     if (currentState) {
       console.log("> currentState", currentState);
@@ -97,13 +131,13 @@ const GO = () => {
     }
   }, [moves]);
 
-  //更新 Log
+  //Update Log
   const handleAddGameLog = (string) => {
     setGameLog([...gameLog, string]);
   };
-  //函式發送棋譜給 AI
+  // function deliver game record to AI 
   const handleGetAIMove = async () => {
-    //整理棋譜
+    // game record clean-up 
     const format = () => {
       return moves.map((m) => {
         const revert = convertArrayIndexToGoPosition(
@@ -115,21 +149,21 @@ const GO = () => {
       });
     };
     let payload = format();
-    payload = `[${payload.join(",")}]`; //給 API 看的棋譜
+    payload = `[${payload.join(",")}]`; // API-read game play record
 
-    //常數
+    //constants
     const playerColor = side === "1" ? "black" : "white";
     const aiColor = side === "1" ? "white" : "black";
     const lastColor = moves[moves.length - 1]?.color;
     const waitForAIString = "AI is thinking... 🤔";
     const waitForPlayerString = `It's your turn 『${player}』`;
 
-    //API 請求
+    //API request
     const fetchAI = async () => {
-      setAIThinking(true);
+      setAIGenerating(true);
       setAIReplyCountDown(90);
       try {
-        //取得 AI 棋盤回應
+        //Get AI board response
         await axios
           .post(`https://swapgo.yosgo.com/ana`, {
             moves: payload,
@@ -139,7 +173,7 @@ const GO = () => {
             let pass =
               `${ana.next_move}`.indexOf("pass") !== -1 ||
               ana?.top_moves.find((m) => m.move.indexOf("pass") !== -1);
-            //依照難度計算下一步的數字格式
+            // According to the difficulty, calculate the next step in number format
             let next_move_number_format;
             let next_move_text_format;
             let next_move_english_format;
@@ -168,7 +202,7 @@ const GO = () => {
             console.log("> fetchAI error", err);
           });
 
-        //AI 結束思考
+        //AI stop generating
         setAIThinking(false);
         setAIReplyCountDown(0);
       } catch (err) {
@@ -176,8 +210,8 @@ const GO = () => {
       }
     };
     const fetchGenAI = async () => {
-      //劇本提示詞
-      setAIGenerating(true);
+      // Narratives prompts
+      setAIThinking(true);
       let _newScreenWriting;
       const screenWritingTemplate = `這是一場圍棋比賽，而你的任務就是轉譯，把棋盤上的局勢描述成歷史上的戰役
 
@@ -233,7 +267,7 @@ imgPrompt: 搭配劇情的生成圖片提示詞，請你搭配使用此基本風
 `;
       console.log("> screenWritingTemplate", screenWritingTemplate);
 
-      //生成劇本與圖片提示詞
+      //Generate Narratives and image prompts
       await axios
         .post("/api/claude_call2", {
           prompts: [
@@ -255,7 +289,7 @@ imgPrompt: 搭配劇情的生成圖片提示詞，請你搭配使用此基本風
           alert("> ScreenWriting error");
         });
 
-      //生成圖片
+      //Generate Images
       await axios
         .post("/api/openai_sprint", {
           type: "image",
@@ -276,14 +310,14 @@ imgPrompt: 搭配劇情的生成圖片提示詞，請你搭配使用此基本風
           console.log("> ImageGenerating error", err);
         });
 
-      //更新劇情
+      //Update Narratives
       setScreenWriting([...screenWriting, _newScreenWriting]);
 
-      //AI 結束生成
+      //AI stop generating
       setAIGenerating(false);
     };
 
-    //下棋順序判斷
+    // play sequence judgement
     if (moves.length === 0) {
       if (playerColor === "black") {
         handleAddGameLog(waitForPlayerString);
@@ -302,7 +336,7 @@ imgPrompt: 搭配劇情的生成圖片提示詞，請你搭配使用此基本風
       }
     }
   };
-  //執行自動下棋
+  // Enforce auto-playing
   useEffect(() => {
     (async () => {
       if (parsed && moves) {
@@ -310,7 +344,7 @@ imgPrompt: 搭配劇情的生成圖片提示詞，請你搭配使用此基本風
       }
     })();
   }, [moves, parsed]);
-  //取得 AI 回應，更新棋盤、判斷勝負
+  // Get AI response，update board & judge win/lose
   useEffect(() => {
     if (
       aiResponse &&
@@ -334,12 +368,12 @@ imgPrompt: 搭配劇情的生成圖片提示詞，請你搭配使用此基本風
         console.error(`沒有找到坐標為 (${x}, ${y}) 的交叉點元素`);
       }
     } else if (aiResponse && aiResponse?.pass) {
-      //AI 判定結束遊戲 end game
+      //AI judge end game
       setEndGameModalOpen(true);
     }
   }, [aiResponse]);
 
-  // AI 回應預期倒數
+  // AI respond anticipated countdown
   useEffect(() => {
     if (aiReplyCountDown > 0) {
       const timer = setTimeout(() => {
@@ -349,21 +383,21 @@ imgPrompt: 搭配劇情的生成圖片提示詞，請你搭配使用此基本風
     }
   }, [aiReplyCountDown]);
 
-  //監聽劇情
+  // monitoring Narratives
   useEffect(() => {
     console.log("> screenWriting", screenWriting);
   }, [screenWriting]);
 
-  //End game 處理
+  // Dealing with End game 
   useEffect(() => {
     (async () => {
-      //當 endGameModelOpen 時，把資料給 AI 並產出劇情與結果
+      //while endGameModelOpen, deliver data to ai to produce narratives and combat outcome
       if (endGameModalOpen) {
-        //常數
+        //constants
         const playerColor = side === "1" ? "black" : "white";
         const aiColor = side === "1" ? "white" : "black";
 
-        //劇本提示詞
+        // narratives prompt
         let _endGameScreenWriting;
         const endGameScreenWritingTemplate = `這是一場圍棋比賽，而你的任務就是轉譯，把棋盤上的局勢描述成歷史上的戰役
 
@@ -424,7 +458,7 @@ imgPrompt: 搭配劇情的生成圖片提示詞，請你搭配使用此基本風
     imgPrompt: ""
 }
 `;
-        //生成劇本與圖片提示詞
+        // Generate Narratives and image prompts
         await axios
           .post("/api/claude_call2", {
             prompts: [
@@ -446,7 +480,7 @@ imgPrompt: 搭配劇情的生成圖片提示詞，請你搭配使用此基本風
             alert("> ScreenWriting error");
           });
 
-        //生成圖片
+        // Generate Images
         await axios
           .post("/api/openai_sprint", {
             type: "image",
@@ -467,14 +501,92 @@ imgPrompt: 搭配劇情的生成圖片提示詞，請你搭配使用此基本風
             console.log("> ImageGenerating error", err);
           });
 
-        //更新劇情
+        // Update Narratives
         setEndGameScreenWriting(_endGameScreenWriting);
       }
     })();
   }, [endGameModalOpen]);
 
+<<<<<<< HEAD
+=======
+  //styles
+  const styles = {
+    container: {
+      display: "flex",
+      width: "100vw",
+      minHeight: "100vh",
+      overflow: "hidden",
+      alignItems: "stretch",
+      border: "3px solid black",
+      boxSize: "border-box",
+    },
+    leftColumn: {
+      display: "flex",
+      width: "100%",
+      height: "calc(100vh - 6px)",
+      borderRight: "3px solid rgba(55,55,55,1)",
+      display: "flex",
+      justifyContent: "space-between",
+      flexDirection: "column",
+      boxSize: "border-box",
+    },
+    rightColumn: {
+      width: "100%",
+      height: "calc(100vh - 6px)",
+      position: "relative",
+    },
+    leftTop: {
+      overflow: "auto",
+      boxSize: "border-box",
+      padding: "8px 16px",
+      minHeight: "88px",
+    },
+    leftBottom: {
+      borderTop: "3px solid rgba(55,55,55,1)",
+      boxSize: "border-box",
+      position: "relative",
+    },
+  };
+
+  const pageJsonLd = {
+    "@context": "https://schema.org",
+    "@type": "Game",
+    "name": "SWAPGO Game Page",
+    "description": `Game session for ${player} in SWAPGO`,
+    "url": `https://go.swap.work/SWAPGO/go?id=${battle?.id}&side=${side}&player=${player}&difficulty=${difficulty}&boardSize=${boardSize}`,
+    "image": "https://go.swap.work/logo/swapgo_trans.png",
+    "author": {
+      "@type": "Organization",
+      "name": "SwapGo",
+      "url": "https://go.swap.work"
+    }
+  };
+
+>>>>>>> d36991db5016997d3c49e2847f92a1ccc06f6efa
   return (
     <Layout>
+       <Head>
+        <title>{`${player}'s Game - SWAPGO`}</title>
+        <meta name="description" content={`SwapGo Go game session for ${player} in SWAPGO`} />
+        <link rel="canonical" href={`https://go.swap.work/SWAPGO/go?id=${battle?.id}&side=${side}&player=${player}&difficulty=${difficulty}&boardSize=${boardSize}`} />
+        
+        <meta property="og:type" content="website" />
+        <meta property="og:url" content={`https://go.swap.work/SWAPGO/go?id=${battle?.id}&side=${side}&player=${player}&difficulty=${difficulty}&boardSize=${boardSize}`} />
+        <meta property="og:title" content={`${player}'s Game - SWAPGO`} />
+        <meta property="og:description" content={`Go game session for ${player} in SWAPGO`} />
+        <meta property="og:image" content="https://go.swap.work/logo/swapgo_trans.png" />
+
+        <meta property="twitter:card" content="summary_large_image" />
+        <meta property="twitter:url" content={`https://go.swap.work/SWAPGO/go?id=${battle?.id}&side=${side}&player=${player}&difficulty=${difficulty}&boardSize=${boardSize}`} />
+        <meta property="twitter:title" content={`${player}'s Game - SWAPGO`} />
+        <meta property="twitter:description" content={`Go game session for ${player} in SWAPGO`} />
+        <meta property="twitter:image" content="https://go.swap.work/logo/swapgo_trans.png" />
+
+        <script
+            type="application/ld+json"
+            dangerouslySetInnerHTML={{ __html: JSON.stringify(pageJsonLd) }}
+          />
+      </Head>
       <style jsx>
         {`
           .swap-go-board-container {
@@ -545,13 +657,16 @@ imgPrompt: 搭配劇情的生成圖片提示詞，請你搭配使用此基本風
           }
         `}
       </style>
-      {parsed && (
+      {!parsed ? (
+        <div> Loading... </div>
+      ) : (
         <Fade in={parsed}>
           <div>
             {/* End Game Modal */}
             <Modal
               visible={endGameModalOpen}
               onClose={() => setEndGameModalOpen(false)}
+              aria-labelledby="end-game-modal-title"
             >
               {endGameScreenWriting === null ? (
                 <div>
@@ -593,9 +708,15 @@ imgPrompt: 搭配劇情的生成圖片提示詞，請你搭配使用此基本風
                 Play Again
               </Modal.Action>
             </Modal>
+<<<<<<< HEAD
             <div className="swap-go-container">
               <div className="leftColumn">
                 <div className="leftTop">
+=======
+            <div style={styles.container} role="main">
+              <div style={styles.leftColumn} aria-label="SwapGo Go Game Board and Controls">
+                <div style={styles.leftTop}>
+>>>>>>> d36991db5016997d3c49e2847f92a1ccc06f6efa
                   <div
                     style={{
                       display: "flex",
@@ -622,7 +743,9 @@ imgPrompt: 搭配劇情的生成圖片提示詞，請你搭配使用此基本風
                       });
                     }}
                   >
-                    <h1 style={{ fontSize: "1.5rem", fontStyle: "italic" }}>
+                    <h1 style={{ fontSize: "1.5rem", fontStyle: "italic" }}
+                        aria-label="Battle Name"
+                      >
                       {battle.name}
                     </h1>
                     {aiResponse && (
@@ -632,6 +755,7 @@ imgPrompt: 搭配劇情的生成圖片提示詞，請你搭配使用此基本風
                           paddingLeft={"8px"}
                           paddingRight={"8px"}
                           height={"30px"}
+                          aria-label="End Game"
                           onClick={() => {
                             if (aiThinking || aiGenerating) {
                               alert(
@@ -651,7 +775,7 @@ imgPrompt: 搭配劇情的生成圖片提示詞，請你搭配使用此基本風
                         </Button>
                       </div>
                     )}
-                    <YTMusic />
+                    <YTMusic /> 
                   </div>
                   <div>
                     {[
@@ -670,7 +794,29 @@ imgPrompt: 搭配劇情的生成圖片提示詞，請你搭配使用此基本風
                         captured: currentState?.whiteStonesCaptured,
                       },
                     ].map((item) => (
+<<<<<<< HEAD
                       <div key={item.img} style={{ marginTop: "16px" }}>
+=======
+                      <div
+                        key={item.img}
+                        style={{
+                          display: "flex",
+                          alignItems: "center",
+                          gap: "4px",
+                        }}
+                      >
+                        <img
+                          src={item.img}
+                          alt={`${item.type} stone`}
+                          style={{ width: "20px", height: "20px" }}
+                        />
+                        <i>
+                          <b>{item.captured}</b>{" "}
+                          {item.captured > 1 ? "stones" : "stone"}{" "}
+                          {item.captured > 1 ? "were" : "was"} captured
+                        </i>
+                        ,{" "}
+>>>>>>> d36991db5016997d3c49e2847f92a1ccc06f6efa
                         <i>
                           {item.type.toUpperCase()}: {item.label}(
                           {side === item.value ? `You, ${player}` : "AI"})
@@ -698,8 +844,14 @@ imgPrompt: 搭配劇情的生成圖片提示詞，請你搭配使用此基本風
                     ))}
                   </div>
                 </div>
+<<<<<<< HEAD
                 <div className="leftBottom">
                   {/* 棋盤狀態 */}
+=======
+                <div style={styles.leftBottom} 
+                      aria-label="Go board">
+                  {/* board status */}
+>>>>>>> d36991db5016997d3c49e2847f92a1ccc06f6efa
                   <div
                     style={{
                       padding: "4px 16px",
@@ -779,14 +931,24 @@ imgPrompt: 搭配劇情的生成圖片提示詞，請你搭配使用此基本風
                       </span>
                     </div>
                   </div>
+<<<<<<< HEAD
                   {/* 棋盤 */}
                   <div className="swap-go-board-container">
+=======
+                  {/* board */}
+                  <div
+                    style={{
+                      width: `${boardWidth}px`,
+                      height: `${boardWidth}px`,
+                    }}
+                  >
+>>>>>>> d36991db5016997d3c49e2847f92a1ccc06f6efa
                     <div
                       className="tenuki-board swap-go-board"
                       data-include-coordinates={true}
                     />
                   </div>
-                  {/* 遮罩 */}
+                  {/* mask */}
                   {(aiThinking || aiGenerating) && (
                     <div
                       style={{
@@ -802,12 +964,18 @@ imgPrompt: 搭配劇情的生成圖片提示詞，請你搭配使用此基本風
                   )}
                 </div>
               </div>
+<<<<<<< HEAD
               <div className="rightColumn">
+=======
+              <div style={styles.rightColumn}
+                  aria-label="Game Narrative">
+>>>>>>> d36991db5016997d3c49e2847f92a1ccc06f6efa
                 {screenWriting.map((item, index) => {
                   const rotate = index * 0.05;
                   return (
                     <div
                       key={`screenWriting-${index}`}
+                      aria-label={`Narrative Scene ${index + 1}`}
                       style={{
                         zIndex: index,
                         position: "absolute",
@@ -861,23 +1029,23 @@ imgPrompt: 搭配劇情的生成圖片提示詞，請你搭配使用此基本風
 
 export default GO;
 
-/** 輔助函式 */
+/** supplement function */
 //
 function convertArrayIndexToGoPosition(row, col, boardSize = 9) {
   const actualRow = boardSize - 1 - row;
   return [actualRow, col];
 }
-//轉成英文座標
+// convert to English coordinates
 function convertMove(moveStr) {
   let col = moveStr.charCodeAt(0) - "A".charCodeAt(0);
   const row = 9 - parseInt(moveStr[1]);
-  // 處理 'I' 之後的字母
+  // deal with every alphabet after 'I' 
   if (col >= 8) {
     col = 8; // 跳過 'I'
   }
   return [col, row];
 }
-//棋譜紀錄
+// board record
 const moveAccFunction = (moves = [], currentState) => {
   let result;
   if (currentState && currentState?.playedPoint) {
@@ -894,7 +1062,7 @@ const moveAccFunction = (moves = [], currentState) => {
   }
   return result;
 };
-//棋譜圖像化
+// visualize board record
 function visualizeGoBoard(intersections, size) {
   if (![9, 13, 19].includes(size)) {
     return "Invalid board size. Please use 9, 13, or 19.";
@@ -918,7 +1086,7 @@ function visualizeGoBoard(intersections, size) {
 
   return board;
 }
-//音樂元件
+// music element
 export const YTMusic = () => {
   return (
     <div style={{ position: "absolute", zIndex: -9999, opacity: 0 }}>
@@ -930,21 +1098,22 @@ export const YTMusic = () => {
         playsinline={true}
         playing={true}
         loop={true}
+        aria-label="Background Battlefield Music"
       />
     </div>
   );
 };
 
 /**
- * 1. 可以選難度、黑白方
- * 2. 下棋 Log、搭配戰役劇情文案、一黑一白搭配一張圖片
- * 3. 依據勝率調整爭鬥 bar
- * 4. 增加音樂
- * 語言轉換
- * 計時、數值
- * 主動投降，計算
- * 語音朗讀
- * 版權聲明
+ * 1. Choose difficulty and side
+ * 2. go game Log、narrative battle copywriting、a set of black&white stones coupled with an image
+ * 3.  Adjust fight bar According to win rate
+ * 4. Add music
+ * Lang convert
+ * Timer、Number Value
+ * Surrender, Scoring 
+ * voice reading
+ * copyright
  * Onboarding
- * Export 功能
+ * Export
  */
