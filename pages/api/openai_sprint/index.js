@@ -38,43 +38,31 @@ export default async function handler(req, res) {
       res.setHeader("Content-Type", "audio/mpeg");
       return res.send(response.data);
     } else if (type === "image") {
-      response = await axios
-        .post(
-          "https://api.openai.com/v1/images/generations",
-          {
-            model: "dall-e-3",
-            prompt: prompt,
-            n: 1,
-            size: "1024x1024",
+      response = await axios.post(
+        "https://api.openai.com/v1/images/generations",
+        {
+          model: "dall-e-3",
+          prompt: prompt,
+          n: 1,
+          size: "1024x1024",
+        },
+        {
+          headers: {
+            Authorization: `Bearer ${process.env.OPENAI_API_KEY}`,
+            "Content-Type": "application/json",
           },
-          {
-            headers: {
-              Authorization: `Bearer ${process.env.OPENAI_API_KEY}`,
-              "Content-Type": "application/json",
-            },
-          }
-        )
-        .catch((error) => {
-          console.error(
-            "Error calling OpenAI API:",
-            error.response?.data || error.message
-          );
-          return res.status(500).json({
-            message: "Error processing request",
-            error: error.response?.data || error.message,
-          });
-        });
-
+        }
+      );
       return res.status(200).json(response.data);
     }
   } catch (error) {
     console.error(
       "Error calling OpenAI API:",
-      error.response?.data || error.message
+      error.response?.data || error.message || error
     );
-    res.status(500).json({
+    return res.status(500).json({
       message: "Error processing request",
-      error: error.response?.data || error.message,
+      error: error.response?.data || error.message || error,
     });
   }
 }
