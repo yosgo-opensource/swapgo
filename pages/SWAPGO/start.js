@@ -2,21 +2,14 @@ import { Button, Input, Radio, Spacer } from "@geist-ui/core";
 import { Fade } from "@mui/material";
 import { useEffect, useState } from "react";
 import ReactPlayer from "react-player";
-import Head from 'next/head'
-import { useRouter } from 'next/router'; 
+import Head from "next/head";
+import { useRouter } from "next/router";
 
 const StartGame = () => {
-<<<<<<< HEAD
-  const [selectedBattle, setSelectedBattle] = useState(1);
-  const [side, setSide] = useState(1); //-1 白 1 黑
-  const [playerName, setPlayerName] = useState("SwapGo Player1");
-=======
-  const router = useRouter(); 
-
   const [selectedBattle, setSelectedBattle] = useState(2);
   const [side, setSide] = useState(1); //-1 white, 1 black
   const [playerName, setPlayerName] = useState("SwapGo Player 1");
->>>>>>> d36991db5016997d3c49e2847f92a1ccc06f6efa
+
   const [difficulty, setDifficulty] = useState(2);
   const [boardSize, setBoardSize] = useState(9); // [9, 13, 19
 
@@ -31,14 +24,15 @@ const StartGame = () => {
   const pageJsonLd = {
     "@context": "https://schema.org",
     "@type": "WebPage",
-    "name": "SWAPGO Start Page",
-    "description": "Start your journey with SwapGo, a strategic game that rewrites pivotal moments in history.",
-    "url": "https://go.swap.work/SWAPGO/start",
-    "image": "https://go.swap.work/logo/swapgo_trans.png",
-    "author": {
+    name: "SWAPGO Start Page",
+    description:
+      "Start your journey with SwapGo, a strategic game that rewrites pivotal moments in history.",
+    url: "https://go.swap.work/SWAPGO/start",
+    image: "https://go.swap.work/logo/swapgo_trans.png",
+    author: {
       "@type": "Organization",
-      "name": "SwapGo",
-      "url": "https://go.swap.work"
+      name: "SwapGo",
+      url: "https://go.swap.work",
     },
     // "potentialAction": {
     //   "@type": "SearchAction",
@@ -50,25 +44,46 @@ const StartGame = () => {
   return (
     rendered && (
       <>
-      <Head>
+        <Head>
           <title>SWAPGO Start Page</title>
-          <meta name="description" content="Start your journey with SwapGo, a strategic game that rewrites pivotal moments in history." />
-          <meta name="keywords" content="SwapGo, strategic game, history, board game, Go game" />
+          <meta
+            name="description"
+            content="Start your journey with SwapGo, a strategic game that rewrites pivotal moments in history."
+          />
+          <meta
+            name="keywords"
+            content="SwapGo, strategic game, history, board game, Go game"
+          />
           <link rel="canonical" href="https://go.swap.work/SWAPGO/start" />
 
           {/* Open Graph */}
           <meta property="og:type" content="website" />
           <meta property="og:url" content="https://go.swap.work/SWAPGO/start" />
           <meta property="og:title" content="SWAPGO Start Page" />
-          <meta property="og:description" content="Start your journey with SwapGo, a strategic game that rewrites pivotal moments in history." />
-          <meta property="og:image" content="https://go.swap.work/logo/swapgo_trans.png" />
+          <meta
+            property="og:description"
+            content="Start your journey with SwapGo, a strategic game that rewrites pivotal moments in history."
+          />
+          <meta
+            property="og:image"
+            content="https://go.swap.work/logo/swapgo_trans.png"
+          />
 
           {/* Twitter Card */}
           <meta property="twitter:card" content="summary_large_image" />
-          <meta property="twitter:url" content="https://go.swap.work/SWAPGO/start" />
+          <meta
+            property="twitter:url"
+            content="https://go.swap.work/SWAPGO/start"
+          />
           <meta property="twitter:title" content="SWAPGO Start Page" />
-          <meta property="twitter:description" content="Start your journey with SwapGo, a strategic game that rewrites pivotal moments in history." />
-          <meta property="twitter:image" content="https://go.swap.work/logo/swapgo_trans.png" />
+          <meta
+            property="twitter:description"
+            content="Start your journey with SwapGo, a strategic game that rewrites pivotal moments in history."
+          />
+          <meta
+            property="twitter:image"
+            content="https://go.swap.work/logo/swapgo_trans.png"
+          />
 
           {/* Structured Data */}
           <script
@@ -181,7 +196,6 @@ const StartGame = () => {
               >
                 <div>
                   <h3 className="hint-text">Live Demo video</h3>
-<<<<<<< HEAD
                   <div className="battle-card">
                     <ReactPlayer
                       url={"https://youtu.be/on3ye7jCcRg"}
@@ -189,63 +203,6 @@ const StartGame = () => {
                       height={180}
                       volume={1}
                       controls={true}
-=======
-                </div>
-                <div>
-                  <h3 className="hint-text">Please select a battle to start</h3>
-                </div>
-              </div>
-              <div
-                style={{
-                  display: "grid",
-                  gridTemplateColumns: `repeat(${battlesData.length + 1}, 1fr)`,
-                  gap: "16px",
-                }}
-              >
-                <div
-                  className="battle-card"
-                  style={{
-                    border: "1px solid lightgrey",
-                    borderRadius: "8px",
-                    cursor: "pointer",
-                    overflow: "hidden",
-                    boxShadow: "0 0 10px rgba(0,0,0,0.2)",
-                  }}
-                >
-                  <ReactPlayer
-                    url={"https://youtu.be/on3ye7jCcRg"}
-                    width={320}
-                    height={180}
-                    volume={1}
-                    controls={true}
-                  />
-                </div>
-                {battlesData.map((battle) => (
-                  <div
-                    key={battle.id}
-                    className="battle-card"
-                    style={{
-                      border: `1px solid ${
-                        selectedBattle === battle.id ? `black` : "lightgrey"
-                      }`,
-                      boxShadow:
-                        selectedBattle === battle.id
-                          ? "0 0 10px rgba(0,0,0,0.2)"
-                          : "none",
-                      transition: "all 0.3s",
-                      borderRadius: "8px",
-                      cursor: battle.open ? "pointer" : "not-allowed",
-                      overflow: "hidden",
-                      padding: "16px",
-                    }}
-                    onClick={() => {
-                      if (battle.open) {
-                        setSelectedBattle(battle.id);
-                      } else alert("This battle is coming soon");
-                    }}
-                  >
-                    <div
->>>>>>> d36991db5016997d3c49e2847f92a1ccc06f6efa
                       style={{
                         borderRadius: "8px",
                         cursor: "pointer",

@@ -8,13 +8,7 @@ import axios from "axios";
 import ReactPlayer from "react-player";
 import ReactTyped from "react-typed";
 import { Button, Divider, Loading, Modal } from "@geist-ui/core";
-<<<<<<< HEAD
-import { max } from "moment";
-=======
 import Head from "next/head";
-
-
->>>>>>> d36991db5016997d3c49e2847f92a1ccc06f6efa
 
 const GO = () => {
   const router = useRouter();
@@ -50,7 +44,6 @@ const GO = () => {
         (b) => `${b.id}` === `${urlParams.get("id")}`
       );
 
-      
       if (!_player || !_side || !_difficulty || !_boardSize || !_battle) {
         router.push("/SWAPGO/start");
         return;
@@ -75,25 +68,7 @@ const GO = () => {
     }
   }, []);
 
-<<<<<<< HEAD
-  //初始化棋盤
-=======
-  //decide the board width
-  const handleResizeTheBoardWidth = () => {
-    //get window width first
-    const screenWidth = window.innerWidth;
-    setBoardWidth(screenWidth / 2 - 6);
-  };
-  useEffect(() => {
-    handleResizeTheBoardWidth();
-  }, []);
-  useEffect(() => {
-    // while resizing the window, the board width will be recalculated
-    window.addEventListener("resize", handleResizeTheBoardWidth);
-  }, []);
-
   //initialize game board
->>>>>>> d36991db5016997d3c49e2847f92a1ccc06f6efa
   useEffect(() => {
     if (parsed) {
       // clean up
@@ -135,9 +110,9 @@ const GO = () => {
   const handleAddGameLog = (string) => {
     setGameLog([...gameLog, string]);
   };
-  // function deliver game record to AI 
+  // function deliver game record to AI
   const handleGetAIMove = async () => {
-    // game record clean-up 
+    // game record clean-up
     const format = () => {
       return moves.map((m) => {
         const revert = convertArrayIndexToGoPosition(
@@ -388,7 +363,7 @@ imgPrompt: 搭配劇情的生成圖片提示詞，請你搭配使用此基本風
     console.log("> screenWriting", screenWriting);
   }, [screenWriting]);
 
-  // Dealing with End game 
+  // Dealing with End game
   useEffect(() => {
     (async () => {
       //while endGameModelOpen, deliver data to ai to produce narratives and combat outcome
@@ -507,85 +482,67 @@ imgPrompt: 搭配劇情的生成圖片提示詞，請你搭配使用此基本風
     })();
   }, [endGameModalOpen]);
 
-<<<<<<< HEAD
-=======
-  //styles
-  const styles = {
-    container: {
-      display: "flex",
-      width: "100vw",
-      minHeight: "100vh",
-      overflow: "hidden",
-      alignItems: "stretch",
-      border: "3px solid black",
-      boxSize: "border-box",
-    },
-    leftColumn: {
-      display: "flex",
-      width: "100%",
-      height: "calc(100vh - 6px)",
-      borderRight: "3px solid rgba(55,55,55,1)",
-      display: "flex",
-      justifyContent: "space-between",
-      flexDirection: "column",
-      boxSize: "border-box",
-    },
-    rightColumn: {
-      width: "100%",
-      height: "calc(100vh - 6px)",
-      position: "relative",
-    },
-    leftTop: {
-      overflow: "auto",
-      boxSize: "border-box",
-      padding: "8px 16px",
-      minHeight: "88px",
-    },
-    leftBottom: {
-      borderTop: "3px solid rgba(55,55,55,1)",
-      boxSize: "border-box",
-      position: "relative",
-    },
-  };
-
   const pageJsonLd = {
     "@context": "https://schema.org",
     "@type": "Game",
-    "name": "SWAPGO Game Page",
-    "description": `Game session for ${player} in SWAPGO`,
-    "url": `https://go.swap.work/SWAPGO/go?id=${battle?.id}&side=${side}&player=${player}&difficulty=${difficulty}&boardSize=${boardSize}`,
-    "image": "https://go.swap.work/logo/swapgo_trans.png",
-    "author": {
+    name: "SWAPGO Game Page",
+    description: `Game session for ${player} in SWAPGO`,
+    url: `https://go.swap.work/SWAPGO/go?id=${battle?.id}&side=${side}&player=${player}&difficulty=${difficulty}&boardSize=${boardSize}`,
+    image: "https://go.swap.work/logo/swapgo_trans.png",
+    author: {
       "@type": "Organization",
-      "name": "SwapGo",
-      "url": "https://go.swap.work"
-    }
+      name: "SwapGo",
+      url: "https://go.swap.work",
+    },
   };
 
->>>>>>> d36991db5016997d3c49e2847f92a1ccc06f6efa
   return (
     <Layout>
-       <Head>
+      <Head>
         <title>{`${player}'s Game - SWAPGO`}</title>
-        <meta name="description" content={`SwapGo Go game session for ${player} in SWAPGO`} />
-        <link rel="canonical" href={`https://go.swap.work/SWAPGO/go?id=${battle?.id}&side=${side}&player=${player}&difficulty=${difficulty}&boardSize=${boardSize}`} />
-        
+        <meta
+          name="description"
+          content={`SwapGo Go game session for ${player} in SWAPGO`}
+        />
+        <link
+          rel="canonical"
+          href={`https://go.swap.work/SWAPGO/go?id=${battle?.id}&side=${side}&player=${player}&difficulty=${difficulty}&boardSize=${boardSize}`}
+        />
+
         <meta property="og:type" content="website" />
-        <meta property="og:url" content={`https://go.swap.work/SWAPGO/go?id=${battle?.id}&side=${side}&player=${player}&difficulty=${difficulty}&boardSize=${boardSize}`} />
+        <meta
+          property="og:url"
+          content={`https://go.swap.work/SWAPGO/go?id=${battle?.id}&side=${side}&player=${player}&difficulty=${difficulty}&boardSize=${boardSize}`}
+        />
         <meta property="og:title" content={`${player}'s Game - SWAPGO`} />
-        <meta property="og:description" content={`Go game session for ${player} in SWAPGO`} />
-        <meta property="og:image" content="https://go.swap.work/logo/swapgo_trans.png" />
+        <meta
+          property="og:description"
+          content={`Go game session for ${player} in SWAPGO`}
+        />
+        <meta
+          property="og:image"
+          content="https://go.swap.work/logo/swapgo_trans.png"
+        />
 
         <meta property="twitter:card" content="summary_large_image" />
-        <meta property="twitter:url" content={`https://go.swap.work/SWAPGO/go?id=${battle?.id}&side=${side}&player=${player}&difficulty=${difficulty}&boardSize=${boardSize}`} />
+        <meta
+          property="twitter:url"
+          content={`https://go.swap.work/SWAPGO/go?id=${battle?.id}&side=${side}&player=${player}&difficulty=${difficulty}&boardSize=${boardSize}`}
+        />
         <meta property="twitter:title" content={`${player}'s Game - SWAPGO`} />
-        <meta property="twitter:description" content={`Go game session for ${player} in SWAPGO`} />
-        <meta property="twitter:image" content="https://go.swap.work/logo/swapgo_trans.png" />
+        <meta
+          property="twitter:description"
+          content={`Go game session for ${player} in SWAPGO`}
+        />
+        <meta
+          property="twitter:image"
+          content="https://go.swap.work/logo/swapgo_trans.png"
+        />
 
         <script
-            type="application/ld+json"
-            dangerouslySetInnerHTML={{ __html: JSON.stringify(pageJsonLd) }}
-          />
+          type="application/ld+json"
+          dangerouslySetInnerHTML={{ __html: JSON.stringify(pageJsonLd) }}
+        />
       </Head>
       <style jsx>
         {`
@@ -708,15 +665,12 @@ imgPrompt: 搭配劇情的生成圖片提示詞，請你搭配使用此基本風
                 Play Again
               </Modal.Action>
             </Modal>
-<<<<<<< HEAD
-            <div className="swap-go-container">
-              <div className="leftColumn">
+            <div className="swap-go-container" role="main">
+              <div
+                className="leftColumn"
+                aria-label="SwapGo Go Game Board and Controls"
+              >
                 <div className="leftTop">
-=======
-            <div style={styles.container} role="main">
-              <div style={styles.leftColumn} aria-label="SwapGo Go Game Board and Controls">
-                <div style={styles.leftTop}>
->>>>>>> d36991db5016997d3c49e2847f92a1ccc06f6efa
                   <div
                     style={{
                       display: "flex",
@@ -743,9 +697,10 @@ imgPrompt: 搭配劇情的生成圖片提示詞，請你搭配使用此基本風
                       });
                     }}
                   >
-                    <h1 style={{ fontSize: "1.5rem", fontStyle: "italic" }}
-                        aria-label="Battle Name"
-                      >
+                    <h1
+                      style={{ fontSize: "1.5rem", fontStyle: "italic" }}
+                      aria-label="Battle Name"
+                    >
                       {battle.name}
                     </h1>
                     {aiResponse && (
@@ -775,7 +730,7 @@ imgPrompt: 搭配劇情的生成圖片提示詞，請你搭配使用此基本風
                         </Button>
                       </div>
                     )}
-                    <YTMusic /> 
+                    <YTMusic />
                   </div>
                   <div>
                     {[
@@ -794,29 +749,7 @@ imgPrompt: 搭配劇情的生成圖片提示詞，請你搭配使用此基本風
                         captured: currentState?.whiteStonesCaptured,
                       },
                     ].map((item) => (
-<<<<<<< HEAD
                       <div key={item.img} style={{ marginTop: "16px" }}>
-=======
-                      <div
-                        key={item.img}
-                        style={{
-                          display: "flex",
-                          alignItems: "center",
-                          gap: "4px",
-                        }}
-                      >
-                        <img
-                          src={item.img}
-                          alt={`${item.type} stone`}
-                          style={{ width: "20px", height: "20px" }}
-                        />
-                        <i>
-                          <b>{item.captured}</b>{" "}
-                          {item.captured > 1 ? "stones" : "stone"}{" "}
-                          {item.captured > 1 ? "were" : "was"} captured
-                        </i>
-                        ,{" "}
->>>>>>> d36991db5016997d3c49e2847f92a1ccc06f6efa
                         <i>
                           {item.type.toUpperCase()}: {item.label}(
                           {side === item.value ? `You, ${player}` : "AI"})
@@ -844,14 +777,8 @@ imgPrompt: 搭配劇情的生成圖片提示詞，請你搭配使用此基本風
                     ))}
                   </div>
                 </div>
-<<<<<<< HEAD
-                <div className="leftBottom">
+                <div className="leftBottom" aria-label="Go board">
                   {/* 棋盤狀態 */}
-=======
-                <div style={styles.leftBottom} 
-                      aria-label="Go board">
-                  {/* board status */}
->>>>>>> d36991db5016997d3c49e2847f92a1ccc06f6efa
                   <div
                     style={{
                       padding: "4px 16px",
@@ -931,18 +858,8 @@ imgPrompt: 搭配劇情的生成圖片提示詞，請你搭配使用此基本風
                       </span>
                     </div>
                   </div>
-<<<<<<< HEAD
                   {/* 棋盤 */}
                   <div className="swap-go-board-container">
-=======
-                  {/* board */}
-                  <div
-                    style={{
-                      width: `${boardWidth}px`,
-                      height: `${boardWidth}px`,
-                    }}
-                  >
->>>>>>> d36991db5016997d3c49e2847f92a1ccc06f6efa
                     <div
                       className="tenuki-board swap-go-board"
                       data-include-coordinates={true}
@@ -964,12 +881,7 @@ imgPrompt: 搭配劇情的生成圖片提示詞，請你搭配使用此基本風
                   )}
                 </div>
               </div>
-<<<<<<< HEAD
-              <div className="rightColumn">
-=======
-              <div style={styles.rightColumn}
-                  aria-label="Game Narrative">
->>>>>>> d36991db5016997d3c49e2847f92a1ccc06f6efa
+              <div className="rightColumn" aria-label="Game Narrative">
                 {screenWriting.map((item, index) => {
                   const rotate = index * 0.05;
                   return (
@@ -1039,7 +951,7 @@ function convertArrayIndexToGoPosition(row, col, boardSize = 9) {
 function convertMove(moveStr) {
   let col = moveStr.charCodeAt(0) - "A".charCodeAt(0);
   const row = 9 - parseInt(moveStr[1]);
-  // deal with every alphabet after 'I' 
+  // deal with every alphabet after 'I'
   if (col >= 8) {
     col = 8; // 跳過 'I'
   }
@@ -1111,7 +1023,7 @@ export const YTMusic = () => {
  * 4. Add music
  * Lang convert
  * Timer、Number Value
- * Surrender, Scoring 
+ * Surrender, Scoring
  * voice reading
  * copyright
  * Onboarding
