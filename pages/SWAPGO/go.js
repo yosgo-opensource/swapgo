@@ -25,7 +25,6 @@ const GO = () => {
   const [moves, setMoves] = useState(null);
   const [gameLog, setGameLog] = useState([]);
   const [aiThinking, setAIThinking] = useState(false);
-  const [aiGenerating, setAIGenerating] = useState(false);
   const [aiResponse, setAiResponse] = useState(null);
   const [screenWriting, setScreenWriting] = useState([]);
   const [aiReplyCountDown, setAIReplyCountDown] = useState(0);
@@ -135,65 +134,15 @@ const GO = () => {
 
     //API request
     const fetchAI = async () => {
-      setAIGenerating(true);
-      setAIReplyCountDown(90);
       try {
-        //Get AI board response
-        await axios
-          .post(`https://swapgo.yosgo.com/ana`, {
-            moves: payload,
-          })
-          .then((res) => {
-            let ana = res.data;
-            let pass =
-              `${ana.next_move}`.indexOf("pass") !== -1 ||
-              ana?.top_moves.find((m) => m.move.indexOf("pass") !== -1);
-            // According to the difficulty, calculate the next step in number format
-            let next_move_number_format;
-            let next_move_text_format;
-            let next_move_english_format;
-            if (!pass && ana?.top_moves?.length > 0) {
-              const { top_moves } = ana;
-              let selected_move = top_moves[Number(difficulty)];
-              if (selected_move) {
-                next_move_english_format = selected_move.move.substring(0, 2);
-                next_move_number_format = convertMove(
-                  selected_move.move.substring(0, 2)
-                );
-                next_move_text_format = `${selected_move.move} probability: ${selected_move.probability}`;
-              }
-            }
-            ana = {
-              ...ana,
-              pass,
-              next_move_english_format,
-              next_move_number_format,
-              next_move_text_format,
-            };
-            setAiResponse(ana);
-          })
-          .catch((err) => {
-            alert("KataGo error");
-            console.log("> fetchAI error", err);
-          });
-
-        //AI stop generating
-        setAIThinking(false);
-        setAIReplyCountDown(0);
-      } catch (err) {
-        console.log("> fetchAI error", err);
-      }
-    };
-    const fetchGenAI = async () => {
-      // Narratives prompts
-      setAIThinking(true);
-      let _newScreenWriting;
-      const screenWritingTemplate = `這是一場圍棋比賽，而你的任務就是轉譯，把棋盤上的局勢描述成歷史上的戰役
+        setAIReplyCountDown(90);
+        let _newScreenWriting;
+        const screenWritingTemplate = `這是一場圍棋比賽，而你的任務就是轉譯，把棋盤上的局勢描述成歷史上的戰役
 
 玩家的名稱是 ${player} 代表 ${playerColor} 方，對手是 AI 代表 ${aiColor} 方，由 ${whoFirst} 先手
 黑子被吃掉的數量是 ${currentState?.blackStonesCaptured}，白子被吃掉的數量是 ${
-        currentState?.whiteStonesCaptured
-      }
+          currentState?.whiteStonesCaptured
+        }
 
 ${
   aiResponse
@@ -240,56 +189,101 @@ imgPrompt: 搭配劇情的生成圖片提示詞，請你搭配使用此基本風
     imgPrompt: ""
 }
 `;
-      console.log("> screenWritingTemplate", screenWritingTemplate);
+        console.log("> screenWritingTemplate", screenWritingTemplate);
 
-      //Generate Narratives and image prompts
-      await axios
-        .post("/api/claude_call2", {
-          prompts: [
-            {
-              role: "user",
-              content: `${screenWritingTemplate}`,
-            },
-          ],
-        })
-        .then((res) => {
-          const parsed = JSON.parse(res.data.payload.text);
-          const { description, imgPrompt } = parsed;
-          _newScreenWriting = {
-            imgPrompt,
-            description,
-          };
-        })
-        .catch((err) => {
-          alert("> ScreenWriting error");
-        });
+        //Generate Narratives and image prompts
+        await axios
+          .post("/api/claude_call2", {
+            prompts: [
+              {
+                role: "user",
+                content: `${screenWritingTemplate}`,
+              },
+            ],
+          })
+          .then((res) => {
+            const parsed = JSON.parse(res.data.payload.text);
+            const { description, imgPrompt } = parsed;
+            _newScreenWriting = {
+              imgPrompt,
+              description,
+            };
+          })
+          .catch((err) => {
+            alert("> ScreenWriting error");
+          });
 
-      //Generate Images
-      await axios
-        .post("/api/openai_sprint", {
-          type: "image",
-          prompt: _newScreenWriting.imgPrompt,
-        })
-        .then((res) => {
-          const img = res?.data?.data[0]?.url || battle.img;
-          _newScreenWriting = {
-            ..._newScreenWriting,
-            img,
-          };
-        })
-        .catch((err) => {
-          _newScreenWriting = {
-            ..._newScreenWriting,
-            img: battle.img,
-          };
-          console.log("> ImageGenerating error", err);
-        });
+        //Generate Images
+        await axios
+          .post("/api/openai_sprint", {
+            type: "image",
+            prompt: _newScreenWriting.imgPrompt,
+          })
+          .then((res) => {
+            const img = res?.data?.data[0]?.url || battle.img;
+            _newScreenWriting = {
+              ..._newScreenWriting,
+              img,
+            };
+          })
+          .catch((err) => {
+            _newScreenWriting = {
+              ..._newScreenWriting,
+              img: battle.img,
+            };
+            console.log("> ImageGenerating error", err);
+          })
+          .finally(() => {
+            //Update Narratives
+            setScreenWriting([...screenWriting, _newScreenWriting]);
+          });
 
-      //Update Narratives
-      setScreenWriting([...screenWriting, _newScreenWriting]);
-
-      //AI stop generating
-      setAIGenerating(false);
+        //Get AI board response
+        await axios
+          .post(`https://swapgo.yosgo.com/ana`, {
+            moves: payload,
+          })
+          .then((res) => {
+            let ana = res.data;
+            let pass =
+              `${ana.next_move}`.indexOf("pass") !== -1 ||
+              ana?.top_moves.find((m) => m.move.indexOf("pass") !== -1);
+            // According to the difficulty, calculate the next step in number format
+            let next_move_number_format;
+            let next_move_text_format;
+            let next_move_english_format;
+            if (!pass && ana?.top_moves?.length > 0) {
+              const { top_moves } = ana;
+              let selected_move = top_moves[Number(difficulty)];
+              if (selected_move) {
+                next_move_english_format = selected_move.move.substring(0, 2);
+                next_move_number_format = convertMove(
+                  selected_move.move.substring(0, 2)
+                );
+                next_move_text_format = `${selected_move.move} probability: ${selected_move.probability}`;
+              }
+            }
+            ana = {
+              ...ana,
+              pass,
+              next_move_english_format,
+              next_move_number_format,
+              next_move_text_format,
+            };
+            setAiResponse(ana);
+          })
+          .catch((err) => {
+            alert("KataGo error");
+            console.log("> fetchAI error", err);
+          })
+          .finally(() => {
+            //AI stop generating
+            setAIThinking(false);
+            setAIReplyCountDown(0);
+          });
+      } catch (err) {
+        console.log("> fetchAI error", err);
+      }
     };
 
     // play sequence judgement
@@ -298,16 +292,14 @@ imgPrompt: 搭配劇情的生成圖片提示詞，請你搭配使用此基本風
         handleAddGameLog(waitForPlayerString);
       } else {
         handleAddGameLog(waitForAIString);
-        fetchGenAI();
-        fetchAI();
+        await fetchAI();
       }
     } else {
       if (playerColor !== lastColor) {
         handleAddGameLog(waitForPlayerString);
       } else {
         handleAddGameLog(waitForAIString);
-        fetchGenAI();
-        fetchAI();
+        await fetchAI();
       }
     }
   };
@@ -689,7 +681,6 @@ imgPrompt: 搭配劇情的生成圖片提示詞，請你搭配使用此基本風
                         moves,
                         gameLog,
                         aiThinking,
-                        aiGenerating,
                         aiResponse,
                         screenWriting,
                         aiReplyCountDown,
@@ -712,7 +703,7 @@ imgPrompt: 搭配劇情的生成圖片提示詞，請你搭配使用此基本風
                           height={"30px"}
                           aria-label="End Game"
                           onClick={() => {
-                            if (aiThinking || aiGenerating) {
+                            if (aiThinking) {
                               alert(
                                 "AI is thinking, please for the next move to end the game."
                               );
@@ -866,7 +857,7 @@ imgPrompt: 搭配劇情的生成圖片提示詞，請你搭配使用此基本風
                     />
                   </div>
                   {/* mask */}
-                  {(aiThinking || aiGenerating) && (
+                  {aiThinking && (
                     <div
                       style={{
                         position: "absolute",
