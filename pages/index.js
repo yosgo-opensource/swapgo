@@ -1,6 +1,8 @@
 import React, { useState, useEffect, useRef } from 'react';
 import styled from 'styled-components';
 import { useRouter } from 'next/router';
+import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
+import { faGithub, faYoutube } from '@fortawesome/free-brands-svg-icons';
 
 const swapgoBg = '/logo/swapgo_b_big_new.png';
 const swapgoBgBlack = '/logo/swapgo_b_big.png';
@@ -14,7 +16,8 @@ const whiteIgo = 'swapgo/white.png';
 
 const Page = styled.div`
   * {
-    cursor: pointer;
+    /* cursor: pointer; */
+    /* cursor:none; */
   }
   html,
   body {
@@ -110,7 +113,7 @@ const Page = styled.div`
     background-color: #000;
     transition: transform 350ms ease, background-color 350ms ease;
     transform: translate(-50%, -50%) scale(.3);
-    z-index: 1000;
+    z-index: 1002;
   }
   .custom-cursor--link {
     background-color: #fff;
@@ -164,7 +167,9 @@ const Page = styled.div`
     
     #nav-btn {
       width: 60px;
-      z-index: 999;
+      z-index: 1001;
+      pointer-events: all;
+
       filter: invert(1);
       
       .icon {
@@ -492,17 +497,20 @@ const Hero = styled.section`
     z-index: 0;
   }
 
+.hero-logo-title {
+  transition: transform 0.3s ease;
+}
+
 .hero-title {
     display: flex;
     justify-content: center;
     align-items: center;
     margin-top: -200px;
-    transition: transform 0.3s ease;
     position: relative;
     z-index: 2;
 
     &:hover {
-      transform: scale(1.05);
+      transform: scale(1.03);
     }
 
     img {
@@ -527,11 +535,37 @@ const Hero = styled.section`
   }
 
   .hero-title:hover {
+
     .hero-title-white {
       opacity: 0;
     }
+    
     .hero-title-black {
       opacity: 1;
+    }
+
+  }
+
+  .awesome-link {
+    display: inline-flex;
+    align-items: center;
+    background-color: #24292e;
+    color: white;
+    padding: 10px 15px;
+    border-radius: 5px;
+    text-decoration: none;
+    font-size: 20px;
+    transition: background-color 0.3s ease;
+    margin-top: 20px;
+    margin-right: 20px;
+    opacity: 0.8;
+
+    &:hover {
+      background-color: #2f363d;
+    }
+
+    i {
+      margin-right: 8px;
     }
   }
 
@@ -567,10 +601,6 @@ const Hero = styled.section`
       position: relative;
       z-index: 2;
       transition: transform 0.3s ease;
-
-      &:hover {
-        transform: scale(1.05);
-      }
 
       img {
         width: 100%;
@@ -638,23 +668,29 @@ const AudioPlayer = styled.div`
   position: fixed;
   top: 50%;
   right: 20px;
+  transform: translateY(-50%);
   z-index: 1000;
   display: flex;
+  flex-direction: column;
   align-items: center;
   background: rgba(255, 255, 255, 0.2);
   backdrop-filter: blur(10px);
-  padding: 10px;
+  padding: 15px 10px;
   border-radius: 10px;
-  width: 120px;
+  height: 150px;
+  width: 50px;
 
   @media screen and (min-width: 700px) and (max-width: 1200px) {
-    top: 70%;
+    top: 80%;
+    transform: translateY(-70%);
   }
   @media screen and (max-width: 699px) {
-    top: 90%;
-    right: 38%;
+    top: auto;
+    bottom: 20px;
+    left: 50%;
+    right: auto;
+    transform: translateX(-50%);
   }
-  
 
   button {
     background: none;
@@ -662,12 +698,25 @@ const AudioPlayer = styled.div`
     color: white;
     font-size: 16px;
     width: 20px;
+    height: 20px;
     cursor: pointer;
-    margin-right: 10px;
+    margin-bottom: 10px;
+    display: flex;
+    justify-content: center;
+    align-items: center;
   }
 
+  .volume-control-wrapper {
+    height: 100px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+  }
+
+
   .volume-control {
-    width: 70px;
+    width: 80px;
+    transform: rotate(-90deg);
   }
 `;
 
@@ -824,10 +873,10 @@ export default function Home() {
     <Page>
       <Header>
         <StickyNav className="sticky-nav d-flex justify-content-between mt-10">
-          <div className="logo" style={{ opacity: 0.65}} onClick={() => router.push('/')} >                    
+          <div className="logo" style={{ opacity: 0.65, cursor: 'pointer' }} onClick={() => router.push('/')} >                    
             <img src={swapgoTrans} width={120} alt="swapgo logo navbar"></img>
           </div>
-          <div id="nav-btn" className="menu box bg-blend-luminosity">
+          <div id="nav-btn" className="menu box bg-blend-luminosity" style={{ cursor: 'pointer'}}>
             <svg id="i1" className="icon" viewBox="20 30 60 40">
               <path id="top-line-1" d="M30,37 L70,37 Z"></path>
               <path id="middle-line-1" d="M30,50 L70,50 Z"></path>
@@ -872,43 +921,55 @@ export default function Home() {
         </div>
         <div className="position-absolute w-100 gradient-overlay"></div>
         <div className="logo-background"></div>
-        <div className="content position-relative text-center ">
-          <div className="hero-title blend flex justify-center" onClick={() => router.push('/SWAPGO/start')}>
-            <div className="hero-title-white flex-col align-items-center justify-center">
-              <img src={swapgoBg} alt="SwapGo" />
-              <div className="flex justify-center mt-[-150px]">
-                <img src={blackIgo} alt="Black Igo" style={{ width: 100, height: 100 }} />
-                <img src={whiteIgo} alt="White Igo" style={{ width: 100, height: 100 }}/>
+        <div className="content position-relative text-center">
+          <div className="hero-title blend flex-col justify-center" >
+              <div className="hero-title-white flex-col align-items-center justify-center cursor-pointer" >
+                <img className="hero-logo-title" src={swapgoBg} alt="SwapGo" onClick={() => router.push('/SWAPGO/start')} />
+                <div className="flex justify-center mt-[-150px]">
+                  <img src={blackIgo} alt="Black Igo" style={{ width: 100, height: 100 }} />
+                  <img src={whiteIgo} alt="White Igo" style={{ width: 100, height: 100 }}/>
+                </div>
               </div>
-            </div>
-            <div className="hero-title-black flex-col align-items-center justify-center">
-              <img src={swapgoBgBlack} alt="SwapGo" />
-              <div className="flex justify-center mt-[-60px] md:mt-[-110px] lg:mt-[-150px] ">
-                <img src={blackIgo} alt="Black Igo" style={{ width: 100, height: 100 }} />
-                <img src={whiteIgo} alt="White Igo" style={{ width: 100, height: 100 }}/>
+              <div className="hero-title-black flex-col align-items-center justify-center cursor-pointer">
+                <img className="hero-logo-title" src={swapgoBgBlack} alt="SwapGo" onClick={() => router.push('/SWAPGO/start')}/>
+                <div className="flex justify-center mt-[-60px] md:mt-[-110px] lg:mt-[-150px]">
+                  <img src={blackIgo} alt="Black Igo" style={{ width: 100, height: 100 }} />
+                  <img src={whiteIgo} alt="White Igo" style={{ width: 100, height: 100 }}/>
+                </div>
               </div>
+            <div className="flex ml-6 mt-[200px]">
+              <a href="https://github.com/yosgo-opensource/swapgo" target="_blank" rel="noopener noreferrer" className="awesome-link">
+                  <FontAwesomeIcon icon={faGithub} />
+                </a>
+                <a href="https://www.youtube.com/watch?v=on3ye7jCcRg" target="_blank" rel="noopener noreferrer" className="awesome-link">
+                  <FontAwesomeIcon icon={faYoutube} />
+              </a>
             </div>
           </div>
+          <h1> SwapGo </h1>
+          <h3>Every game of SwapGo is a journey through time; each move,
+            a pivotal moment in history rewritten.</h3>
         </div>
       </Hero>
       <audio ref={audioRef} loop preload="auto">
         <source src={oceanSound} type="audio/mpeg" />
       </audio>
         <AudioPlayer>
-          <div className="flex">
+  
             <button onClick={togglePlay}>
               {isPlaying ? '⏸' : '▶'}
             </button>
-            <input
-              type="range"
-              min="0"
-              max="1"
-              step="0.1"
-              value={volume}
-              onChange={handleVolumeChange}
-              className="volume-control"
-            />
-          </div>
+            <div className="volume-control-wrapper">
+              <input
+                type="range"
+                min="0"
+                max="1"
+                step="0.1"
+                value={volume}
+                onChange={handleVolumeChange}
+                className="volume-control"
+              />
+            </div>
         </AudioPlayer>
       <CustomCursor className="custom-cursor"></CustomCursor>
     </Page>

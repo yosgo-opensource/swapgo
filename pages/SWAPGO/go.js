@@ -135,6 +135,7 @@ const GO = () => {
     //API request
     const fetchAI = async () => {
       try {
+        setAIThinking(true);
         setAIReplyCountDown(90);
         let _newScreenWriting;
         const screenWritingTemplate = `這是一場圍棋比賽，而你的任務就是轉譯，把棋盤上的局勢描述成歷史上的戰役
@@ -225,6 +226,7 @@ imgPrompt: 搭配劇情的生成圖片提示詞，請你搭配使用此基本風
               ..._newScreenWriting,
               img,
             };
+            setScreenWriting([...screenWriting, _newScreenWriting]);
           })
           .catch((err) => {
             _newScreenWriting = {
@@ -232,10 +234,6 @@ imgPrompt: 搭配劇情的生成圖片提示詞，請你搭配使用此基本風
               img: battle.img,
             };
             console.log("> ImageGenerating error", err);
-          })
-          .finally(() => {
-            //Update Narratives
-            setScreenWriting([...screenWriting, _newScreenWriting]);
           });
 
         //Get AI board response
@@ -270,18 +268,43 @@ imgPrompt: 搭配劇情的生成圖片提示詞，請你搭配使用此基本風
               next_move_number_format,
               next_move_text_format,
             };
+
+            // Get AI response，update board & judge win/lose
+            if (ana?.next_move_number_format && !ana?.pass) {
+              console.log("> ana", ana);
+              const x = ana.next_move_number_format[0];
+              const y = ana.next_move_number_format[1];
+              const intersection = document.querySelector(
+                `.intersection[data-intersection-x="${x}"][data-intersection-y="${y}"]`
+              );
+              if (intersection) {
+                const event = new MouseEvent("click", {
+                  bubbles: true,
+                  cancelable: true,
+                  view: window,
+                });
+                intersection.dispatchEvent(event);
+              } else {
+                alert(`沒有找到坐標為 (${x}, ${y}) 的交叉點元素`);
+                console.error(`沒有找到坐標為 (${x}, ${y}) 的交叉點元素`);
+              }
+            } else if (ana && ana?.pass) {
+              //AI judge end game
+              setEndGameModalOpen(true);
+            }
+
+            // Update State
             setAiResponse(ana);
+            setAIThinking(false);
+            setAIReplyCountDown(0);
           })
           .catch((err) => {
             alert("KataGo error");
             console.log("> fetchAI error", err);
-          })
-          .finally(() => {
-            //AI stop generating
-            setAIThinking(false);
-            setAIReplyCountDown(0);
           });
       } catch (err) {
+        setAIThinking(false);
+        setAIReplyCountDown(0);
         console.log("> fetchAI error", err);
       }
     };
@@ -311,34 +334,6 @@ imgPrompt: 搭配劇情的生成圖片提示詞，請你搭配使用此基本風
       }
     })();
   }, [moves, parsed]);
-  // Get AI response，update board & judge win/lose
-  useEffect(() => {
-    if (
-      aiResponse &&
-      aiResponse?.next_move_number_format &&
-      !aiResponse?.pass
-    ) {
-      console.log("> aiResponse", aiResponse);
-      const x = aiResponse.next_move_number_format[0];
-      const y = aiResponse.next_move_number_format[1];
-      const intersection = document.querySelector(
-        `.intersection[data-intersection-x="${x}"][data-intersection-y="${y}"]`
-      );
-      if (intersection) {
-        const event = new MouseEvent("click", {
-          bubbles: true,
-          cancelable: true,
-          view: window,
-        });
-        intersection.dispatchEvent(event);
-      } else {
-        console.error(`沒有找到坐標為 (${x}, ${y}) 的交叉點元素`);
-      }
-    } else if (aiResponse && aiResponse?.pass) {
-      //AI judge end game
-      setEndGameModalOpen(true);
-    }
-  }, [aiResponse]);
 
   // AI respond anticipated countdown
   useEffect(() => {
