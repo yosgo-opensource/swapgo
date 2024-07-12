@@ -647,6 +647,15 @@ const AudioPlayer = styled.div`
   border-radius: 10px;
   width: 120px;
 
+  @media screen and (min-width: 700px) and (max-width: 1200px) {
+    top: 70%;
+  }
+  @media screen and (max-width: 699px) {
+    top: 90%;
+    right: 38%;
+  }
+  
+
   button {
     background: none;
     border: none;
@@ -828,7 +837,7 @@ export default function Home() {
         </StickyNav>
         <TakeoverNav id="takeover-nav">
           <div className="container-fluid h-full flex">
-            <div className="nav-col nav-contact w-1/4 bg-black flex flex-col justify-center items-center relative py-5 px-3">
+            <div className="nav-col nav-contact w-full md:w-1/2 lg:w-1/4 bg-black flex flex-col justify-center items-center relative py-5 px-3">
               <div className="absolute w-full h-full bg-topographic"></div>
               <div className="relative mt-36 ml-5">
                 <div className="nav-title white mb-5" onClick={() => router.push('/SWAPGO/start')}>
@@ -865,15 +874,19 @@ export default function Home() {
         <div className="logo-background"></div>
         <div className="content position-relative text-center ">
           <div className="hero-title blend flex justify-center" onClick={() => router.push('/SWAPGO/start')}>
-            <div className="hero-title-white flex align-items-center justify-center">
-              <img src={blackIgo} alt="Black Igo" style={{ marginTop: 150, width: 100, height: 100 }} />
+            <div className="hero-title-white flex-col align-items-center justify-center">
               <img src={swapgoBg} alt="SwapGo" />
-              <img src={whiteIgo} alt="White Igo" style={{ marginTop: 300, width: 100, height: 100 }}/>
+              <div className="flex justify-center mt-[-150px]">
+                <img src={blackIgo} alt="Black Igo" style={{ width: 100, height: 100 }} />
+                <img src={whiteIgo} alt="White Igo" style={{ width: 100, height: 100 }}/>
+              </div>
             </div>
-            <div className="hero-title-black flex">
-              <img src={whiteIgo} alt="White Igo" style={{ marginTop: 300, width: 100, height: 100 }}/>
+            <div className="hero-title-black flex-col align-items-center justify-center">
               <img src={swapgoBgBlack} alt="SwapGo" />
-              <img src={blackIgo} alt="Black Igo" style={{ marginTop: 300, width: 100, height: 100 }} />
+              <div className="flex justify-center mt-[-60px] md:mt-[-110px] lg:mt-[-150px] ">
+                <img src={blackIgo} alt="Black Igo" style={{ width: 100, height: 100 }} />
+                <img src={whiteIgo} alt="White Igo" style={{ width: 100, height: 100 }}/>
+              </div>
             </div>
           </div>
         </div>
@@ -881,20 +894,22 @@ export default function Home() {
       <audio ref={audioRef} loop preload="auto">
         <source src={oceanSound} type="audio/mpeg" />
       </audio>
-      <AudioPlayer>
-        <button onClick={togglePlay}>
-          {isPlaying ? '⏸' : '▶'}
-        </button>
-        <input
-          type="range"
-          min="0"
-          max="1"
-          step="0.1"
-          value={volume}
-          onChange={handleVolumeChange}
-          className="volume-control"
-        />
-      </AudioPlayer>
+        <AudioPlayer>
+          <div className="flex">
+            <button onClick={togglePlay}>
+              {isPlaying ? '⏸' : '▶'}
+            </button>
+            <input
+              type="range"
+              min="0"
+              max="1"
+              step="0.1"
+              value={volume}
+              onChange={handleVolumeChange}
+              className="volume-control"
+            />
+          </div>
+        </AudioPlayer>
       <CustomCursor className="custom-cursor"></CustomCursor>
     </Page>
   );
