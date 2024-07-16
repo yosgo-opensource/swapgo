@@ -721,9 +721,16 @@ const AudioPlayer = styled.div`
   @media screen and (max-width: 699px) {
     top: auto;
     bottom: 30px;
-    right: 0;
+    right: 20px;
     left: auto;
-    transform: translateX(-50%);
+    /* transform: translateX(-50%); */
+    transform: none;
+    height: 100px;
+    width: 40px;
+    padding: 0;
+    padding-top: 5px;
+    backdrop-filter: blur(0px);
+    opacity: 0.5;
   }
 
   button {
@@ -734,7 +741,7 @@ const AudioPlayer = styled.div`
     width: 20px;
     height: 20px;
     cursor: pointer;
-    margin-bottom: 10px;
+    /* margin-bottom: 10px; */
     display: flex;
     justify-content: center;
     align-items: center;
@@ -745,11 +752,19 @@ const AudioPlayer = styled.div`
     display: flex;
     align-items: center;
     justify-content: center;
+
+    @media screen and (max-width: 699px) {
+       height: 50px;
+    }
   }
 
   .volume-control {
     width: 80px;
     transform: rotate(-90deg);
+
+    @media screen and (max-width: 699px) {
+      width: 50px;
+    }
   }
 `;
 
