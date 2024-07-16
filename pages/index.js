@@ -768,15 +768,6 @@ const AudioPlayer = styled.div`
   }
 `;
 
-const VideoOverlay = styled.div`
-  position: absolute;
-  top: 0;
-  left: 0;
-  width: 100%;
-  height: 100%;
-  z-index: 2;
-`;
-
 function useWindowWidth() {
   const [width, setWidth] = useState(typeof window !== 'undefined' ? window.innerWidth : 0);
   
@@ -891,6 +882,8 @@ export default function Home() {
   const [isVideoPlaying, setIsVideoPlaying] = useState(false);
   const videoRef = useRef(null);
 
+  const [showPlayButton, setShowPlayButton] = useState(false);
+
   const handleVideoPlay = () => {
     if (videoRef.current) {
       if (isVideoPlaying) {
@@ -904,16 +897,29 @@ export default function Home() {
 
   useEffect(() => {
     const video = videoRef.current;
+
     if (video) {
-      video.addEventListener('play', () => setIsVideoPlaying(true));
-      video.addEventListener('pause', () => setIsVideoPlaying(false));
+      const playVideo = () => {
+        video.play().catch(error => {
+          console.log("Video autoplay was prevented:", error);
+          setShowPlayButton(true);
+        });
+      };
+  
+      playVideo();
+  
+      const handleVisibilityChange = () => {
+        if (!document.hidden) {
+          playVideo();
+        }
+      };
+  
+      document.addEventListener("visibilitychange", handleVisibilityChange);
+  
+      return () => {
+        document.removeEventListener("visibilitychange", handleVisibilityChange);
+      };
     }
-    return () => {
-      if (video) {
-        video.removeEventListener('play', () => setIsVideoPlaying(true));
-        video.removeEventListener('pause', () => setIsVideoPlaying(false));
-      }
-    };
   }, []);
 
   useEffect(() => {
@@ -1017,6 +1023,31 @@ export default function Home() {
           <div className="logo" style={{ opacity: 0.65, cursor: 'pointer' }} onClick={() => router.push('/')} >                    
             <img src={swapgoTrans} width={120} alt="swapgo logo navbar"></img>
           </div>
+          {showPlayButton && (
+          <button 
+            onClick={() => {
+              videoRef.current.play();
+              setShowPlayButton(false);
+            }}
+            style={{
+              position: 'absolute',
+              top: '50%',
+              left: '50%',
+              transform: 'translate(-50%, -50%)',
+              zIndex: 3,
+              background: 'rgba(0,0,0,0.5)',
+              color: 'white',
+              border: 'none',
+              borderRadius: '50%',
+              width: '60px',
+              height: '60px',
+              fontSize: '24px',
+              cursor: 'pointer'
+            }}
+          >
+            ▶
+          </button>
+        )}
           <div id="nav-btn" className="menu box bg-blend-luminosity" style={{ cursor: 'pointer'}}>
             <svg id="i1" className="icon" viewBox="20 30 60 40">
               <path id="top-line-1" d="M30,37 L70,37 Z"></path>
@@ -1092,7 +1123,6 @@ export default function Home() {
             <source src="https://tactusmarketing.com/wp-content/uploads/tactus-waves-hero.mp4" 
                     type="video/mp4" />
           </video>
-          <VideoOverlay onClick={handleVideoPlay} />
         </div>
         
         <div className="position-absolute w-100 gradient-overlay"></div>
