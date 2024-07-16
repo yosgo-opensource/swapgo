@@ -1,5 +1,5 @@
 import React, { useState, useEffect, useRef } from 'react';
-import styled from 'styled-components';
+import styled,  { createGlobalStyle } from 'styled-components';
 import { useRouter } from 'next/router';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 import { faGithub, faYoutube } from '@fortawesome/free-brands-svg-icons';
@@ -19,6 +19,14 @@ const PauseIcon = () => (
     <path d="M6 4H10V20H6V4ZM14 4H18V20H14V4Z" fill="currentColor"/>
   </svg>
 );
+
+const GlobalStyle = createGlobalStyle`
+  @media (max-width: 768px) {
+    video::-webkit-media-controls {
+      display: none !important;
+    }
+  }
+`;
 
 const Page = styled.div`
   * {
@@ -56,7 +64,7 @@ const Page = styled.div`
   }
   .nav-title {
     position: relative;
-    width: 250px;
+    width: 200px;
     height: 250px;
     background-image: url(${swapgo});
     background-size: contain;
@@ -739,11 +747,19 @@ const AudioPlayer = styled.div`
     justify-content: center;
   }
 
-
   .volume-control {
     width: 80px;
     transform: rotate(-90deg);
   }
+`;
+
+const VideoOverlay = styled.div`
+  position: absolute;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+  z-index: 2;
 `;
 
 function useWindowWidth() {
@@ -857,6 +873,34 @@ export default function Home() {
   const [firstLoaded, setFirstLoaded] = useState(false);
   const audioRef = useRef(null);
 
+  const [isVideoPlaying, setIsVideoPlaying] = useState(false);
+  const videoRef = useRef(null);
+
+  const handleVideoPlay = () => {
+    if (videoRef.current) {
+      if (isVideoPlaying) {
+        videoRef.current.pause();
+      } else {
+        videoRef.current.play();
+      }
+      setIsVideoPlaying(!isVideoPlaying);
+    }
+  };
+
+  useEffect(() => {
+    const video = videoRef.current;
+    if (video) {
+      video.addEventListener('play', () => setIsVideoPlaying(true));
+      video.addEventListener('pause', () => setIsVideoPlaying(false));
+    }
+    return () => {
+      if (video) {
+        video.removeEventListener('play', () => setIsVideoPlaying(true));
+        video.removeEventListener('pause', () => setIsVideoPlaying(false));
+      }
+    };
+  }, []);
+
   useEffect(() => {
 
     const audio = audioRef.current;
@@ -950,6 +994,8 @@ export default function Home() {
   const chessMargin = windowWidth <= 768 ? -50 : -110;
 
   return (
+    <>
+    <GlobalStyle />
     <Page>
       <Header>
         <StickyNav className="sticky-nav d-flex justify-content-between mt-10">
@@ -967,9 +1013,9 @@ export default function Home() {
         <TakeoverNav id="takeover-nav">
           <div className="container-fluid h-full flex">
             <div className="nav-col nav-contact w-full md:w-1/2 lg:w-1/4 bg-black 
-                          flex flex-col justify-center items-center relative py-5 px-3">
+                          flex flex-col justify-start items-center relative py-5 px-3">
             <div className="absolute w-full h-full bg-topographic"></div>
-            <div className="relative mt-36 ml-5 mb-10" style={{ display: 'flex', flexDirection : 'column', alignItems : 'center' }}>
+            <div className="relative mt-36 lg:mt-[250px] ml-5 mb-10" style={{ display: 'flex', flexDirection : 'column', alignItems : 'center' }}>
               <div className="nav-title white" onClick={() => router.push('/SWAPGO/start')}></div>
               <div className="font-playwrite font-hairline text-center mb-4" style={{ fontSize: titleWidth, color: 'white'}}> SwapGo </div>
               <div className="font-playwrite font-light text-center" style={{ color: 'white', fontSize: subtitleWidth }}>Every game of SwapGo is a journey through time<br></br><div className="mt-3">Each move,
@@ -1026,10 +1072,12 @@ export default function Home() {
       </Header>
       <Hero className="hero d-flex justify-content-center">
         <div className="video-wrap">
-          <video autoPlay playsInline loop muted id="video-bg">
+          <video autoPlay playsInline loop muted id="video-bg"
+          style={{ objectFit: 'cover', width: '100%', height: '100%' }}>
             <source src="https://tactusmarketing.com/wp-content/uploads/tactus-waves-hero.mp4" 
                     type="video/mp4" />
           </video>
+          <VideoOverlay onClick={handleVideoPlay} />
         </div>
         
         <div className="position-absolute w-100 gradient-overlay"></div>
@@ -1097,6 +1145,7 @@ export default function Home() {
         </AudioPlayer>
       <CustomCursor className="custom-cursor"></CustomCursor>
     </Page>
+    </>
   );
 }
 
