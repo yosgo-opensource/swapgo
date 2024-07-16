@@ -14,6 +14,12 @@ const oceanSound = '/ocean-waves-112906.mp3';
 const blackIgo = 'swapgo/black.png';
 const whiteIgo = 'swapgo/white.png';
 
+const PauseIcon = () => (
+  <svg width="18" height="17" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
+    <path d="M6 4H10V20H6V4ZM14 4H18V20H14V4Z" fill="currentColor"/>
+  </svg>
+);
+
 const Page = styled.div`
   * {
     /* cursor: pointer; */
@@ -1011,7 +1017,7 @@ export default function Home() {
         <AudioPlayer>
   
             <button onClick={togglePlay}>
-              {isPlaying ? '⏸' : '▶'}
+              {isPlaying ? <PauseIcon /> : '▶'}
             </button>
             <div className="volume-control-wrapper">
               <input
