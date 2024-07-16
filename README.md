@@ -36,7 +36,7 @@ As the game progresses, AI generates real-time story scenes and character dialog
 
 ## Project Background
 
-SwapGo is a participating project in the ["Build with Claude June 2024 contest"](https://docs.anthropic.com/en/build-with-claude-contest/overview). In an era where AI Go programs have surpassed human abilities, we consider how to use AI technology to create new possibilities for the field of Go.
+SwapGo is a participating project in the [&#34;Build with Claude June 2024 contest&#34;](https://docs.anthropic.com/en/build-with-claude-contest/overview). In an era where AI Go programs have surpassed human abilities, we consider how to use AI technology to create new possibilities for the field of Go.
 
 Our inspiration comes from the essence of Go—military simulation. SwapGo uses AI to simulate war scenarios, allowing players to experience the depth of strategy and tactics while playing. Through this innovative approach, we hope not only to enrich the Go gaming experience but also to help people understand the complexity of war more deeply, thereby promoting the idea of peace.
 
@@ -76,9 +76,7 @@ To ensure the best experience, we recommend running SwapGo locally. Please follo
 ### KataGo AI Setup
 
 1. **KataGo Executable**: Download the appropriate version for your operating system from [KataGo Binary](https://github.com/lightvector/KataGo/releases).
-  
-2. **Model Parameter File**: Download the v1.4.0 model parameter file from [KataGo Neural Nets](https://github.com/lightvector/KataGo/releases/tag/v1.4.0). 
-  
+2. **Model Parameter File**: Download the v1.4.0 model parameter file from [KataGo Neural Nets](https://github.com/lightvector/KataGo/releases/tag/v1.4.0).
 3. **Python Main File** (`ana.py`):
    Modify line 34 to match your local file locations:
 
@@ -92,9 +90,7 @@ To ensure the best experience, we recommend running SwapGo locally. Please follo
    ```
 
    Replace `./katago`, `./ana.cfg`, and `./g170e-b20c256x2-s5303129600-d1228401921.bin.gz` with the correct paths on your system.
-
 4. **KataGo Configuration File** (`ana.cfg`)
-
 5. **API Server** (`give.js`)
 
 Place all files in the same directory.
@@ -154,6 +150,8 @@ Ensure this change is made to connect the client to your local KataGo AI server.
 ## Contribution
 
 We welcome community contributions! If you have any ideas for improvements or find any bugs, please don't hesitate to submit an issue or pull request.
+
+👉 swap@yosgo.com
 
 <br>
 <img src="public/logo/swapgo.png" alt="swapgo logo in white" width="200"/>

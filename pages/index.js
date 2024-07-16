@@ -837,25 +837,37 @@ export default function Home() {
 
   const router = useRouter();
 
-  const [isPlaying, setIsPlaying] = useState(true);
+  const [isPlaying, setIsPlaying] = useState(false);
   const [volume, setVolume] = useState(0.2);
+  const [firstLoaded, setFirstLoaded] = useState(false);
   const audioRef = useRef(null);
 
   useEffect(() => {
+
+    const audio = audioRef.current;
+    
     const playAudio = () => {
-      if (audioRef.current) {
-        audioRef.current.play().catch(error => {
+      if (audio && !isPlaying) {
+        audio.play().then(() => {
+          setIsPlaying(true);
+          console.log('first playing');
+          console.log(isPlaying);
+        }).catch(error => {
           console.log("Audio autoplay was prevented:", error);
           setIsPlaying(false);
+          console.log('cannot playing');
+          console.log(isPlaying);
         });
       }
     };
 
-    playAudio();
+    // playAudio();
 
     const handleInteraction = () => {
-      playAudio();
-      document.removeEventListener('click', handleInteraction);
+      if (!isPlaying && !firstLoaded) {
+        playAudio();
+        setFirstLoaded(true); 
+      }
     };
 
     document.addEventListener('click', handleInteraction);
@@ -863,7 +875,30 @@ export default function Home() {
     return () => {
       document.removeEventListener('click', handleInteraction);
     };
-  }, []);
+  }, [isPlaying, firstLoaded]);
+
+
+  const togglePlay = () => {
+    const audio = audioRef.current;
+
+    if (audio) {
+      if (isPlaying) {
+        console.log('pause')
+        audio.pause();
+        setIsPlaying(false);
+        console.log(isPlaying);
+      } else {
+        audio.play().then(() => {
+          console.log('play')
+          setIsPlaying(true); 
+          console.log(isPlaying);
+        }).catch(error => {
+          console.log("Audio play was prevented:", error);
+          setIsPlaying(false);
+        });
+      }
+    }
+  };
 
   useEffect(() => {
     if (audioRef.current) {
@@ -885,10 +920,6 @@ export default function Home() {
       }
     }
   }, [isPlaying, volume]);
-
-  const togglePlay = () => {
-    setIsPlaying(!isPlaying);
-  };
 
   const handleVolumeChange = (e) => {
     const newVolume = parseFloat(e.target.value);
@@ -943,7 +974,7 @@ export default function Home() {
                   <a className="text-decoration-none" href="#">Every game of SwapGo is a journey through time; each move,
                 a pivotal moment in history rewritten.</a>
                 </li> */}
-                <li className="">
+                <li>
                   <a className="text-decoration-none" style={{ fontSize: 14 }}>swap@yosgo.com</a>
                 </li>
                 <li>
@@ -977,9 +1008,12 @@ export default function Home() {
                     type="video/mp4" />
           </video>
         </div>
+        
         <div className="position-absolute w-100 gradient-overlay"></div>
         <div className="logo-background"></div>
-        <div className="content position-relative text-center" style={{ backgroundColor: 'black' }}>
+
+        <div className="content position-relative text-center" 
+            style={{ backgroundColor: 'black' }}>
         <div className="hero-title blend flex-col justify-center" >
         <div className="hero-title-white flex-col align-items-center justify-center cursor-pointer" >
           <img style={{ width: 450 }} className="hero-logo-title" src={swapgoBg} alt="SwapGo" onClick={() => router.push('/SWAPGO/start')} />
@@ -997,16 +1031,22 @@ export default function Home() {
         </div>
         <div className="relative mt-3" style={{ display: 'flex', flexDirection : 'column', alignItems : 'center' }}>
           <div className="font-playwrite font-hairline text-center mb-6 opacity-95" style={{ fontSize: 40, color: 'white'}}> SwapGo </div>
-          <div className="font-playwrite font-light text-center opacity-90" style={{ color: 'white', fontSize: 16 }}>Every game of SwapGo is a journey through time<br></br><div className="mt-3">Each move,
-            a pivotal moment in history Rewritten</div></div>
+          <div className="font-playwrite font-light text-center opacity-90" style={{ color: 'white', fontSize: 16 }}>Every game of SwapGo is a journey through time<br></br>
+            <div className="mt-3">Each move,
+              a pivotal moment in history Rewritten
+            </div>
+          </div>
         </div>
-        <div className="flex justify-center mt-2">
-          <a href="https://github.com/yosgo-opensource/swapgo" target="_blank" rel="noopener noreferrer" className="awesome-link">
-            <FontAwesomeIcon icon={faGithub} />
-          </a>
-          <a href="https://www.youtube.com/watch?v=on3ye7jCcRg" target="_blank" rel="noopener noreferrer" className="awesome-link">
-            <FontAwesomeIcon icon={faYoutube} />
-          </a>
+        <div className="flex-col justify-center items-center">
+          <div className="flex justify-center ml-[20px]">
+            <a href="https://github.com/yosgo-opensource/swapgo" target="_blank" rel="noopener noreferrer" className="awesome-link">
+              <FontAwesomeIcon icon={faGithub} />
+            </a>
+            <a href="https://www.youtube.com/watch?v=on3ye7jCcRg" target="_blank" rel="noopener noreferrer" className="awesome-link">
+              <FontAwesomeIcon icon={faYoutube} />
+            </a>
+          </div>
+          <div className="mt-[-125px]"><a className="text-decoration-none" style={{ fontSize: 14, fontWeight: 400, opacity: 0.5 }}>swap@yosgo.com</a></div>
         </div>
       </div>
       </div>
@@ -1016,7 +1056,7 @@ export default function Home() {
       </audio>
         <AudioPlayer>
   
-            <button onClick={togglePlay}>
+            <button style={{ height: 30 }} onClick={togglePlay}>
               {isPlaying ? <PauseIcon /> : '▶'}
             </button>
             <div className="volume-control-wrapper">
