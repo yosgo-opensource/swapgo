@@ -546,7 +546,7 @@ const Hero = styled.section`
 
   .hero-title-black {
     position: absolute;
-    top: 33%;
+    top: 25%;
     left: 50%;
     transform: translate(-50%, -50%); 
     opacity: 0;
@@ -712,9 +712,9 @@ const AudioPlayer = styled.div`
   }
   @media screen and (max-width: 699px) {
     top: auto;
-    bottom: 20px;
-    left: 50%;
-    right: auto;
+    bottom: 30px;
+    right: 0;
+    left: auto;
     transform: translateX(-50%);
   }
 
@@ -745,6 +745,21 @@ const AudioPlayer = styled.div`
     transform: rotate(-90deg);
   }
 `;
+
+function useWindowWidth() {
+  const [width, setWidth] = useState(typeof window !== 'undefined' ? window.innerWidth : 0);
+  
+  useEffect(() => {
+    function handleResize() {
+      setWidth(window.innerWidth);
+    }
+    
+    window.addEventListener('resize', handleResize);
+    return () => window.removeEventListener('resize', handleResize);
+  }, []);
+
+  return width;
+}
 
 const useCustomCursor = () => {
   useEffect(() => {
@@ -926,6 +941,14 @@ export default function Home() {
     setVolume(newVolume);
   };
 
+  const windowWidth = useWindowWidth();
+
+  const logoWidth = windowWidth <= 768 ? 300 : 450;
+  const titleWidth = windowWidth <= 768 ? 20 : 40;
+  const subtitleWidth = windowWidth <= 768 ? 12 : 16;
+  const iconWidth = windowWidth <= 768 ? 20 : 30;
+  const chessMargin = windowWidth <= 768 ? -50 : -110;
+
   return (
     <Page>
       <Header>
@@ -948,18 +971,18 @@ export default function Home() {
             <div className="absolute w-full h-full bg-topographic"></div>
             <div className="relative mt-36 ml-5 mb-10" style={{ display: 'flex', flexDirection : 'column', alignItems : 'center' }}>
               <div className="nav-title white" onClick={() => router.push('/SWAPGO/start')}></div>
-              <div className="font-playwrite font-hairline text-center mb-4" style={{ fontSize: 40, color: 'white'}}> SwapGo </div>
-              <div className="font-playwrite font-light text-center" style={{ color: 'white', fontSize: 16 }}>Every game of SwapGo is a journey through time<br></br><div className="mt-3">Each move,
+              <div className="font-playwrite font-hairline text-center mb-4" style={{ fontSize: titleWidth, color: 'white'}}> SwapGo </div>
+              <div className="font-playwrite font-light text-center" style={{ color: 'white', fontSize: subtitleWidth }}>Every game of SwapGo is a journey through time<br></br><div className="mt-3">Each move,
                 a pivotal moment in history Rewritten</div></div>
             </div>
             <div className="social flex align-items-center">
               <a href="https://github.com/yosgo-opensource/swapgo" target="_blank" rel="noopener noreferrer" className="awesome-link"
-                style={{ fontSize: 30 }}>
+                style={{ fontSize: iconWidth }}>
                   <FontAwesomeIcon icon={faGithub} />
               </a>
               <span className="mt-1 mx-5 white" style={{ fontSize: 20, opacity: 0.8, color:"#00BCD4" }}>|</span>
               <a href="https://www.youtube.com/watch?v=on3ye7jCcRg" target="_blank" rel="noopener noreferrer" className="awesome-link"
-                  style={{ fontSize: 30 }}>
+                  style={{ fontSize: iconWidth }}>
                 <FontAwesomeIcon icon={faYoutube} />
               </a>
               {/* <a className="text-decoration-none green" href="#">linkedin</a> */}
@@ -1015,21 +1038,23 @@ export default function Home() {
         <div className="content position-relative text-center" 
             style={{ backgroundColor: 'black' }}>
         <div className="hero-title blend flex-col justify-center" >
-        <div className="hero-title-white flex-col align-items-center justify-center cursor-pointer" >
-          <img style={{ width: 450 }} className="hero-logo-title" src={swapgoBg} alt="SwapGo" onClick={() => router.push('/SWAPGO/start')} />
+        <div className="hero-title-white flex-col align-items-center justify-center cursor-pointer" 
+            onClick={() => router.push('/SWAPGO/start')} >
+          <img style={{ width: logoWidth }} className="hero-logo-title" src={swapgoBg} alt="SwapGo"/>
           <div className="flex justify-center">
-            <img src={blackIgo} alt="Black Igo" style={{ marginTop: -110, width: 100, height: 100 }} />
-            <img src={whiteIgo} alt="White Igo" style={{  marginTop: -110, width: 100, height: 100 }}/>
+            <img src={blackIgo} alt="Black Igo" style={{ marginTop: chessMargin, width: 100, height: 100 }}/>
+            <img src={whiteIgo} alt="White Igo" style={{  marginTop: chessMargin, width: 100, height: 100 }}/>
           </div>
         </div>
-        <div className="hero-title-black flex-col align-items-center justify-center cursor-pointer">
-          <img style={{ width: 450 }} className="hero-logo-title" src={swapgoBgBlack} alt="SwapGo" onClick={() => router.push('/SWAPGO/start')}/>
+        <div className="hero-title-black flex-col align-items-center justify-center cursor-pointer"
+          onClick={() => router.push('/SWAPGO/start')} >
+          <img style={{ width: logoWidth }} className="hero-logo-title" src={swapgoBgBlack} alt="SwapGo-hover" />
           <div className="flex justify-center">
-            <img src={blackIgo} alt="Black Igo" style={{ marginTop: -110, width: 100, height: 100 }} />
-            <img src={whiteIgo} alt="White Igo" style={{ marginTop: -110, width: 100, height: 100 }}/>
+            <img src={blackIgo} alt="Black Igo" style={{ marginTop: chessMargin, width: 100, height: 100 }} />
+            <img src={whiteIgo} alt="White Igo" style={{ marginTop: chessMargin, width: 100, height: 100 }}/>
           </div>
         </div>
-        <div className="relative mt-3" style={{ display: 'flex', flexDirection : 'column', alignItems : 'center' }}>
+        <div className="relative" style={{ display: 'flex', flexDirection : 'column', alignItems : 'center' }}>
           <div className="font-playwrite font-hairline text-center mb-6 opacity-95" style={{ fontSize: 40, color: 'white'}}> SwapGo </div>
           <div className="font-playwrite font-light text-center opacity-90" style={{ color: 'white', fontSize: 16 }}>Every game of SwapGo is a journey through time<br></br>
             <div className="mt-3">Each move,
@@ -1046,7 +1071,7 @@ export default function Home() {
               <FontAwesomeIcon icon={faYoutube} />
             </a>
           </div>
-          <div className="mt-[-125px]"><a className="text-decoration-none" style={{ fontSize: 14, fontWeight: 400, opacity: 0.5 }}>swap@yosgo.com</a></div>
+          <div className=""><a className="text-decoration-none" style={{ fontSize: 14, fontWeight: 400, opacity: 0.5, marginBottom: 100 }}>swap@yosgo.com</a></div>
         </div>
       </div>
       </div>
@@ -1055,7 +1080,6 @@ export default function Home() {
         <source src={oceanSound} type="audio/mpeg" />
       </audio>
         <AudioPlayer>
-  
             <button style={{ height: 30 }} onClick={togglePlay}>
               {isPlaying ? <PauseIcon /> : '▶'}
             </button>
