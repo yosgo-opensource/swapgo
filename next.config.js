@@ -3,11 +3,9 @@
 const nextConfig = {
   reactStrictMode: false,
   experimental: { esmExternals: true },
-
   compiler : {
     styledComponents: true,
   },
-
   images: {
     domains: ['tactusmarketing.com', 'oaidalleapiprodscus.blob.core.windows.net'], 
     remotePatterns: [
@@ -18,6 +16,9 @@ const nextConfig = {
         pathname: '/**',
       },
     ],
+  },
+  experimental: {
+    forceSwcTransforms: true,
   },
 
   async headers() {

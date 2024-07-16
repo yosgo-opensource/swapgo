@@ -46,7 +46,6 @@ const Page = styled.div`
   }
   .hero-title {
     font-size: 8vw;
-    line-height: 1em;
     font-weight: 900;
   }
   .nav-title {
@@ -58,9 +57,12 @@ const Page = styled.div`
     background-repeat: no-repeat;
     background-position: center;
     transition: background-image 0.3s ease;
+    transition: transform 0.5s ease;
 
     &:hover {
       background-image: url(${swapgoWhite});
+      transform: scale(1.1);
+      margin-left: 5px;
     }
   }
   .nav-subTitle {
@@ -111,8 +113,8 @@ const Page = styled.div`
     height: 30px;
     border-radius: 50%;
     background-color: #000;
-    transition: transform 350ms ease, background-color 350ms ease;
-    transform: translate(-50%, -50%) scale(.3);
+    /* transition: transform 350ms ease, background-color 350ms ease; */
+    /* transform: translate(-50%, -50%) scale(.3); */
     z-index: 1002;
   }
   .custom-cursor--link {
@@ -169,18 +171,29 @@ const Page = styled.div`
       width: 60px;
       z-index: 1001;
       pointer-events: all;
-
       filter: invert(1);
+      cursor: pointer;
+      transition: transform 0.3s ease;
+
+      &:hover {
+        transform: scale(1.1);
+      }
       
       .icon {
         position: relative;
         width: 100%; 
         height: 100%;
         fill: none;
-        stroke-width: 8;
+        stroke-width: 7;
         stroke-linecap: round;
         stroke-linejoin: round;
         stroke: #fff;
+
+        &:hover {
+          stroke: white;
+          stroke-width: 8 ;
+          stroke: #00BCD4;
+        }
       }
     }
   }
@@ -390,12 +403,15 @@ const StickyNav = styled.div`
     height: 45px;
     background-size: 100%;
     background-repeat: no-repeat;
-    background-position: left;
     z-index: 998;
     color: #fff;
-    display: flex;
-    align-items: center;
     font-size: 2em;
+    transition: transform 0.3s ease;
+
+    &:hover {
+      transform: scale(1.1);
+      margin-left: 5px;
+    }
   }
 
   #nav-btn {
@@ -499,6 +515,8 @@ const Hero = styled.section`
 
 .hero-logo-title {
   transition: transform 0.3s ease;
+  width: 100%;
+  max-width: 600px;
 }
 
 .hero-title {
@@ -510,7 +528,7 @@ const Hero = styled.section`
     z-index: 2;
 
     &:hover {
-      transform: scale(1.03);
+      /* transform: scale(1.03); */
     }
 
     img {
@@ -522,9 +540,9 @@ const Hero = styled.section`
 
   .hero-title-black {
     position: absolute;
-    top: 50%;
+    top: 33%;
     left: 50%;
-    transform: translate(-50%, -50%);
+    transform: translate(-50%, -50%); 
     opacity: 0;
     transition: opacity 0.3s ease;
 
@@ -559,6 +577,8 @@ const Hero = styled.section`
     margin-top: 20px;
     margin-right: 20px;
     opacity: 0.8;
+    position: relative;
+    z-index: 3;
 
     &:hover {
       background-color: #2f363d;
@@ -886,15 +906,47 @@ export default function Home() {
         </StickyNav>
         <TakeoverNav id="takeover-nav">
           <div className="container-fluid h-full flex">
-            <div className="nav-col nav-contact w-full md:w-1/2 lg:w-1/4 bg-black flex flex-col justify-center items-center relative py-5 px-3">
-              <div className="absolute w-full h-full bg-topographic"></div>
-              <div className="relative mt-36 ml-5">
-                <div className="nav-title white mb-5" onClick={() => router.push('/SWAPGO/start')}>
-                </div>
-              </div>
+            <div className="nav-col nav-contact w-full md:w-1/2 lg:w-1/4 bg-black 
+                          flex flex-col justify-center items-center relative py-5 px-3">
+            <div className="absolute w-full h-full bg-topographic"></div>
+            <div className="relative mt-36 ml-5 mb-10" style={{ display: 'flex', flexDirection : 'column', alignItems : 'center' }}>
+              <div className="nav-title white" onClick={() => router.push('/SWAPGO/start')}></div>
+              <div className="font-playwrite font-hairline text-center mb-4" style={{ fontSize: 40, color: 'white'}}> SwapGo </div>
+              <div className="font-playwrite font-light text-center" style={{ color: 'white', fontSize: 16 }}>Every game of SwapGo is a journey through time<br></br><div className="mt-3">Each move,
+                a pivotal moment in history Rewritten</div></div>
+            </div>
+            <div className="social flex align-items-center">
+              <a href="https://github.com/yosgo-opensource/swapgo" target="_blank" rel="noopener noreferrer" className="awesome-link"
+                style={{ fontSize: 30 }}>
+                  <FontAwesomeIcon icon={faGithub} />
+              </a>
+              <span className="mt-1 mx-5 white" style={{ fontSize: 20, opacity: 0.8, color:"#00BCD4" }}>|</span>
+              <a href="https://www.youtube.com/watch?v=on3ye7jCcRg" target="_blank" rel="noopener noreferrer" className="awesome-link"
+                  style={{ fontSize: 30 }}>
+                <FontAwesomeIcon icon={faYoutube} />
+              </a>
+              {/* <a className="text-decoration-none green" href="#">linkedin</a> */}
+              {/* <a className="text-decoration-none green" hre
+              {/* <a className="text-decoration-none green" href="#">facebook</a> */}
+              {/* <span className="mx-2 white">|</span> */}
+              {/* <a className="text-decoration-none green" href="#">instagram</a> */}
+            </div> 
+            <ul className="contact-items white list-unstyled mb-5 mt-3" style={{ display: 'flex', flexDirection : 'column', alignItems : 'center' }}>
+                
+                {/* <li className="pb-4">
+                  <a className="text-decoration-none" href="#">Every game of SwapGo is a journey through time; each move,
+                a pivotal moment in history rewritten.</a>
+                </li> */}
+                <li className="">
+                  <a className="text-decoration-none" style={{ fontSize: 14 }}>swap@yosgo.com</a>
+                </li>
+                <li>
+                  <a className="text-decoration-none"  style={{ fontSize: 14 }}>Taipei, Taiwan(ROC)</a>
+                </li>
+              </ul>
             </div>
             <div className="nav-col nav-menu bg-green flex flex-col justify-center items-center pt-5 pb-3 px-[7px]">
-              {/* <ul className="nav-items list-unstyled text-center"> */}
+               <ul className="nav-items list-unstyled text-center"> 
                 {/* <li className="pb-3">
                   <a className="text-decoration-none" href="#">services</a>
                 </li>
@@ -906,8 +958,8 @@ export default function Home() {
                 </li>
                 <li>
                   <a className="text-decoration-none" href="#">about</a>
-                </li> */}
-              {/* </ul> */}
+                </li>  */}
+              </ul>
             </div>
           </div>
         </TakeoverNav>
@@ -921,35 +973,37 @@ export default function Home() {
         </div>
         <div className="position-absolute w-100 gradient-overlay"></div>
         <div className="logo-background"></div>
-        <div className="content position-relative text-center">
-          <div className="hero-title blend flex-col justify-center" >
-              <div className="hero-title-white flex-col align-items-center justify-center cursor-pointer" >
-                <img className="hero-logo-title" src={swapgoBg} alt="SwapGo" onClick={() => router.push('/SWAPGO/start')} />
-                <div className="flex justify-center mt-[-150px]">
-                  <img src={blackIgo} alt="Black Igo" style={{ width: 100, height: 100 }} />
-                  <img src={whiteIgo} alt="White Igo" style={{ width: 100, height: 100 }}/>
-                </div>
-              </div>
-              <div className="hero-title-black flex-col align-items-center justify-center cursor-pointer">
-                <img className="hero-logo-title" src={swapgoBgBlack} alt="SwapGo" onClick={() => router.push('/SWAPGO/start')}/>
-                <div className="flex justify-center mt-[-60px] md:mt-[-110px] lg:mt-[-150px]">
-                  <img src={blackIgo} alt="Black Igo" style={{ width: 100, height: 100 }} />
-                  <img src={whiteIgo} alt="White Igo" style={{ width: 100, height: 100 }}/>
-                </div>
-              </div>
-            <div className="flex ml-6 mt-[200px]">
-              <a href="https://github.com/yosgo-opensource/swapgo" target="_blank" rel="noopener noreferrer" className="awesome-link">
-                  <FontAwesomeIcon icon={faGithub} />
-                </a>
-                <a href="https://www.youtube.com/watch?v=on3ye7jCcRg" target="_blank" rel="noopener noreferrer" className="awesome-link">
-                  <FontAwesomeIcon icon={faYoutube} />
-              </a>
-            </div>
+        <div className="content position-relative text-center" style={{ backgroundColor: 'black' }}>
+        <div className="hero-title blend flex-col justify-center" >
+        <div className="hero-title-white flex-col align-items-center justify-center cursor-pointer" >
+          <img style={{ width: 450 }} className="hero-logo-title" src={swapgoBg} alt="SwapGo" onClick={() => router.push('/SWAPGO/start')} />
+          <div className="flex justify-center">
+            <img src={blackIgo} alt="Black Igo" style={{ marginTop: -110, width: 100, height: 100 }} />
+            <img src={whiteIgo} alt="White Igo" style={{  marginTop: -110, width: 100, height: 100 }}/>
           </div>
-          <h1> SwapGo </h1>
-          <h3>Every game of SwapGo is a journey through time; each move,
-            a pivotal moment in history rewritten.</h3>
         </div>
+        <div className="hero-title-black flex-col align-items-center justify-center cursor-pointer">
+          <img style={{ width: 450 }} className="hero-logo-title" src={swapgoBgBlack} alt="SwapGo" onClick={() => router.push('/SWAPGO/start')}/>
+          <div className="flex justify-center">
+            <img src={blackIgo} alt="Black Igo" style={{ marginTop: -110, width: 100, height: 100 }} />
+            <img src={whiteIgo} alt="White Igo" style={{ marginTop: -110, width: 100, height: 100 }}/>
+          </div>
+        </div>
+        <div className="relative mt-3" style={{ display: 'flex', flexDirection : 'column', alignItems : 'center' }}>
+          <div className="font-playwrite font-hairline text-center mb-6 opacity-95" style={{ fontSize: 40, color: 'white'}}> SwapGo </div>
+          <div className="font-playwrite font-light text-center opacity-90" style={{ color: 'white', fontSize: 16 }}>Every game of SwapGo is a journey through time<br></br><div className="mt-3">Each move,
+            a pivotal moment in history Rewritten</div></div>
+        </div>
+        <div className="flex justify-center mt-2">
+          <a href="https://github.com/yosgo-opensource/swapgo" target="_blank" rel="noopener noreferrer" className="awesome-link">
+            <FontAwesomeIcon icon={faGithub} />
+          </a>
+          <a href="https://www.youtube.com/watch?v=on3ye7jCcRg" target="_blank" rel="noopener noreferrer" className="awesome-link">
+            <FontAwesomeIcon icon={faYoutube} />
+          </a>
+        </div>
+      </div>
+      </div>
       </Hero>
       <audio ref={audioRef} loop preload="auto">
         <source src={oceanSound} type="audio/mpeg" />
@@ -975,42 +1029,6 @@ export default function Home() {
     </Page>
   );
 }
-
-
-         {/* <ul className="contact-items white list-unstyled mb-5">
-              <li className="pb-4">
-                <a className="text-decoration-none" href="#">+1 386-235-4062</a>
-              </li>
-              <li className="pb-4">
-                <a className="text-decoration-none" href="#">morgan@tactusmarketing.com</a>
-              </li>
-              <li>
-                <a className="text-decoration-none" href="#">Aguadilla, PR 00603</a>
-              </li>
-            </ul>
-            <div className="social">
-              <a className="text-decoration-none green" href="#">linkedin</a>
-              <span className="mx-2 white">|</span>
-              <a className="text-decoration-none green" href="#">facebook</a>
-              <span className="mx-2 white">|</span>
-              <a className="text-decoration-none green" href="#">instagram</a>
-            </div> */}
-
-                        {/* <ul className="nav-items list-unstyled text-center"> */}
-                {/* <li className="pb-3">
-                  <a className="text-decoration-none" href="#">services</a>
-                </li>
-                <li className="pb-3">
-                  <a className="text-decoration-none" href="#">portfolio</a>
-                </li>
-                <li className="pb-3">
-                  <a className="text-decoration-none" href="#">contact</a>
-                </li>
-                <li>
-                  <a className="text-decoration-none" href="#">about</a>
-                </li> */}
-              {/* </ul> */}
-
 
 // Copyright (c) 2024 - YOSGO - https://codepen.io/jalinb/pen/ExOgOBZ
 
