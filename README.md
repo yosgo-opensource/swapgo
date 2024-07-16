@@ -1,5 +1,7 @@
 # SwapGo: The Intelligent Narrative Revolution in Go
 
+<img src="public/logo/swapgo_b_big_new.png" alt="swapgo logo in black" width="300"/>
+
 Screenshots
 
 <table>
@@ -74,9 +76,9 @@ To ensure the best experience, we recommend running SwapGo locally. Please follo
 ### KataGo AI Setup
 
 1. **KataGo Executable**: Download the appropriate version for your operating system from [KataGo Binary](https://github.com/lightvector/KataGo/releases).
-
-2. **Model Parameter File**: Download the v1.4.0 model parameter file from [KataGo Neural Nets](https://github.com/lightvector/KataGo/releases/tag/v1.4.0).
-
+  
+2. **Model Parameter File**: Download the v1.4.0 model parameter file from [KataGo Neural Nets](https://github.com/lightvector/KataGo/releases/tag/v1.4.0). 
+  
 3. **Python Main File** (`ana.py`):
    Modify line 34 to match your local file locations:
 
@@ -133,6 +135,8 @@ Ensure this change is made to connect the client to your local KataGo AI server.
 
 ## Technologies and Resources Used
 
+<img src="public/favicon/android-chrome-192x192.png" alt="favicon" width="100" />
+
 ### Go AI
 
 - [KataGo](https://github.com/lightvector/KataGo): Used for simulating opponents
@@ -152,7 +156,7 @@ Ensure this change is made to connect the client to your local KataGo AI server.
 We welcome community contributions! If you have any ideas for improvements or find any bugs, please don't hesitate to submit an issue or pull request.
 
 <br>
-
+<img src="public/logo/swapgo.png" alt="swapgo logo in white" width="200"/>
 ---
 
 SwapGo - Redefining the Go experience, ushering in a new era of intelligent narrative.
