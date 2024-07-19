@@ -12,7 +12,8 @@ Screenshots
   </tr>
 </table>
 
-⬇︎ Click the image below to watch our demo video!
+
+  🎬 🍿 Click the image below to watch our `DEMO VIDEO` 👇
 
 <table>
   <tr>
