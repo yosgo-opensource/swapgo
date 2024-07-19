@@ -286,6 +286,7 @@ imgPrompt: 搭配劇情的生成圖片提示詞，請你搭配使用此基本風
         setImageLoadingModalVisible(false);
       }
     };
+
     const fetchAI = async () => {
       setAiThinkingModalVisible(true);
 
@@ -335,12 +336,12 @@ imgPrompt: 搭配劇情的生成圖片提示詞，請你搭配使用此基本風
             console.log("> fetchAI error", err);
           });
       } catch (err) {
-        setAIThinking(false);
-        setAIReplyCountDown(0);
-        console.log("> fetchAI error", err);
-      } finally {
         // setAIThinking(false);
         // setAIReplyCountDown(0);
+        console.log("Error", err);
+      } finally {
+        setAIThinking(false);
+        setAIReplyCountDown(0);
         setAiThinkingModalVisible(false);
         handleAddGameLog("Your Turn 換你了");
       }
@@ -365,6 +366,13 @@ imgPrompt: 搭配劇情的生成圖片提示詞，請你搭配使用此基本風
       }
     }
   };
+
+  useEffect(() => {
+    if (aiResponse && !aiThinking) {
+      setAiThinkingModalVisible(false);
+    }
+  }, [aiResponse, aiThinking]);
+
   // Enforce auto-playing
   useEffect(() => {
     (async () => {
@@ -840,18 +848,6 @@ imgPrompt: 搭配劇情的生成圖片提示詞，請你搭配使用此基本風
                 </div>
                 <div className="leftBottom" aria-label="Go board">
                   {/* 棋盤狀態 */}
-                  <Modal visible={aiThinkingModalVisible} disableBackdropClick>
-                    <Modal.Content>
-                      <Loading>
-                        <ReactTyped
-                          strings={aiThinkingMessages}
-                          typeSpeed={40}
-                          backSpeed={50}
-                          loop
-                        />
-                      </Loading>
-                    </Modal.Content>
-                  </Modal>
                   <div
                     style={{
                       padding: "4px 16px",
@@ -937,6 +933,35 @@ imgPrompt: 搭配劇情的生成圖片提示詞，請你搭配使用此基本風
                       className="tenuki-board swap-go-board"
                       data-include-coordinates={true}
                     />
+                    {aiThinkingModalVisible && (
+                      <div
+                        style={{
+                          position: 'absolute',
+                          top: 0,
+                          left: 0,
+                          width: '100%',
+                          height: '100%',
+                          display: 'flex',
+                          justifyContent: 'center',
+                          alignItems: 'center',
+                          background: 'rgba(255, 255, 255, 0.8)',
+                          zIndex: 100,
+                        }}
+                      >
+                        <Modal visible={aiThinkingModalVisible} disableBackdropClick>
+                          <Modal.Content>
+                            <Loading>
+                              <ReactTyped
+                                strings={aiThinkingMessages}
+                                typeSpeed={40}
+                                backSpeed={50}
+                                loop
+                              />
+                            </Loading>
+                          </Modal.Content>
+                        </Modal>
+                        </div>
+                      )}
                   </div>
                   {/* mask */}
                   {aiThinking && (
