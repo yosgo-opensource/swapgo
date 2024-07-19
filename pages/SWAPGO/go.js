@@ -11,6 +11,10 @@ import { Button, Divider, Loading, Modal } from "@geist-ui/core";
 import Head from "next/head";
 
 const GO = () => {
+
+  const [imageLoadingModalVisible, setImageLoadingModalVisible] = useState(false);
+  const [aiThinkingModalVisible, setAiThinkingModalVisible] = useState(false);
+
   const router = useRouter();
   // parameters
   const [parsed, setParsed] = useState(null);
@@ -30,6 +34,50 @@ const GO = () => {
   const [aiReplyCountDown, setAIReplyCountDown] = useState(0);
   const [endGameModalOpen, setEndGameModalOpen] = useState(false);
   const [endGameScreenWriting, setEndGameScreenWriting] = useState(null);
+
+  const imageLoadingMessages = [
+    "Preparing ammunition 💣 裝填彈藥... ",
+    "Setting up battle formations 🗺️ 佈置陣型...",
+    "Scouting the terrain 🔭 偵查敵情...",
+    "Analyzing enemy movements 👀 分析敵情...",
+    "Finding an Enemy❗️發現敵人!...",
+    "Sharpening swords 🗡️ 磨刀霍霍...",
+    "Polishing armor 🛡️ 擦亮盔甲...",
+    "Inspecting weapons 🔫 檢查武器...",
+    "Preparing for war 🏹 準備戰爭...",
+    "Gathering intelligence 📡 收集情報...",
+    "Training soldiers 🏋️ 訓練士兵...",
+    "Fortifying defenses 🏰 加強防禦...",
+    "Building siege weapons 🏗️ 建造攻城器械...",
+    "Raising the flag 🚩 揚起旗幟...",
+    "Rallying the troops 🥁 集結軍隊...",
+    "Sending out scouts 🏇 派出偵察兵...",
+    "Raising the alarm 🚨 發出警報...",
+    "Raising the morale 🎖️ 提高士氣...",
+    "Raising the bar 🍻 提高標準..."
+  ];
+
+  const aiThinkingMessages = [
+    "Plotting next move 👉 思忖下一步棋...",
+    "Contemplating strategy 🧔 撚鬍苦思...",
+    "Brewing a pot of tea 🍵 沏一壺茶...",
+    "Calculating probabilities 🧮 計算各種可能...",
+    "Analyzing the battlefield 🧐 分析戰局...",
+    "Reading the Art of War 📖 讀兵法...",
+    "Studying the Go board 💺 研究棋盤...",
+    "Thinking about life 🧑‍🤝‍🧑 思考人生...",   
+    "Thinking about the universe 🌃 思考宇宙...",
+    "Thinking about the future 🚀 思考未來...",
+    "Thinking about the past 🕰️ 思考過去...",
+    "Thinking about the present 🎁 思考現在...",
+    "Thinking about the meaning of life 🤔 思考生命意義...",
+    "Thinking about the meaning of Go 🤯 思考圍棋意義...",
+    "Thinking about the meaning of AI 🤖 思考人工智慧...",
+    "Thinking about the meaning of existence 🌌 思考存在意義...",
+    "Thinking about the meaning of everything 🌍 思考萬物意義...",
+    "Thinking about the meaning of nothing 🌑 思考虛無意義...",
+    "Thinking about the meaning of thinking 🧠 思考思考意義...",
+  ];
 
   // parse URL parameters
   useEffect(() => {
@@ -134,6 +182,8 @@ const GO = () => {
 
     //API request
     const fetchGenAI = async () => {
+      setImageLoadingModalVisible(true);
+      try {
       let _newScreenWriting;
       const screenWritingTemplate = `這是一場圍棋比賽，而你的任務就是轉譯，把棋盤上的局勢描述成歷史上的戰役
 
@@ -232,8 +282,13 @@ imgPrompt: 搭配劇情的生成圖片提示詞，請你搭配使用此基本風
           };
           console.log("> ImageGenerating error", err);
         });
+      } finally {
+        setImageLoadingModalVisible(false);
+      }
     };
     const fetchAI = async () => {
+      setAiThinkingModalVisible(true);
+
       try {
         setAIThinking(true);
         setAIReplyCountDown(90);
@@ -283,6 +338,11 @@ imgPrompt: 搭配劇情的生成圖片提示詞，請你搭配使用此基本風
         setAIThinking(false);
         setAIReplyCountDown(0);
         console.log("> fetchAI error", err);
+      } finally {
+        // setAIThinking(false);
+        // setAIReplyCountDown(0);
+        setAiThinkingModalVisible(false);
+        handleAddGameLog("Your Turn 換你了");
       }
     };
 
@@ -780,6 +840,18 @@ imgPrompt: 搭配劇情的生成圖片提示詞，請你搭配使用此基本風
                 </div>
                 <div className="leftBottom" aria-label="Go board">
                   {/* 棋盤狀態 */}
+                  <Modal visible={aiThinkingModalVisible} disableBackdropClick>
+                    <Modal.Content>
+                      <Loading>
+                        <ReactTyped
+                          strings={aiThinkingMessages}
+                          typeSpeed={40}
+                          backSpeed={50}
+                          loop
+                        />
+                      </Loading>
+                    </Modal.Content>
+                  </Modal>
                   <div
                     style={{
                       padding: "4px 16px",
@@ -883,6 +955,18 @@ imgPrompt: 搭配劇情的生成圖片提示詞，請你搭配使用此基本風
                 </div>
               </div>
               <div className="rightColumn" aria-label="Game Narrative">
+              <Modal visible={imageLoadingModalVisible} disableBackdropClick>
+                <Modal.Content>
+                  <Loading>
+                    <ReactTyped
+                      strings={imageLoadingMessages}
+                      typeSpeed={40}
+                      backSpeed={50}
+                      loop
+                    />
+                  </Loading>
+                </Modal.Content>
+              </Modal>
                 {screenWriting.map((item, index) => {
                   const rotate = index * 0.05;
                   return (
