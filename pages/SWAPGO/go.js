@@ -2,13 +2,17 @@ import React from "react";
 import { useEffect, useState } from "react";
 import { useRouter } from "next/router";
 import Error from "next/error";
-import { Layout, battlesData } from "./start";
 import { Fade } from "@mui/material";
 import axios from "axios";
-import ReactPlayer from "react-player";
 import ReactTyped from "react-typed";
 import { Button, Divider, Loading, Modal } from "@geist-ui/core";
 import Head from "next/head";
+import ServerStatusIndicator from "../../components/ServerStatusIndicator";
+import { imageLoadingMessages, aiThinkingMessages  } from "../../components/loadingMessages";
+import { getScreenWritingTemplate, getEndGameScreenWritingTemplate } from "../../components/screenWriting/screenWritingTemplate";
+import Layout from "../../components/Layout";
+import battlesData from "../../components/battlesData";
+import YTMusic from "../../components/YTMusic";
 
 const GO = () => {
 
@@ -34,50 +38,6 @@ const GO = () => {
   const [aiReplyCountDown, setAIReplyCountDown] = useState(0);
   const [endGameModalOpen, setEndGameModalOpen] = useState(false);
   const [endGameScreenWriting, setEndGameScreenWriting] = useState(null);
-
-  const imageLoadingMessages = [
-    "Preparing ammunition 💣 裝填彈藥... ",
-    "Setting up battle formations 🗺️ 佈置陣型...",
-    "Scouting the terrain 🔭 偵查敵情...",
-    "Analyzing enemy movements 👀 分析敵情...",
-    "Finding an Enemy❗️發現敵人!...",
-    "Sharpening swords 🗡️ 磨刀霍霍...",
-    "Polishing armor 🛡️ 擦亮盔甲...",
-    "Inspecting weapons 🔫 檢查武器...",
-    "Preparing for war 🏹 準備戰爭...",
-    "Gathering intelligence 📡 收集情報...",
-    "Training soldiers 🏋️ 訓練士兵...",
-    "Fortifying defenses 🏰 加強防禦...",
-    "Building siege weapons 🏗️ 建造攻城器械...",
-    "Raising the flag 🚩 揚起旗幟...",
-    "Rallying the troops 🥁 集結軍隊...",
-    "Sending out scouts 🏇 派出偵察兵...",
-    "Raising the alarm 🚨 發出警報...",
-    "Raising the morale 🎖️ 提高士氣...",
-    "Raising the bar 🍻 提高標準..."
-  ];
-
-  const aiThinkingMessages = [
-    "Plotting next move 👉 思忖下一步棋...",
-    "Contemplating strategy 🧔 撚鬍苦思...",
-    "Brewing a pot of tea 🍵 沏一壺茶...",
-    "Calculating probabilities 🧮 計算各種可能...",
-    "Analyzing the battlefield 🧐 分析戰局...",
-    "Reading the Art of War 📖 讀兵法...",
-    "Studying the Go board 💺 研究棋盤...",
-    "Thinking about life 🧑‍🤝‍🧑 思考人生...",   
-    "Thinking about the universe 🌃 思考宇宙...",
-    "Thinking about the future 🚀 思考未來...",
-    "Thinking about the past 🕰️ 思考過去...",
-    "Thinking about the present 🎁 思考現在...",
-    "Thinking about the meaning of life 🤔 思考生命意義...",
-    "Thinking about the meaning of Go 🤯 思考圍棋意義...",
-    "Thinking about the meaning of AI 🤖 思考人工智慧...",
-    "Thinking about the meaning of existence 🌌 思考存在意義...",
-    "Thinking about the meaning of everything 🌍 思考萬物意義...",
-    "Thinking about the meaning of nothing 🌑 思考虛無意義...",
-    "Thinking about the meaning of thinking 🧠 思考思考意義...",
-  ];
 
   // parse URL parameters
   useEffect(() => {
@@ -143,13 +103,13 @@ const GO = () => {
   //Manually record moves history for later API uses
   useEffect(() => {
     if (currentState) {
-      console.log("> currentState", currentState);
+      // console.log("> currentState", currentState);
       setMoves(moveAccFunction(moves, currentState));
     }
   }, [currentState]);
   useEffect(() => {
     if (moves) {
-      console.log("> moves", moves);
+      // console.log("> moves", moves);
     }
   }, [moves]);
 
@@ -185,63 +145,22 @@ const GO = () => {
       setImageLoadingModalVisible(true);
       try {
       let _newScreenWriting;
-      const screenWritingTemplate = `這是一場圍棋比賽，而你的任務就是轉譯，把棋盤上的局勢描述成歷史上的戰役
-
-玩家的名稱是 ${player} 代表 ${playerColor} 方，對手是 AI 代表 ${aiColor} 方，由 ${whoFirst} 先手
-黑子被吃掉的數量是 ${currentState?.blackStonesCaptured}，白子被吃掉的數量是 ${
-        currentState?.whiteStonesCaptured
-      }
-
-${
-  aiResponse
-    ? `對手下在了 ${aiResponse.next_move_number_format} 位置
-    即時分析的局勢是 ${aiResponse?.score_lead}
-    勝率分別是黑：${aiResponse?.black_win_rate} 與白：${aiResponse?.white_win_rate}，
-`
-    : ""
-}
-
-目前的棋盤是 
-${
-  currentState?.intersections &&
-  visualizeGoBoard(currentState?.intersections, currentState.boardSize)
-}
-
-${
-  currentState?.playedPoint
-    ? `玩家下在了 [${currentState?.playedPoint.x}, ${currentState?.playedPoint.y}] 的位置`
-    : ""
-}
-
-戰役的部分是 ${battle.name}
-
-黑方是 ${battle.black}，白方是 ${battle.white}
-
-${
-  screenWriting.length > 0 &&
-  `先前有以下劇情
-${screenWriting.map((s, index) => `${index}.${s.description}`).join("\n")}`
-}
-
-接下來請你使用圍棋的規則與想像力，把當前的戰況劇情描述出來，並提供該劇情場景所需的圖片提示詞，
-
-description: 30字的英文
-imgPrompt: 搭配劇情的生成圖片提示詞，請你搭配使用此基本風格 sketch style, black and white illustration, soft pencil lines, minimalist details, vintage look, beige background
-
-另外就是圖片提示詞可能要注意安全政策(Safe Policy)，在不影響生成圖片的精彩度之下，避免一些過於細節暴力、血腥的場景
-
-最後請你直接回應 JSON 格式的字串，例如下方
-
-{
-    description: ""
-    imgPrompt: ""
-}
-`;
-      console.log("> screenWritingTemplate", screenWritingTemplate);
+      
+      const screenWritingTemplate = getScreenWritingTemplate({
+        player,
+        playerColor,
+        aiColor,
+        whoFirst,
+        currentState,
+        aiResponse,
+        battle,
+        screenWriting
+      });
+      // console.log("> screenWritingTemplate", screenWritingTemplate);
 
       //Generate Narratives and image prompts
       await axios
-        .post("/api/claude_call2", {
+        .post("/api/claude_call", {
           prompts: [
             {
               role: "user",
@@ -263,7 +182,7 @@ imgPrompt: 搭配劇情的生成圖片提示詞，請你搭配使用此基本風
 
       //Generate Images
       await axios
-        .post("/api/openai_sprint", {
+        .post("/api/dalle", {
           type: "image",
           prompt: _newScreenWriting.imgPrompt,
         })
@@ -392,7 +311,7 @@ imgPrompt: 搭配劇情的生成圖片提示詞，請你搭配使用此基本風
     ) {
       // Get AI response，update board & judge win/lose
       try {
-        console.log("> ana", aiResponse);
+        // console.log("> ana", aiResponse);
         const x = aiResponse.next_move_number_format[0];
         const y = aiResponse.next_move_number_format[1];
         const intersection = document.querySelector(
@@ -407,7 +326,7 @@ imgPrompt: 搭配劇情的生成圖片提示詞，請你搭配使用此基本風
           intersection.dispatchEvent(event);
           intersection.dispatchEvent(event);
         } else {
-          throw new Error(`沒有找到坐標為 (${x}, ${y}) 的交叉點元素`);
+          throw new Error(`No intersection element found with coordinates (${x}, ${y})`);
         }
       } catch (err) {
         alert("Click board Error", err);
@@ -430,7 +349,7 @@ imgPrompt: 搭配劇情的生成圖片提示詞，請你搭配使用此基本風
 
   // monitoring Narratives
   useEffect(() => {
-    console.log("> screenWriting", screenWriting);
+    // console.log("> screenWriting", screenWriting);
   }, [screenWriting]);
 
   // Dealing with End game
@@ -444,68 +363,19 @@ imgPrompt: 搭配劇情的生成圖片提示詞，請你搭配使用此基本風
 
         // narratives prompt
         let _endGameScreenWriting;
-        const endGameScreenWritingTemplate = `這是一場圍棋比賽，而你的任務就是轉譯，把棋盤上的局勢描述成歷史上的戰役
-
-玩家的名稱是 ${player} 代表 ${playerColor} 方，對手是 AI 代表 ${aiColor} 方，由 ${whoFirst} 先手
-黑子被吃掉的數量是 ${currentState?.blackStonesCaptured}，白子被吃掉的數量是 ${
-          currentState?.whiteStonesCaptured
-        }
-
-${
-  aiResponse
-    ? `對手下在了 ${aiResponse.next_move_number_format} 位置
-    即時分析的局勢是 ${aiResponse?.score_lead}
-    勝率分別是黑：${aiResponse?.black_win_rate} 與白：${aiResponse?.white_win_rate}，
-`
-    : ""
-}
-
-目前的棋盤是 
-${
-  currentState?.intersections &&
-  visualizeGoBoard(currentState?.intersections, currentState.boardSize)
-}
-
-${
-  currentState?.playedPoint
-    ? `玩家下在了 [${currentState?.playedPoint.x}, ${currentState?.playedPoint.y}] 的位置`
-    : ""
-}
-
-戰役的部分是 ${battle.name}
-
-黑方是 ${battle.black}，白方是 ${battle.white}
-
-${
-  screenWriting.length > 0 &&
-  `先前有以下劇情
-${screenWriting.map((s, index) => `${index}.${s.description}`).join("\n")}`
-}
-
-現在有人發動了棋盤的判決，玩家是 ${player}，代表 ${playerColor} 方，對手是 AI，代表 ${aiColor} 方，這場比賽將會結束
-
-黑子的勝率是 ${aiResponse?.black_win_rate}，白子的勝率是 ${
-          aiResponse?.white_win_rate
-        }，目前的局勢是 ${aiResponse?.score_lead}
-目前情勢是：${aiResponse?.score_lead}
-
-請為這場比賽做結束的劇情描述與圖片生成提示詞
-
-description: 30字的英文
-imgPrompt: 搭配劇情的生成圖片提示詞，請你搭配使用此基本風格 sketch style, black and white illustration, soft pencil lines, minimalist details, vintage look, beige background
-
-另外就是圖片提示詞可能要注意安全政策(Safe Policy)，在不影響生成圖片的精彩度之下，避免一些過於細節暴力、血腥的場景
-
-最後請你直接回應 JSON 格式的字串，例如下方
-
-{
-    description: ""
-    imgPrompt: ""
-}
-`;
+        const endGameScreenWritingTemplate = getEndGameScreenWritingTemplate({
+          player,
+          playerColor,
+          aiColor,
+          whoFirst,
+          currentState,
+          aiResponse,
+          battle,
+          screenWriting
+        });
         // Generate Narratives and image prompts
         await axios
-          .post("/api/claude_call2", {
+          .post("/api/claude_call", {
             prompts: [
               {
                 role: "user",
@@ -527,7 +397,7 @@ imgPrompt: 搭配劇情的生成圖片提示詞，請你搭配使用此基本風
 
         // Generate Images
         await axios
-          .post("/api/openai_sprint", {
+          .post("/api/dalle", {
             type: "image",
             prompt: _endGameScreenWriting.imgPrompt,
           })
@@ -614,6 +484,7 @@ imgPrompt: 搭配劇情的生成圖片提示詞，請你搭配使用此基本風
           dangerouslySetInnerHTML={{ __html: JSON.stringify(pageJsonLd) }}
         />
       </Head>
+      <ServerStatusIndicator />
       <style jsx>
         {`
           .swap-go-board-container {
@@ -748,22 +619,22 @@ imgPrompt: 搭配劇情的生成圖片提示詞，請你搭配使用此基本風
                       alignItems: "center",
                     }}
                     onClick={() => {
-                      console.log("> All state", {
-                        player,
-                        side,
-                        difficulty,
-                        boardSize,
-                        battle,
-                        whoFirst,
-                        currentState,
-                        moves,
-                        gameLog,
-                        aiThinking,
-                        aiResponse,
-                        screenWriting,
-                        aiReplyCountDown,
-                        endGameModalOpen,
-                      });
+                      // console.log("> All state", {
+                      //   player,
+                      //   side,
+                      //   difficulty,
+                      //   boardSize,
+                      //   battle,
+                      //   whoFirst,
+                      //   currentState,
+                      //   moves,
+                      //   gameLog,
+                      //   aiThinking,
+                      //   aiResponse,
+                      //   screenWriting,
+                      //   aiReplyCountDown,
+                      //   endGameModalOpen,
+                      // });
                     }}
                   >
                     <h1
@@ -936,15 +807,15 @@ imgPrompt: 搭配劇情的生成圖片提示詞，請你搭配使用此基本風
                     {aiThinkingModalVisible && (
                       <div
                         style={{
-                          position: 'absolute',
+                          position: "absolute",
                           top: 0,
                           left: 0,
-                          width: '100%',
-                          height: '100%',
-                          display: 'flex',
-                          justifyContent: 'center',
-                          alignItems: 'center',
-                          background: 'rgba(255, 255, 255, 0.8)',
+                          width: "100%",
+                          height: "100%",
+                          display: "flex",
+                          justifyContent: "center",
+                          alignItems: "center",
+                          background: "rgba(255, 255, 255, 0.8)",
                           zIndex: 100,
                         }}
                       >
@@ -1006,7 +877,7 @@ imgPrompt: 搭配劇情的生成圖片提示詞，請你搭配使用此基本風
                         top: "4%",
                         left: "4%",
                         borderRadius: "2px",
-                        backgroundImage: `url(${item?.img}), linear-gradient(rgba(255, 255, 255, 0.5), rgba(255, 255, 255, 0.5)), url('/swapgo/background.png')`,
+                        backgroundImage: `url(${item?.img}), linear-gradient(rgba(255, 255, 255, 0.5), rgba(255, 255, 255, 0.5)), url("/swapgo/background.png")`,
                         backgroundSize: "cover",
                         backgroundPosition: "center",
                         boxSize: "border-box",
@@ -1061,12 +932,13 @@ function convertArrayIndexToGoPosition(row, col, boardSize = 9) {
 function convertMove(moveStr) {
   let col = moveStr.charCodeAt(0) - "A".charCodeAt(0);
   const row = 9 - parseInt(moveStr[1]);
-  // deal with every alphabet after 'I'
+  // deal with every alphabet after "I"
   if (col >= 8) {
-    col = 8; // 跳過 'I'
+    col = 8; // skip "I"
   }
   return [col, row];
 }
+
 // board record
 const moveAccFunction = (moves = [], currentState) => {
   let result;
@@ -1083,47 +955,6 @@ const moveAccFunction = (moves = [], currentState) => {
     result = moves || [];
   }
   return result;
-};
-// visualize board record
-function visualizeGoBoard(intersections, size) {
-  if (![9, 13, 19].includes(size)) {
-    return "Invalid board size. Please use 9, 13, or 19.";
-  }
-
-  let board = "";
-  const symbols = {
-    empty: "⋅",
-    black: "●",
-    white: "○",
-  };
-
-  for (let y = 0; y < size; y++) {
-    let row = "";
-    for (let x = 0; x < size; x++) {
-      const intersection = intersections.find((i) => i.x === x && i.y === y);
-      row += symbols[intersection.value] + " ";
-    }
-    board += row.trim() + "\n";
-  }
-
-  return board;
-}
-// music element
-export const YTMusic = () => {
-  return (
-    <div style={{ position: "absolute", zIndex: -9999, opacity: 0 }}>
-      <ReactPlayer
-        url={"https://www.youtube.com/watch?v=jZSquuCHVZA"}
-        width={320}
-        height={180}
-        volume={1}
-        playsinline={true}
-        playing={true}
-        loop={true}
-        aria-label="Background Battlefield Music"
-      />
-    </div>
-  );
 };
 
 /**

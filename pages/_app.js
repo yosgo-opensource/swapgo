@@ -1,6 +1,6 @@
 import Head from "next/head";
 import "../styles/globals.css";
-import localFont from '@next/font/local'
+import localFont from "@next/font/local"
 
 const playwriteHR = localFont({
   src: '../fonts/PlaywriteHR-VariableFont_wght.ttf',

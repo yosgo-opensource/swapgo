@@ -1,18 +1,18 @@
-import React, { useState, useEffect, useRef } from 'react';
-import styled,  { createGlobalStyle } from 'styled-components';
-import { useRouter } from 'next/router';
-import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
-import { faGithub, faYoutube } from '@fortawesome/free-brands-svg-icons';
+import React, { useState, useEffect, useRef } from "react";
+import styled,  { createGlobalStyle } from "styled-components";
+import { useRouter } from "next/router";
+import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
+import { faGithub, faYoutube } from "@fortawesome/free-brands-svg-icons";
 
-const swapgoBg = '/logo/swapgo_b_big_new.png';
-const swapgoBgBlack = '/logo/swapgo_b_big.png';
-const swapgoTrans = '/logo/swapgo_trans.png';
-const swapgo = '/logo/swapgo.png';
-const swapgoWhite = '/logo/swapgo_w.png';
-const backgroundWhite = '/logo/white.png';
-const oceanSound = '/ocean-waves-112906.mp3';
-const blackIgo = 'swapgo/black.png';
-const whiteIgo = 'swapgo/white.png';
+const swapgoBg = "/logo/swapgo_b_big_new.png";
+const swapgoBgBlack = "/logo/swapgo_b_big.png";
+const swapgoTrans = "/logo/swapgo_trans.png";
+const swapgo = "/logo/swapgo.png";
+const swapgoWhite = "/logo/swapgo_w.png";
+const backgroundWhite = "/logo/white.png";
+const oceanSound = "/ocean-waves-112906.mp3";
+const blackIgo = "swapgo/black.png";
+const whiteIgo = "swapgo/white.png";
 
 const PauseIcon = () => (
   <svg width="18" height="17" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
@@ -37,7 +37,7 @@ const Page = styled.div`
   body {
     background: #efefef;
     color: #212121;
-    font-family: 'Montserrat', sans-serif;
+    font-family: "Montserrat", sans-serif;
     font-size: 16px;
     height: 100%;
     overflow: hidden; 
@@ -769,15 +769,15 @@ const AudioPlayer = styled.div`
 `;
 
 function useWindowWidth() {
-  const [width, setWidth] = useState(typeof window !== 'undefined' ? window.innerWidth : 0);
+  const [width, setWidth] = useState(typeof window !== "undefined" ? window.innerWidth : 0);
   
   useEffect(() => {
     function handleResize() {
       setWidth(window.innerWidth);
     }
     
-    window.addEventListener('resize', handleResize);
-    return () => window.removeEventListener('resize', handleResize);
+    window.addEventListener("resize", handleResize);
+    return () => window.removeEventListener("resize", handleResize);
   }, []);
 
   return width;
@@ -785,16 +785,16 @@ function useWindowWidth() {
 
 const useCustomCursor = () => {
   useEffect(() => {
-    const cursor = document.querySelector('.custom-cursor');
-    const links = document.querySelectorAll('a, button, #nav-btn, input.btn');
+    const cursor = document.querySelector(".custom-cursor");
+    const links = document.querySelectorAll("a, button, #nav-btn, input.btn");
     let initCursor = false;
 
     links.forEach(link => {
-      link.addEventListener('mouseover', () => {
-        cursor.classList.add('custom-cursor--link');
+      link.addEventListener("mouseover", () => {
+        cursor.classList.add("custom-cursor--link");
       });
-      link.addEventListener('mouseout', () => {
-        cursor.classList.remove('custom-cursor--link');
+      link.addEventListener("mouseout", () => {
+        cursor.classList.remove("custom-cursor--link");
       });
     });
 
@@ -837,32 +837,32 @@ const useCustomCursor = () => {
       }, 200);
     };
 
-    window.addEventListener('mousemove', handleMouseMove);
-    window.addEventListener('touchmove', handleTouchMove);
-    window.addEventListener('mouseout', handleMouseOut);
-    window.addEventListener('touchstart', handleTouchStart);
-    window.addEventListener('touchend', handleTouchEnd);
+    window.addEventListener("mousemove", handleMouseMove);
+    window.addEventListener("touchmove", handleTouchMove);
+    window.addEventListener("mouseout", handleMouseOut);
+    window.addEventListener("touchstart", handleTouchStart);
+    window.addEventListener("touchend", handleTouchEnd);
 
     return () => {
-      window.removeEventListener('mousemove', handleMouseMove);
-      window.removeEventListener('touchmove', handleTouchMove);
-      window.removeEventListener('mouseout', handleMouseOut);
-      window.removeEventListener('touchstart', handleTouchStart);
-      window.removeEventListener('touchend', handleTouchEnd);
+      window.removeEventListener("mousemove", handleMouseMove);
+      window.removeEventListener("touchmove", handleTouchMove);
+      window.removeEventListener("mouseout", handleMouseOut);
+      window.removeEventListener("touchstart", handleTouchStart);
+      window.removeEventListener("touchend", handleTouchEnd);
     };
   }, []);
 };
 
 const useMenuToggle = () => {
   useEffect(() => {
-    const navBtn = document.getElementById('nav-btn');
-    const takeoverNav = document.getElementById('takeover-nav');
-    const stickyNav = document.querySelector('.sticky-nav');
+    const navBtn = document.getElementById("nav-btn");
+    const takeoverNav = document.getElementById("takeover-nav");
+    const stickyNav = document.querySelector(".sticky-nav");
 
-    navBtn.addEventListener('click', () => {
-      takeoverNav.classList.toggle('shown');
-      stickyNav.classList.toggle('difference');
-      navBtn.classList.toggle('active');
+    navBtn.addEventListener("click", () => {
+      takeoverNav.classList.toggle("shown");
+      stickyNav.classList.toggle("difference");
+      navBtn.classList.toggle("active");
     });
   }, []);
 };
@@ -930,12 +930,12 @@ export default function Home() {
       if (audio && !isPlaying) {
         audio.play().then(() => {
           setIsPlaying(true);
-          console.log('first playing');
+          console.log("first playing");
           console.log(isPlaying);
         }).catch(error => {
           console.log("Audio autoplay was prevented:", error);
           setIsPlaying(false);
-          console.log('cannot playing');
+          console.log("cannot playing");
           console.log(isPlaying);
         });
       }
@@ -950,10 +950,10 @@ export default function Home() {
       }
     };
 
-    document.addEventListener('click', handleInteraction);
+    document.addEventListener("click", handleInteraction);
 
     return () => {
-      document.removeEventListener('click', handleInteraction);
+      document.removeEventListener("click", handleInteraction);
     };
   }, [isPlaying, firstLoaded]);
 
@@ -963,13 +963,13 @@ export default function Home() {
 
     if (audio) {
       if (isPlaying) {
-        console.log('pause')
+        console.log("pause")
         audio.pause();
         setIsPlaying(false);
         console.log(isPlaying);
       } else {
         audio.play().then(() => {
-          console.log('play')
+          console.log("play")
           setIsPlaying(true); 
           console.log(isPlaying);
         }).catch(error => {
@@ -1020,7 +1020,7 @@ export default function Home() {
     <Page>
       <Header>
         <StickyNav className="sticky-nav d-flex justify-content-between mt-10">
-          <div className="logo" style={{ opacity: 0.65, cursor: 'pointer' }} onClick={() => router.push('/')} >                    
+          <div className="logo" style={{ opacity: 0.65, cursor: "pointer" }} onClick={() => router.push("/")} >                    
             <img src={swapgoTrans} width={120} alt="swapgo logo navbar"></img>
           </div>
           {showPlayButton && (
@@ -1030,25 +1030,25 @@ export default function Home() {
               setShowPlayButton(false);
             }}
             style={{
-              position: 'absolute',
-              top: '50%',
-              left: '50%',
-              transform: 'translate(-50%, -50%)',
+              position: "absolute",
+              top: "50%",
+              left: "50%",
+              transform: "translate(-50%, -50%)",
               zIndex: 3,
-              background: 'rgba(0,0,0,0.5)',
-              color: 'white',
-              border: 'none',
-              borderRadius: '50%',
-              width: '60px',
-              height: '60px',
-              fontSize: '24px',
-              cursor: 'pointer'
+              background: "rgba(0,0,0,0.5)",
+              color: "white",
+              border: "none",
+              borderRadius: "50%",
+              width: "60px",
+              height: "60px",
+              fontSize: "24px",
+              cursor: "pointer"
             }}
           >
             ▶
           </button>
         )}
-          <div id="nav-btn" className="menu box bg-blend-luminosity" style={{ cursor: 'pointer'}}>
+          <div id="nav-btn" className="menu box bg-blend-luminosity" style={{ cursor: "pointer"}}>
             <svg id="i1" className="icon" viewBox="20 30 60 40">
               <path id="top-line-1" d="M30,37 L70,37 Z"></path>
               <path id="middle-line-1" d="M30,50 L70,50 Z"></path>
@@ -1061,10 +1061,10 @@ export default function Home() {
             <div className="nav-col nav-contact w-full md:w-1/2 lg:w-1/4 bg-black 
                           flex flex-col justify-start items-center relative py-5 px-3">
             <div className="absolute w-full h-full bg-topographic"></div>
-            <div className="relative mt-36 lg:mt-[250px] ml-5 mb-10" style={{ display: 'flex', flexDirection : 'column', alignItems : 'center' }}>
-              <div className="nav-title white" onClick={() => router.push('/SWAPGO/start')}></div>
-              <div className="font-playwrite font-hairline text-center mb-4" style={{ fontSize: titleWidth, color: 'white'}}> SwapGo </div>
-              <div className="font-playwrite font-light text-center" style={{ color: 'white', fontSize: subtitleWidth }}>Every game of SwapGo is a journey through time<br></br><div className="mt-3">Each move,
+            <div className="relative mt-36 lg:mt-[250px] ml-5 mb-10" style={{ display: "flex", flexDirection : "column", alignItems : "center" }}>
+              <div className="nav-title white" onClick={() => router.push("/SWAPGO/start")}></div>
+              <div className="font-playwrite font-hairline text-center mb-4" style={{ fontSize: titleWidth, color: "white"}}> SwapGo </div>
+              <div className="font-playwrite font-light text-center" style={{ color: "white", fontSize: subtitleWidth }}>Every game of SwapGo is a journey through time<br></br><div className="mt-3">Each move,
                 a pivotal moment in history Rewritten</div></div>
             </div>
             <div className="social flex align-items-center">
@@ -1083,7 +1083,7 @@ export default function Home() {
               {/* <span className="mx-2 white">|</span> */}
               {/* <a className="text-decoration-none green" href="#">instagram</a> */}
             </div> 
-            <ul className="contact-items white list-unstyled mb-5 mt-3" style={{ display: 'flex', flexDirection : 'column', alignItems : 'center' }}>
+            <ul className="contact-items white list-unstyled mb-5 mt-3" style={{ display: "flex", flexDirection : "column", alignItems : "center" }}>
                 
                 {/* <li className="pb-4">
                   <a className="text-decoration-none" href="#">Every game of SwapGo is a journey through time; each move,
@@ -1119,7 +1119,7 @@ export default function Home() {
       <Hero className="hero d-flex justify-content-center">
         <div className="video-wrap">
           <video autoPlay playsInline loop muted id="video-bg"
-          style={{ objectFit: 'cover', width: '100%', height: '100%' }}>
+          style={{ objectFit: "cover", width: "100%", height: "100%" }}>
             <source src="https://tactusmarketing.com/wp-content/uploads/tactus-waves-hero.mp4" 
                     type="video/mp4" />
           </video>
@@ -1129,10 +1129,10 @@ export default function Home() {
         <div className="logo-background"></div>
 
         <div className="content position-relative text-center" 
-            style={{ backgroundColor: 'black' }}>
+            style={{ backgroundColor: "black" }}>
         <div className="hero-title blend flex-col justify-center" >
         <div className="hero-title-white flex-col align-items-center justify-center cursor-pointer" 
-            onClick={() => router.push('/SWAPGO/start')} >
+            onClick={() => router.push("/SWAPGO/start")} >
           <img style={{ width: logoWidth }} className="hero-logo-title" src={swapgoBg} alt="SwapGo"/>
           <div className="flex justify-center">
             <img src={blackIgo} alt="Black Igo" style={{ marginTop: chessMargin, width: 100, height: 100 }}/>
@@ -1140,16 +1140,16 @@ export default function Home() {
           </div>
         </div>
         <div className="hero-title-black flex-col align-items-center justify-center cursor-pointer"
-          onClick={() => router.push('/SWAPGO/start')} >
+          onClick={() => router.push("/SWAPGO/start")} >
           <img style={{ width: logoWidth }} className="hero-logo-title" src={swapgoBgBlack} alt="SwapGo-hover" />
           <div className="flex justify-center">
             <img src={blackIgo} alt="Black Igo" style={{ marginTop: chessMargin, width: 100, height: 100 }} />
             <img src={whiteIgo} alt="White Igo" style={{ marginTop: chessMargin, width: 100, height: 100 }}/>
           </div>
         </div>
-        <div className="relative" style={{ display: 'flex', flexDirection : 'column', alignItems : 'center' }}>
-          <div className="font-playwrite font-hairline text-center mb-6 opacity-95" style={{ fontSize: 40, color: 'white'}}> SwapGo </div>
-          <div className="font-playwrite font-light text-center opacity-90" style={{ color: 'white', fontSize: 16 }}>Every game of SwapGo is a journey through time<br></br>
+        <div className="relative" style={{ display: "flex", flexDirection : "column", alignItems : "center" }}>
+          <div className="font-playwrite font-hairline text-center mb-6 opacity-95" style={{ fontSize: 40, color: "white"}}> SwapGo </div>
+          <div className="font-playwrite font-light text-center opacity-90" style={{ color: "white", fontSize: 16 }}>Every game of SwapGo is a journey through time<br></br>
             <div className="mt-3">Each move,
               a pivotal moment in history Rewritten
             </div>
@@ -1174,7 +1174,7 @@ export default function Home() {
       </audio>
         <AudioPlayer>
             <button style={{ height: 30 }} onClick={togglePlay}>
-              {isPlaying ? <PauseIcon /> : '▶'}
+              {isPlaying ? <PauseIcon /> : "▶"}
             </button>
             <div className="volume-control-wrapper">
               <input
