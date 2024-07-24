@@ -93,7 +93,7 @@ const StartGame = () => {
             dangerouslySetInnerHTML={{ __html: JSON.stringify(pageJsonLd) }}
           />
         </Head>
-        <ServerStatusIndicator/>
+        <ServerStatusIndicator />
         <style jsx>{`
           .start-game-container {
             padding: 16px;
@@ -165,7 +165,7 @@ const StartGame = () => {
           >
             <div style={{ display: "flex", alignItems: "center", gap: "16px" }}>
               <img
-                src="/swapgo/board2-removeBg.png"
+                src="/swapgo/board2-remove-bg.png"
                 style={{
                   width: "120px",
                   height: "120px",
