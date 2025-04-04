@@ -62,7 +62,7 @@ graph TD
 
 ## Demonstration
 
-[Online Demo Website Link](https://go.swap.work/SWAPGO/start)
+Please contact us support@yosgo.com to get demo site. 
 
 - The demo site supports a maximum of 2 users simultaneously due to performance considerations.
 - We cannot guarantee continuous availability of the demo site.
